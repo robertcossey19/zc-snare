@@ -1,7 +1,7 @@
 name: intake
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/5 * * * *'      # restart net only - the listener below is what normally picks jobs up
   workflow_dispatch: {}
 permissions:
   contents: write
@@ -9,27 +9,48 @@ permissions:
 concurrency:
   group: intake
   cancel-in-progress: false
+env:
+  ZC_NTFY_TOPIC: 'zc-snare-jobs-00a30119bd60e56e2593776a'
+  ZC_NTFY_DONE: 'zc-snare-done-3b0fd4cb77640a88e253c855'
 jobs:
   intake:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 355
     steps:
       - uses: actions/checkout@v4
-      - name: Pull new jobs from the mailbox
-        id: pull
-        env: { ZC_NTFY_TOPIC: 'zc-snare-jobs-00a30119bd60e56e2593776a', ZC_NTFY_DONE: 'zc-snare-done-3b0fd4cb77640a88e253c855', ZC_WORK: '${{ github.workspace }}/work' }
+      - name: Catch anything already waiting
+        id: pull0
+        env: { ZC_WORK: '${{ github.workspace }}/work' }
         run: python3 pipeline/intake.py
+      - name: Listen on the mailbox (up to 5 h 35 min)
+        id: listen
+        if: steps.pull0.outputs.ids == ''
+        run: python3 pipeline/listen.py
+      - name: Pull the new job(s)
+        id: pull
+        if: steps.pull0.outputs.ids == '' && steps.listen.outputs.found == '1'
+        env: { ZC_WORK: '${{ github.workspace }}/work' }
+        run: sleep 3; python3 pipeline/intake.py
+      - name: Collect ids
+        id: ids
+        run: echo "ids=${{ steps.pull0.outputs.ids }}${{ steps.pull.outputs.ids }}" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
-        if: steps.pull.outputs.ids != ''
+        if: steps.ids.outputs.ids != ''
         with: { name: 'intake-${{ github.run_id }}', path: work/intake/, retention-days: 3, if-no-files-found: error, compression-level: 0 }
       - name: Claim (queue markers, fail reports)
         if: always()
         run: |
           git config user.name "zc-snare[bot]"; git config user.email "zc-snare@users.noreply.github.com"
           for d in queue packs; do [ -d "$d" ] && git add -A "$d"; done; true
-          git commit -q -m "intake: ${{ steps.pull.outputs.ids }} [skip ci]" || { echo "nothing new"; exit 0; }
+          git commit -q -m "intake: ${{ steps.ids.outputs.ids }} [skip ci]" || { echo "nothing new"; exit 0; }
           for i in 1 2 3 4 5; do git pull -q --rebase origin main && git push -q origin HEAD:main && break || { echo retry $i; sleep $((i*7)); }; done
       - name: Start extract
-        if: steps.pull.outputs.ids != ''
+        if: steps.ids.outputs.ids != ''
         env: { GH_TOKEN: '${{ github.token }}' }
-        run: gh workflow run extract -R "$GITHUB_REPOSITORY" -f ids="${{ steps.pull.outputs.ids }}" -f intake_run="${{ github.run_id }}"
+        run: gh workflow run extract -R "$GITHUB_REPOSITORY" -f ids="${{ steps.ids.outputs.ids }}" -f intake_run="${{ github.run_id }}"
+      - name: Hand off to the next listener
+        if: always()
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          [ -f LISTENER_OFF ] && { echo "LISTENER_OFF - not chaining"; exit 0; }
+          for i in 1 2 3; do gh workflow run intake -R "$GITHUB_REPOSITORY" && break || sleep 10; done
