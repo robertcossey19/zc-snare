@@ -1,12 +1,12 @@
 {
  "job": "linkin-park-figure-09-d3b1a",
  "status": "OK",
- "pipeline": "4.1.0",
+ "pipeline": "4.2.0",
  "stages": {
-  "decode_s": 0.6,
-  "demucs_s": 95.4,
-  "drumsep_s": 693.4,
-  "build_s": 33.4
+  "decode_s": 0.5,
+  "demucs_s": 92.6,
+  "drumsep_s": 687.6,
+  "build_s": 183.3
  },
  "gates": [
   {
@@ -32,14 +32,14 @@
   },
   {
    "name": "drums_rms_dbfs",
-   "value": -17.5,
+   "value": -17.7,
    "limit": "> -45 dBFS",
    "ok": true,
    "note": "Demucs found no drum content"
   },
   {
    "name": "drums_minus_mix_db",
-   "value": -7.6,
+   "value": -7.8,
    "limit": "-25..+3 dB",
    "ok": true,
    "note": "drum share of the mix"
@@ -47,13 +47,13 @@
   {
    "name": "separation_residual_below_drums_db",
    "value": 32.0,
-   "limit": ">= 20 dB",
+   "limit": ">= 12 dB",
    "ok": true,
-   "note": "the six stems must add back up to the drum stem (reference songs: 26.9..28.9)"
+   "note": "the six stems must add back up to the drum stem (reference songs 23.9..32.0; the snare-specific loss is gated per band below)"
   },
   {
    "name": "snare_stem_rms_dbfs",
-   "value": -28.4,
+   "value": -28.6,
    "limit": "-45..-8 dBFS",
    "ok": true,
    "note": "reference songs -20..-30"
@@ -63,32 +63,32 @@
    "value": 0,
    "limit": "0 failing files",
    "ok": true,
-   "note": "after up to 3 re-picks"
+   "note": "after up to 7 re-picks per strategy"
   },
   {
    "name": "hits_aligned",
-   "value": 130,
+   "value": 135,
    "limit": ">= 60",
    "ok": true,
    "note": "reference songs 116..184"
   },
   {
    "name": "corr_median",
-   "value": 0.76,
-   "limit": ">= 0.70",
+   "value": 0.762,
+   "limit": ">= 0.55",
    "ok": true,
-   "note": "reference songs 0.816..0.933"
+   "note": "reference songs 0.76..0.95; 0.55..0.70 passes with a variation warning"
   },
   {
    "name": "audit_0_5ms_snare_vs_drums_db",
-   "value": 0.0,
+   "value": -0.1,
    "limit": "|diff| <= 1.5 dB",
    "ok": true,
    "note": "transient intact after separation"
   },
   {
    "name": "coherent_resid_below_snare_db",
-   "value": 48.9,
+   "value": 48.5,
    "limit": ">= 12 dB",
    "ok": true,
    "note": "hit-locked snare energy the separator assigned to no stem (reference songs 42..44; dense mixes 18..25)"
@@ -102,7 +102,7 @@
   },
   {
    "name": "noise_floor_dbfs",
-   "value": -95.8,
+   "value": -94.7,
    "limit": "< -60 dBFS",
    "ok": true,
    "note": "snare stem between hits"
@@ -110,9 +110,9 @@
   {
    "name": "t60_mid_bands_s",
    "value": [
-    0.64,
-    0.65,
-    0.4
+    0.6,
+    0.55,
+    0.39
    ],
    "limit": "0.08..3.0 s",
    "ok": true,
@@ -120,7 +120,7 @@
   },
   {
    "name": "selected_hits_distinct_min_gap_s",
-   "value": 1.23,
+   "value": 1.22,
    "limit": ">= 0.05 s",
    "ok": true,
    "note": "all 16 files come from different strokes"
@@ -129,10 +129,11 @@
  "warnings": [
   "lossy input at 128 kbps: expect a lower HF ceiling and more pre-echo than the reference packs (built from 128-320 kbps / WAV)",
   "lossy source: top end limited by the codec (~16 kHz for mp3); WAV/FLAC input gives a cleaner result",
+  "detection recipe A_bright was not the best on this record; B_dark won (darker / lo-fi snare or <160 kbps source: lower crack band, 4 dB rise, corr floor 0.45); scores: A_bright 0.598, B_dark 0.669, C_dense 0.626, D_sparse 0.661",
   "soft: 1/4 real hits found in that velocity band on this record; the other 3 are flagged estimates (hard hit with the lighter-stroke transform)",
-  "ghost: 0/4 real hits found in that velocity band on this record; the other 4 are flagged estimates (hard hit with the lighter-stroke transform)"
+  "ghost: 1/4 real hits found in that velocity band on this record; the other 3 are flagged estimates (hard hit with the lighter-stroke transform)"
  ],
- "started": "2026-11-06T16:44:24Z",
+ "started": "2026-11-06T18:34:55Z",
  "artist": "Linkin Park",
  "title": "Figure.09",
  "mixer": "unknown",
@@ -148,87 +149,218 @@
  "log_tail": [
   "[    0.0s] job linkin-park-figure-09-d3b1a | Linkin Park - Figure.09 | input.mp3 3169005 bytes",
   "[    0.0s] $ ffprobe -v error -print_format json -show_format -show_streams /home/runner/work/zc-snare/zc-snare/jobs/linkin-park-figure-09-d3b1a/input.mp3",
-  "[    0.1s] $ ffmpeg -hide_banner -loglevel error -y -i /home/runner/work/zc-snare/zc-snare/jobs/linkin-park-figure-09-d3b1a/input.mp3 -vn -ar 44100 -ac 2 -c:a pcm_s16le /home/runner/work/zc-snare/zc-snare/work/audio/linkin-park-figure-09-d3b1a.wav",
-  "[    0.6s] PASS duration_s = 198.0 (limit 30..720 s) ",
-  "[    0.6s] PASS mix_peak_dbfs = 0.0 (limit > -30 dBFS) silent or near-silent file",
-  "[    0.6s] PASS clipped_fraction = 0.0013 (limit < 0.02) samples at full scale",
-  "[    0.6s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m demucs -n htdemucs --two-stems=drums -d cpu -j 1 --segment 7 -o /home/runner/work/zc-snare/zc-snare/work/sep /home/runner/work/zc-snare/zc-snare/work/audio/linkin-park-figure-09-d3b1a.wav",
-  "[   96.0s] PASS drums_rms_dbfs = -17.5 (limit > -45 dBFS) Demucs found no drum content",
-  "[   96.0s] PASS drums_minus_mix_db = -7.6 (limit -25..+3 dB) drum share of the mix",
-  "[   96.5s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python inference.py --model_type mdx23c --config_path /home/runner/work/zc-snare/zc-snare/pipeline/drumsep.yaml --start_check_point /home/runner/work/zc-snare/zc-snare/work/ds/drumsep.ckpt --input_folder /home/runner/work/zc-snare/zc-snare/work/ds/in_linkin-park-figure-09-d3b1a --store_dir /home/runner/work/zc-snare/zc-snare/work/ds/out --force_cpu --pcm_type FLOAT --disable_detailed_pbar",
-  "[  789.4s] PASS separation_residual_below_drums_db = 32.0 (limit >= 20 dB) the six stems must add back up to the drum stem (reference songs: 26.9..28.9)",
-  "[  789.4s] PASS snare_stem_rms_dbfs = -28.4 (limit -45..-8 dBFS) reference songs -20..-30",
-  "[  789.4s] build attempt 1, excluded 0 hit(s)",
-  "[  806.2s] per-file QC rejected [('hard_rr4', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
-  "[  806.2s] build attempt 2, excluded 1 hit(s)",
-  "[  822.8s] PASS file_qc_all_pass = 0 (limit 0 failing files) after up to 3 re-picks",
-  "[  822.8s] PASS hits_aligned = 130 (limit >= 60) reference songs 116..184",
-  "[  822.8s] PASS corr_median = 0.76 (limit >= 0.70) reference songs 0.816..0.933",
-  "[  822.8s] PASS audit_0_5ms_snare_vs_drums_db = 0.0 (limit |diff| <= 1.5 dB) transient intact after separation",
-  "[  822.8s] PASS coherent_resid_below_snare_db = 48.9 (limit >= 12 dB) hit-locked snare energy the separator assigned to no stem (reference songs 42..44; dense mixes 18..25)",
-  "[  822.8s] PASS snare_lost_to_residual_max_db = 0.02 (limit <= 1.0 dB) snare stem vs snare+unassigned residual, 150 Hz-8 kHz, first 60 ms: the real separation loss",
-  "[  822.8s] PASS noise_floor_dbfs = -95.8 (limit < -60 dBFS) snare stem between hits",
-  "[  822.8s] PASS t60_mid_bands_s = [0.64, 0.65, 0.4] (limit 0.08..3.0 s) measured late decay 150 Hz-6 kHz",
-  "[  822.8s] PASS selected_hits_distinct_min_gap_s = 1.23 (limit >= 0.05 s) all 16 files come from different strokes",
-  "[  822.8s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python /home/runner/work/zc-snare/zc-snare/pipeline/pack_readme.py linkin-park-figure-09-d3b1a Linkin Park Figure.09 unknown"
+  "[    0.0s] $ ffmpeg -hide_banner -loglevel error -y -i /home/runner/work/zc-snare/zc-snare/jobs/linkin-park-figure-09-d3b1a/input.mp3 -vn -ar 44100 -ac 2 -c:a pcm_s16le /home/runner/work/zc-snare/zc-snare/work/audio/linkin-park-figure-09-d3b1a.wav",
+  "[    0.5s] PASS duration_s = 198.0 (limit 30..720 s) ",
+  "[    0.5s] PASS mix_peak_dbfs = 0.0 (limit > -30 dBFS) silent or near-silent file",
+  "[    0.5s] PASS clipped_fraction = 0.0013 (limit < 0.02) samples at full scale",
+  "[    0.5s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m demucs -n htdemucs --two-stems=drums -d cpu -j 1 --segment 7 -o /home/runner/work/zc-snare/zc-snare/work/sep /home/runner/work/zc-snare/zc-snare/work/audio/linkin-park-figure-09-d3b1a.wav",
+  "[   93.0s] PASS drums_rms_dbfs = -17.7 (limit > -45 dBFS) Demucs found no drum content",
+  "[   93.0s] PASS drums_minus_mix_db = -7.8 (limit -25..+3 dB) drum share of the mix",
+  "[   93.5s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python inference.py --model_type mdx23c --config_path /home/runner/work/zc-snare/zc-snare/pipeline/drumsep.yaml --start_check_point /home/runner/work/zc-snare/zc-snare/work/ds/drumsep.ckpt --input_folder /home/runner/work/zc-snare/zc-snare/work/ds/in_linkin-park-figure-09-d3b1a --store_dir /home/runner/work/zc-snare/zc-snare/work/ds/out --force_cpu --pcm_type FLOAT --disable_detailed_pbar",
+  "[  780.7s] PASS separation_residual_below_drums_db = 32.0 (limit >= 12 dB) the six stems must add back up to the drum stem (reference songs 23.9..32.0; the snare-specific loss is gated per band below)",
+  "[  780.7s] PASS snare_stem_rms_dbfs = -28.6 (limit -45..-8 dBFS) reference songs -20..-30",
+  "[  780.7s] library: 7 songs; strategy order ['A_bright', 'B_dark', 'C_dense', 'D_sparse'] | nearest by separation/stem facts: [('underoath-it-s-dangerous-bus-d4e00', 1.23), ('nothing-more-if-it-doesn-t-h-ztf6s', 1.3), ('asking-alexandria-the-final--d3f79', 1.32)]",
+  "[  780.7s] strategy A_bright: build attempt 1, excluded 0 hit(s)",
+  "[  796.3s] per-file QC rejected [('hard_rr1', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr2', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[  796.3s] strategy A_bright: build attempt 2, excluded 3 hit(s)",
+  "[  811.9s] per-file QC rejected [('hard_rr2', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[  811.9s] strategy A_bright: build attempt 3, excluded 4 hit(s)",
+  "[  827.5s] strategy A_bright: OK score 0.598",
+  "[  827.5s] strategy A_bright is marginal (corr 0.755, 132 hits): trying the remaining recipes, best score wins",
+  "[  827.5s] strategy B_dark: build attempt 1, excluded 0 hit(s)",
+  "[  842.4s] per-file QC rejected [('hard_rr1', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr2', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr4', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[  842.4s] strategy B_dark: build attempt 2, excluded 4 hit(s)",
+  "[  857.1s] strategy B_dark: OK score 0.669",
+  "[  857.1s] strategy B_dark is marginal (corr 0.762, 135 hits): trying the remaining recipes, best score wins",
+  "[  857.1s] strategy C_dense: build attempt 1, excluded 0 hit(s)",
+  "[  873.0s] per-file QC rejected [('hard_rr1', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr2', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[  873.0s] strategy C_dense: build attempt 2, excluded 3 hit(s)",
+  "[  888.9s] per-file QC rejected [('hard_rr2', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[  888.9s] strategy C_dense: build attempt 3, excluded 5 hit(s)",
+  "[  904.8s] strategy C_dense: OK score 0.626",
+  "[  904.8s] strategy C_dense is marginal (corr 0.765, 131 hits): trying the remaining recipes, best score wins",
+  "[  904.8s] strategy D_sparse: build attempt 1, excluded 0 hit(s)",
+  "[  919.6s] per-file QC rejected [('hard_rr1', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr2', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[  919.6s] strategy D_sparse: build attempt 2, excluded 3 hit(s)",
+  "[  934.4s] per-file QC rejected [('hard_rr2', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[  934.4s] strategy D_sparse: build attempt 3, excluded 4 hit(s)",
+  "[  949.1s] strategy D_sparse: OK score 0.661",
+  "[  949.1s] rebuilding winner B_dark (score 0.669) ...",
+  "[  964.0s] PASS file_qc_all_pass = 0 (limit 0 failing files) after up to 7 re-picks per strategy",
+  "[  964.0s] PASS hits_aligned = 135 (limit >= 60) reference songs 116..184",
+  "[  964.0s] PASS corr_median = 0.762 (limit >= 0.55) reference songs 0.76..0.95; 0.55..0.70 passes with a variation warning",
+  "[  964.0s] PASS audit_0_5ms_snare_vs_drums_db = -0.1 (limit |diff| <= 1.5 dB) transient intact after separation",
+  "[  964.0s] PASS coherent_resid_below_snare_db = 48.5 (limit >= 12 dB) hit-locked snare energy the separator assigned to no stem (reference songs 42..44; dense mixes 18..25)",
+  "[  964.0s] PASS snare_lost_to_residual_max_db = 0.02 (limit <= 1.0 dB) snare stem vs snare+unassigned residual, 150 Hz-8 kHz, first 60 ms: the real separation loss",
+  "[  964.0s] PASS noise_floor_dbfs = -94.7 (limit < -60 dBFS) snare stem between hits",
+  "[  964.0s] PASS t60_mid_bands_s = [0.6, 0.55, 0.39] (limit 0.08..3.0 s) measured late decay 150 Hz-6 kHz",
+  "[  964.0s] PASS selected_hits_distinct_min_gap_s = 1.22 (limit >= 0.05 s) all 16 files come from different strokes",
+  "[  964.0s] nearest library songs after build: [('underoath-it-s-dangerous-bus-d4e00', 0.99), ('nothing-more-if-it-doesn-t-h-ztf6s', 1.36), ('asking-alexandria-the-final--d3f79', 1.47)]",
+  "[  964.0s] library note: coherent_resid_below_snare_db = 48.5: outside the library range 19.4..45.4 (n=7)",
+  "[  964.0s] library note: separation_residual_below_drums_db = 32.0: outside the library range 23.9..31.1 (n=7)",
+  "[  964.0s] library note: hat_minus_snare_stem_db = -3.8: outside the library range -13.3..-7.7 (n=7)",
+  "[  964.0s] library note: noise_floor_dbfs = -94.7: outside the library range -93.6..-83.2 (n=7)",
+  "[  964.0s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python /home/runner/work/zc-snare/zc-snare/pipeline/pack_readme.py linkin-park-figure-09-d3b1a Linkin Park Figure.09 unknown"
  ],
- "elapsed_s": 822.9,
- "drums_rms_dbfs": -17.5,
+ "elapsed_s": 964.1,
+ "drums_rms_dbfs": -17.7,
  "stem_rms_dbfs": {
-  "Kick": -18.3,
-  "Snare": -28.4,
-  "Toms": -37.6,
-  "Hh": -32.3,
+  "Kick": -18.5,
+  "Snare": -28.6,
+  "Toms": -37.8,
+  "Hh": -32.4,
   "Ride": -42.8,
-  "Crash": -39.1
+  "Crash": -39.6
  },
  "separation_residual_below_drums_db": 32.0,
+ "library_size": 7,
+ "strategy_order": [
+  "A_bright",
+  "B_dark",
+  "C_dense",
+  "D_sparse"
+ ],
+ "nearest_before_build": [
+  {
+   "job": "underoath-it-s-dangerous-bus-d4e00",
+   "artist": "Underoath",
+   "title": "It's Dangerous Business Walking Out Your Front Door",
+   "distance": 1.23,
+   "strategy": "A_bright"
+  },
+  {
+   "job": "nothing-more-if-it-doesn-t-h-ztf6s",
+   "artist": "Nothing More",
+   "title": "If It Doesn't Hurt",
+   "distance": 1.3,
+   "strategy": "A_bright"
+  },
+  {
+   "job": "asking-alexandria-the-final--d3f79",
+   "artist": "Asking Alexandria",
+   "title": "The Final Episode",
+   "distance": 1.32,
+   "strategy": "A_bright"
+  }
+ ],
+ "strategy_attempts": [
+  {
+   "strategy": "A_bright",
+   "ok": true,
+   "why": "",
+   "hits_aligned": 132,
+   "corr_median": 0.755,
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 0
+   },
+   "template_centroid_hz": 1087,
+   "centroid_limit_hz": 1601,
+   "qc_repicks": 4,
+   "score": 0.598
+  },
+  {
+   "strategy": "B_dark",
+   "ok": true,
+   "why": "",
+   "hits_aligned": 135,
+   "corr_median": 0.762,
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 1,
+    "ghost": 1
+   },
+   "template_centroid_hz": 1087,
+   "centroid_limit_hz": 1601,
+   "qc_repicks": 4,
+   "score": 0.669
+  },
+  {
+   "strategy": "C_dense",
+   "ok": true,
+   "why": "",
+   "hits_aligned": 131,
+   "corr_median": 0.765,
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 1
+   },
+   "template_centroid_hz": 1087,
+   "centroid_limit_hz": 1500,
+   "qc_repicks": 5,
+   "score": 0.626
+  },
+  {
+   "strategy": "D_sparse",
+   "ok": true,
+   "why": "",
+   "hits_aligned": 139,
+   "corr_median": 0.761,
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 1
+   },
+   "template_centroid_hz": 1088,
+   "centroid_limit_hz": 1601,
+   "qc_repicks": 4,
+   "score": 0.661
+  }
+ ],
+ "strategy_used": "B_dark",
+ "template_centroid_hz": 1087,
  "file_qc": [
   {
    "slot": "hard_rr1",
-   "t": 43.55,
+   "t": 42.32,
    "real": true,
-   "rel_db": -0.7,
-   "peak_dbfs": -1.6,
-   "first_half_ms_re_peak_db": -17.1,
-   "centroid_hz": 877,
-   "len_ms": 709,
+   "rel_db": -0.8,
+   "peak_dbfs": -1.7,
+   "first_half_ms_re_peak_db": -21.3,
+   "centroid_hz": 1087,
+   "len_ms": 694,
    "ok": true,
    "why": ""
   },
   {
    "slot": "hard_rr2",
-   "t": 91.29,
+   "t": 34.97,
    "real": true,
-   "rel_db": -0.3,
-   "peak_dbfs": -1.6,
-   "first_half_ms_re_peak_db": -18.5,
-   "centroid_hz": 1088,
-   "len_ms": 694,
+   "rel_db": -0.2,
+   "peak_dbfs": -1.3,
+   "first_half_ms_re_peak_db": -21.3,
+   "centroid_hz": 1285,
+   "len_ms": 675,
    "ok": true,
    "why": ""
   },
   {
    "slot": "hard_rr3",
-   "t": 42.32,
+   "t": 77.82,
    "real": true,
-   "rel_db": -1.0,
-   "peak_dbfs": -1.4,
-   "first_half_ms_re_peak_db": -21.1,
-   "centroid_hz": 981,
-   "len_ms": 694,
+   "rel_db": -0.9,
+   "peak_dbfs": -1.6,
+   "first_half_ms_re_peak_db": -23.6,
+   "centroid_hz": 1009,
+   "len_ms": 560,
    "ok": true,
    "why": ""
   },
   {
    "slot": "hard_rr4",
-   "t": 87.61,
+   "t": 19.06,
    "real": true,
-   "rel_db": 0.4,
-   "peak_dbfs": -1.0,
-   "first_half_ms_re_peak_db": -21.0,
-   "centroid_hz": 940,
-   "len_ms": 725,
+   "rel_db": -0.3,
+   "peak_dbfs": -1.4,
+   "first_half_ms_re_peak_db": -23.2,
+   "centroid_hz": 1454,
+   "len_ms": 585,
    "ok": true,
    "why": ""
   },
@@ -236,371 +368,457 @@
    "slot": "medium_rr1",
    "t": 63.13,
    "real": true,
-   "rel_db": -3.5,
-   "peak_dbfs": -5.0,
-   "first_half_ms_re_peak_db": -29.5,
-   "centroid_hz": 734,
-   "len_ms": 569,
+   "rel_db": -4.7,
+   "peak_dbfs": -5.1,
+   "first_half_ms_re_peak_db": -33.3,
+   "centroid_hz": 892,
+   "len_ms": 620,
    "ok": true,
    "why": ""
   },
   {
    "slot": "medium_rr2",
-   "t": 150.04,
+   "t": 55.79,
    "real": true,
-   "rel_db": -7.4,
-   "peak_dbfs": -8.8,
-   "first_half_ms_re_peak_db": -17.4,
-   "centroid_hz": 1328,
-   "len_ms": 609,
+   "rel_db": -3.5,
+   "peak_dbfs": -3.9,
+   "first_half_ms_re_peak_db": -25.9,
+   "centroid_hz": 866,
+   "len_ms": 424,
    "ok": true,
    "why": ""
   },
   {
    "slot": "medium_rr3",
-   "t": 107.2,
+   "t": 150.04,
    "real": true,
-   "rel_db": -5.2,
-   "peak_dbfs": -5.0,
-   "first_half_ms_re_peak_db": -22.0,
-   "centroid_hz": 1304,
+   "rel_db": -9.3,
+   "peak_dbfs": -10.5,
+   "first_half_ms_re_peak_db": -18.5,
+   "centroid_hz": 1359,
+   "len_ms": 519,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "medium_rr4",
+   "t": 64.36,
+   "real": true,
+   "rel_db": -7.2,
+   "peak_dbfs": -8.4,
+   "first_half_ms_re_peak_db": -16.3,
+   "centroid_hz": 1394,
+   "len_ms": 594,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr1",
+   "t": 94.96,
+   "real": true,
+   "rel_db": -15.9,
+   "peak_dbfs": -13.1,
+   "first_half_ms_re_peak_db": -30.9,
+   "centroid_hz": 808,
+   "len_ms": 225,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr2",
+   "t": 186.77,
+   "real": false,
+   "rel_db": -12,
+   "peak_dbfs": -14.4,
+   "first_half_ms_re_peak_db": -27.1,
+   "centroid_hz": 788,
+   "len_ms": 540,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr3",
+   "t": 33.75,
+   "real": false,
+   "rel_db": -12,
+   "peak_dbfs": -15.2,
+   "first_half_ms_re_peak_db": -18.3,
+   "centroid_hz": 495,
+   "len_ms": 580,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr4",
+   "t": 141.48,
+   "real": false,
+   "rel_db": -12,
+   "peak_dbfs": -12.1,
+   "first_half_ms_re_peak_db": -23.0,
+   "centroid_hz": 934,
+   "len_ms": 605,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "ghost_rr1",
+   "t": 93.73,
+   "real": true,
+   "rel_db": -18.3,
+   "peak_dbfs": -13.3,
+   "first_half_ms_re_peak_db": -31.2,
+   "centroid_hz": 815,
+   "len_ms": 275,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "ghost_rr2",
+   "t": 174.53,
+   "real": false,
+   "rel_db": -20,
+   "peak_dbfs": -22.1,
+   "first_half_ms_re_peak_db": -15.1,
+   "centroid_hz": 698,
    "len_ms": 579,
    "ok": true,
    "why": ""
   },
   {
-   "slot": "medium_rr4",
-   "t": 112.1,
-   "real": true,
-   "rel_db": -8.4,
-   "peak_dbfs": -6.1,
-   "first_half_ms_re_peak_db": -29.0,
-   "centroid_hz": 1106,
-   "len_ms": 525,
-   "ok": true,
-   "why": ""
-  },
-  {
-   "slot": "soft_rr1",
-   "t": 94.96,
-   "real": true,
-   "rel_db": -10.8,
-   "peak_dbfs": -7.7,
-   "first_half_ms_re_peak_db": -27.6,
-   "centroid_hz": 778,
-   "len_ms": 227,
-   "ok": true,
-   "why": ""
-  },
-  {
-   "slot": "soft_rr2",
-   "t": 90.06,
-   "real": false,
-   "rel_db": -12,
-   "peak_dbfs": -14.9,
-   "first_half_ms_re_peak_db": -7.7,
-   "centroid_hz": 634,
-   "len_ms": 684,
-   "ok": true,
-   "why": ""
-  },
-  {
-   "slot": "soft_rr3",
-   "t": 115.77,
-   "real": false,
-   "rel_db": -12,
-   "peak_dbfs": -14.5,
-   "first_half_ms_re_peak_db": -27.9,
-   "centroid_hz": 826,
-   "len_ms": 700,
-   "ok": true,
-   "why": ""
-  },
-  {
-   "slot": "soft_rr4",
+   "slot": "ghost_rr3",
    "t": 118.22,
    "real": false,
-   "rel_db": -12,
-   "peak_dbfs": -14.3,
-   "first_half_ms_re_peak_db": -29.2,
-   "centroid_hz": 929,
-   "len_ms": 710,
-   "ok": true,
-   "why": ""
-  },
-  {
-   "slot": "ghost_rr1",
-   "t": 28.86,
-   "real": false,
    "rel_db": -20,
-   "peak_dbfs": -22.7,
-   "first_half_ms_re_peak_db": -13.5,
-   "centroid_hz": 319,
-   "len_ms": 619,
-   "ok": true,
-   "why": ""
-  },
-  {
-   "slot": "ghost_rr2",
-   "t": 180.65,
-   "real": false,
-   "rel_db": -20,
-   "peak_dbfs": -22.3,
-   "first_half_ms_re_peak_db": -25.4,
-   "centroid_hz": 544,
-   "len_ms": 705,
-   "ok": true,
-   "why": ""
-  },
-  {
-   "slot": "ghost_rr3",
-   "t": 19.06,
-   "real": false,
-   "rel_db": -20,
-   "peak_dbfs": -23.4,
-   "first_half_ms_re_peak_db": -25.1,
-   "centroid_hz": 512,
-   "len_ms": 699,
+   "peak_dbfs": -22.4,
+   "first_half_ms_re_peak_db": -31.9,
+   "centroid_hz": 646,
+   "len_ms": 600,
    "ok": true,
    "why": ""
   },
   {
    "slot": "ghost_rr4",
-   "t": 33.75,
+   "t": 38.65,
    "real": false,
    "rel_db": -20,
-   "peak_dbfs": -24.2,
-   "first_half_ms_re_peak_db": -19.0,
-   "centroid_hz": 352,
-   "len_ms": 634,
+   "peak_dbfs": -24.0,
+   "first_half_ms_re_peak_db": -18.2,
+   "centroid_hz": 503,
+   "len_ms": 619,
    "ok": true,
    "why": ""
   }
  ],
- "qc_repicks": 1,
+ "qc_repicks": 4,
  "layers_real": {
   "hard": 4,
   "medium": 4,
   "soft": 1,
-  "ghost": 0
+  "ghost": 1
  },
  "selected": [
   {
    "slot": "hard_rr1",
-   "t": 43.55,
+   "t": 42.32,
    "real": true,
-   "rel_db": -0.7,
-   "gap_ms": 1214,
-   "real_to_ms": 164,
-   "len_ms": 709
+   "rel_db": -0.8,
+   "gap_ms": 1217,
+   "real_to_ms": 264,
+   "len_ms": 694
   },
   {
    "slot": "hard_rr2",
-   "t": 91.29,
+   "t": 34.97,
    "real": true,
-   "rel_db": -0.3,
-   "gap_ms": 1216,
-   "real_to_ms": 224,
-   "len_ms": 694
+   "rel_db": -0.2,
+   "gap_ms": 1050,
+   "real_to_ms": 209,
+   "len_ms": 675
   },
   {
    "slot": "hard_rr3",
-   "t": 42.32,
+   "t": 77.82,
    "real": true,
-   "rel_db": -1.0,
-   "gap_ms": 1217,
-   "real_to_ms": 204,
-   "len_ms": 694
+   "rel_db": -0.9,
+   "gap_ms": 1214,
+   "real_to_ms": 149,
+   "len_ms": 560
   },
   {
    "slot": "hard_rr4",
-   "t": 87.61,
+   "t": 19.06,
    "real": true,
-   "rel_db": 0.4,
-   "gap_ms": 1217,
-   "real_to_ms": 154,
-   "len_ms": 725
+   "rel_db": -0.3,
+   "gap_ms": 605,
+   "real_to_ms": 244,
+   "len_ms": 585
   },
   {
    "slot": "medium_rr1",
    "t": 63.13,
    "real": true,
-   "rel_db": -3.5,
-   "gap_ms": 308,
+   "rel_db": -4.7,
+   "gap_ms": 318,
    "real_to_ms": 149,
-   "len_ms": 569
+   "len_ms": 620
   },
   {
    "slot": "medium_rr2",
-   "t": 150.04,
+   "t": 55.79,
    "real": true,
-   "rel_db": -7.4,
-   "gap_ms": 909,
+   "rel_db": -3.5,
+   "gap_ms": 304,
    "real_to_ms": 149,
-   "len_ms": 609
+   "len_ms": 424
   },
   {
    "slot": "medium_rr3",
-   "t": 107.2,
+   "t": 150.04,
    "real": true,
-   "rel_db": -5.2,
-   "gap_ms": 298,
+   "rel_db": -9.3,
+   "gap_ms": 914,
    "real_to_ms": 149,
-   "len_ms": 579
+   "len_ms": 519
   },
   {
    "slot": "medium_rr4",
-   "t": 112.1,
+   "t": 64.36,
    "real": true,
-   "rel_db": -8.4,
-   "gap_ms": 348,
+   "rel_db": -7.2,
+   "gap_ms": 1215,
    "real_to_ms": 149,
-   "len_ms": 525
+   "len_ms": 594
   },
   {
    "slot": "soft_rr1",
    "t": 94.96,
    "real": true,
-   "rel_db": -10.8,
-   "gap_ms": 454,
+   "rel_db": -15.9,
+   "gap_ms": 449,
    "real_to_ms": 149,
-   "len_ms": 227
+   "len_ms": 225
   },
   {
    "slot": "soft_rr2",
-   "t": 90.06,
+   "t": 186.77,
    "real": false,
    "rel_db": -12,
-   "gap_ms": 1215,
-   "real_to_ms": 199,
-   "len_ms": 684
+   "gap_ms": 1214,
+   "real_to_ms": 149,
+   "len_ms": 540
   },
   {
    "slot": "soft_rr3",
-   "t": 115.77,
+   "t": 33.75,
    "real": false,
    "rel_db": -12,
-   "gap_ms": 1217,
+   "gap_ms": 669,
    "real_to_ms": 149,
-   "len_ms": 700
+   "len_ms": 580
   },
   {
    "slot": "soft_rr4",
-   "t": 118.22,
+   "t": 141.48,
    "real": false,
    "rel_db": -12,
-   "gap_ms": 1216,
-   "real_to_ms": 179,
-   "len_ms": 710
+   "gap_ms": 628,
+   "real_to_ms": 154,
+   "len_ms": 605
   },
   {
    "slot": "ghost_rr1",
-   "t": 28.86,
-   "real": false,
-   "rel_db": -20,
-   "gap_ms": 605,
-   "real_to_ms": 154,
-   "len_ms": 619
+   "t": 93.73,
+   "real": true,
+   "rel_db": -18.3,
+   "gap_ms": 452,
+   "real_to_ms": 149,
+   "len_ms": 275
   },
   {
    "slot": "ghost_rr2",
-   "t": 180.65,
+   "t": 174.53,
    "real": false,
    "rel_db": -20,
-   "gap_ms": 780,
-   "real_to_ms": 154,
-   "len_ms": 705
+   "gap_ms": 1216,
+   "real_to_ms": 149,
+   "len_ms": 579
   },
   {
    "slot": "ghost_rr3",
-   "t": 19.06,
+   "t": 118.22,
    "real": false,
    "rel_db": -20,
-   "gap_ms": 605,
-   "real_to_ms": 169,
-   "len_ms": 699
+   "gap_ms": 899,
+   "real_to_ms": 159,
+   "len_ms": 600
   },
   {
    "slot": "ghost_rr4",
-   "t": 33.75,
+   "t": 38.65,
    "real": false,
    "rel_db": -20,
    "gap_ms": 654,
-   "real_to_ms": 149,
-   "len_ms": 634
+   "real_to_ms": 174,
+   "len_ms": 619
   }
  ],
  "measurements": {
-  "hits_aligned": 130,
-  "corr_median": 0.76,
-  "level_sd_db": 3.27,
+  "hits_aligned": 135,
+  "corr_median": 0.762,
+  "level_sd_db": 3.53,
   "t60_band": {
-   "band0": 0.49,
-   "band1": 0.64,
-   "band2": 0.65,
-   "band3": 0.4,
-   "band4": 0.28
+   "band0": 0.45,
+   "band1": 0.6,
+   "band2": 0.55,
+   "band3": 0.39,
+   "band4": 0.33
   },
   "slope_db_s": [
-   -122.0,
-   -94.0,
-   -93.0,
-   -150.0,
-   -212.0
+   -132.0,
+   -100.0,
+   -109.0,
+   -155.0,
+   -181.0
   ],
   "audit_0_5ms": {
-   "snare": -7.3,
-   "drums": -7.3,
-   "resid": -45.7,
-   "kick": -32.9,
+   "snare": -7.6,
+   "drums": -7.5,
+   "resid": -45.8,
+   "kick": -32.8,
    "hh": -39.1,
-   "ride": -49.3,
-   "crash": -50.6,
-   "toms": -41.7
+   "ride": -49.0,
+   "crash": -46.3,
+   "toms": -40.4
   },
   "coherent_resid_0_5ms": {
-   "coherent_resid_dB": -56.9,
-   "snare_dB": -8.0
+   "coherent_resid_dB": -56.8,
+   "snare_dB": -8.3
   },
   "tilt": {
-   "60-150": -3.4,
-   "150-300": -0.1,
+   "60-150": -4.6,
+   "150-300": -0.2,
    "300-600": -0.1,
    "600-1200": 0.0,
-   "1200-2500": -0.0,
-   "2500-5000": -0.7,
-   "5000-8000": -2.4,
-   "8000-12000": -6.3,
-   "12000-16000": -11.1
+   "1200-2500": -0.1,
+   "2500-5000": -0.9,
+   "5000-8000": -2.6,
+   "8000-12000": -6.6,
+   "12000-16000": -11.6
   },
   "lost_to_resid_db": {
-   "60-150": -0.02,
+   "60-150": -0.03,
    "150-300": -0.0,
    "300-600": -0.0,
    "600-1200": -0.0,
    "1200-2500": -0.0,
    "2500-5000": -0.01,
    "5000-8000": -0.02,
-   "8000-12000": -0.15,
-   "12000-16000": -0.46
+   "8000-12000": -0.16,
+   "12000-16000": -0.47
   },
   "hat_vs_snare_db": {
-   "60-150": -40.9,
-   "150-300": -54.5,
-   "300-600": -35.1,
-   "600-1200": -39.1,
-   "1200-2500": -35.6,
-   "2500-5000": -16.6,
-   "5000-8000": -8.3,
-   "8000-12000": -2.6,
-   "12000-16000": 2.7
+   "60-150": -37.6,
+   "150-300": -54.6,
+   "300-600": -33.9,
+   "600-1200": -39.4,
+   "1200-2500": -34.5,
+   "2500-5000": -15.7,
+   "5000-8000": -7.8,
+   "8000-12000": -1.8,
+   "12000-16000": 3.3
   },
-  "noise_floor_dbfs": -95.8
+  "noise_floor_dbfs": -94.7
  },
+ "profile": {
+  "job": "linkin-park-figure-09-d3b1a",
+  "artist": "Linkin Park",
+  "title": "Figure.09",
+  "status": "OK",
+  "pipeline": "4.2.0",
+  "strategy": "B_dark",
+  "input_sha256": "25760e5397db29ebfdcee3a2edd5cc4f8d14420fc6c91e185580ebc19e46d2ff",
+  "hits_aligned": 135,
+  "hits_per_min": 40.9,
+  "corr_median": 0.762,
+  "level_sd_db": 3.53,
+  "coherent_resid_below_snare_db": 48.5,
+  "separation_residual_below_drums_db": 32.0,
+  "hat_vs_snare_5_8k_db": -7.8,
+  "hat_vs_snare_2_5_5k_db": -15.7,
+  "tilt_5_8k_db": -2.6,
+  "lost_to_resid_db": {
+   "60-150": -0.03,
+   "150-300": -0.0,
+   "300-600": -0.0,
+   "600-1200": -0.0,
+   "1200-2500": -0.0,
+   "2500-5000": -0.01,
+   "5000-8000": -0.02,
+   "8000-12000": -0.16,
+   "12000-16000": -0.47
+  },
+  "t60_band": {
+   "band0": 0.45,
+   "band1": 0.6,
+   "band2": 0.55,
+   "band3": 0.39,
+   "band4": 0.33
+  },
+  "t60_mid_s": 0.51,
+  "noise_floor_dbfs": -94.7,
+  "layers_real": {
+   "hard": 4,
+   "medium": 4,
+   "soft": 1,
+   "ghost": 1
+  },
+  "input_kbps": 128,
+  "input_codec": "mp3",
+  "duration_s": 198.0,
+  "stem_rms_dbfs": {
+   "Kick": -18.5,
+   "Snare": -28.6,
+   "Toms": -37.8,
+   "Hh": -32.4,
+   "Ride": -42.8,
+   "Crash": -39.6
+  },
+  "hat_minus_snare_stem_db": -3.8,
+  "warnings": 3
+ },
+ "nearest": [
+  {
+   "job": "underoath-it-s-dangerous-bus-d4e00",
+   "artist": "Underoath",
+   "title": "It's Dangerous Business Walking Out Your Front Door",
+   "distance": 0.99,
+   "strategy": "A_bright"
+  },
+  {
+   "job": "nothing-more-if-it-doesn-t-h-ztf6s",
+   "artist": "Nothing More",
+   "title": "If It Doesn't Hurt",
+   "distance": 1.36,
+   "strategy": "A_bright"
+  },
+  {
+   "job": "asking-alexandria-the-final--d3f79",
+   "artist": "Asking Alexandria",
+   "title": "The Final Episode",
+   "distance": 1.47,
+   "strategy": "A_bright"
+  }
+ ],
+ "library_notes": [
+  "coherent_resid_below_snare_db = 48.5: outside the library range 19.4..45.4 (n=7)",
+  "separation_residual_below_drums_db = 32.0: outside the library range 23.9..31.1 (n=7)",
+  "hat_minus_snare_stem_db = -3.8: outside the library range -13.3..-7.7 (n=7)",
+  "noise_floor_dbfs = -94.7: outside the library range -93.6..-83.2 (n=7)"
+ ],
  "files": {
   "zip": "ZC_Snare_linkin-park-figure-09-d3b1a_RoundRobins.zip",
   "oneshot": "ZC_linkin-park-figure-09-d3b1a_oneshot.wav",
-  "zip_bytes": 2915320
+  "zip_bytes": 2516004
  },
- "finished": "2026-11-06T16:58:07Z"
+ "finished": "2026-11-06T18:50:59Z"
 }

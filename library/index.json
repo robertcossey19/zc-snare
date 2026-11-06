@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "linkin-park-figure-09-d3b1a",
+   "artist": "Linkin Park",
+   "title": "Figure.09",
+   "zip": "ZC_Snare_linkin-park-figure-09-d3b1a_RoundRobins.zip",
+   "oneshot": "ZC_linkin-park-figure-09-d3b1a_oneshot.wav",
+   "pipeline": "4.2.0",
+   "finished": "2026-11-06T18:50:59Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 1,
+    "ghost": 1
+   },
+   "strategy": "B_dark",
+   "hits_aligned": 135,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 1/4; the rest are flagged estimates"
+  },
+  {
    "id": "asking-alexandria-breathless-d53a2",
    "artist": "Asking Alexandria",
    "title": "Breathless",
@@ -71,24 +89,6 @@
    "strategy": "A_bright",
    "hits_aligned": 129,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "linkin-park-figure-09-d3b1a",
-   "artist": "Linkin Park",
-   "title": "Figure.09",
-   "zip": "ZC_Snare_linkin-park-figure-09-d3b1a_RoundRobins.zip",
-   "oneshot": "ZC_linkin-park-figure-09-d3b1a_oneshot.wav",
-   "pipeline": "4.1.0",
-   "finished": "2026-11-06T16:58:07Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 1,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 130,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
   },
   {
    "id": "nickelback-san-quentin-offic-39akj",
