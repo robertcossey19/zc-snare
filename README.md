@@ -1,0 +1,9 @@
+# zc-snare
+
+Public build backend for the ZC SNARE EXTRACT pen. No login anywhere: the page uploads the song to tmpfiles.org (anonymous, deleted after 60 min), posts a one-line job note to a public ntfy.sh topic, and this repo's `intake` workflow (cron, every 5 min) fetches the song, stages it as a short-lived Actions artifact and starts `extract`. Results are committed to `packs/<id>/` and the page reads them from raw.githubusercontent.com. Songs are never committed to the repo; the artifact is deleted when the pack is published.
+
+Pipeline (identical for every song, nothing tunable per song): ffmpeg decode -> Demucs htdemucs (drums) -> MDX23C DrumSep (kick/snare/toms/hh/ride/crash, checkpoint sha256-verified) -> `build_pack.py --realvel` (per-band auto: real quiet hits where the record has them, flagged estimates where it does not) -> per-file QC with re-pick -> measurement gates -> pack. See `pipeline/run_job.py` for the gates. `golden/<input sha256>.json` holds the local reference result for the four known inputs; a known song must reproduce the loud (hard) picks (>= 3/4), hits-aligned within 30%, correlation within 0.10, mid-band T60 within 30%, and keep hard 4 / medium >= ref-1 real hits, or the run fails. Soft/ghost counts are reported, not gated (they sit near the stem floor and are not bit-reproducible across CPUs). `reference/` holds the four shipped, hand-verified v3 packs the page loads as built-ins; `packs/` is pipeline output only.
+
+Layout: `pipeline/` code, `golden/` reference results, `reference/` shipped packs, `queue/<id>.json` claimed jobs (deleted when published), `packs/<id>/` results (report.json always; zip/oneshot/info/README only when every gate passes). Pushing `jobs/<id>/input.<ext>` by hand also triggers `extract`.
+
+GitHub disables cron workflows after 60 days without repo activity; re-enable under Actions if that happens.
