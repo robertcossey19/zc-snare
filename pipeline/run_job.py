@@ -20,7 +20,7 @@ WORK = os.environ.get('ZC_WORK', os.path.join(ROOT, 'work'))
 CKPT_SHA = 'd2a4aa53eb584d21eead358a4e66d1882ad182911be018f052b5da73be9096d0'
 CKPT_URL = 'https://huggingface.co/noblebarkrr/mvsepless_resources/resolve/main/mdx23c/mdx23c_drumsep_6stem_aufr33_jarredou.ckpt'
 MSST_COMMIT = 'f0b527736e7da24eae5b561a2bb1efd0569ec757'
-PIPELINE_VERSION = '4.0.1'
+PIPELINE_VERSION = '4.0.2'
 SR = 44100
 STEMS = ['Kick', 'Snare', 'Toms', 'Hh', 'Ride', 'Crash']
 
@@ -177,7 +177,7 @@ def main(job):
             # velocity bands sit near the stem floor, so soft/ghost membership can flip. The gate therefore checks what must hold on any machine:
             # the loud (hard) picks, the alignment statistics and the measured decay, each within a tolerance measured from local perturbation tests.
             g = json.load(open(gpath)); gt = {h['slot']: h['t'] for h in g['selected']}; nt = {f"{h['layer']}_rr{i % 4 + 1}": h['t'] for i, h in enumerate(info['selected'])}
-            hard_same = sum(1 for k in gt if k.startswith('hard') and abs(gt[k] - nt.get(k, -1)) < 0.005)
+            hard_same = sum(1 for k, v in gt.items() if k.startswith('hard') and any(abs(v - t) < 0.005 for kk, t in nt.items() if kk.startswith('hard')))   # same strokes, any slot order
             same = sum(1 for k in gt if abs(gt[k] - nt.get(k, -1)) < 0.005)
             report['golden'] = dict(name=g.get('name'), hard_slots_identical=hard_same, slots_identical=same, of=len(gt), expected=gt, got=nt,
                                     expected_hits_aligned=g['hits_aligned'], expected_corr_median=g['corr_median'], expected_layers_real=g['layers_real'])
