@@ -66,9 +66,18 @@ jobs:
           # input songs are never committed: they live in the intake artifact only (packs/ and queue/ are the only published dirs)
           for id in ${{ steps.which.outputs.ids }}; do git add -f "packs/$id" || true; git rm -q --cached --ignore-unmatch "queue/$id.json" 2>/dev/null; rm -f "queue/$id.json"; git rm -r -q --cached --ignore-unmatch "jobs/$id" 2>/dev/null; [ -f "packs/$id/report.json" ] && rm -rf "jobs/$id"; done
           git rm -r -q --cached --ignore-unmatch jobs 2>/dev/null; for d in packs queue; do [ -d "$d" ] && git add -A "$d"; done; true
-          python3 pipeline/index_packs.py && git add library/index.json
           git commit -q -m "packs: ${{ steps.which.outputs.ids }} [skip ci]" || { echo "nothing to commit"; exit 0; }
-          for i in 1 2 3 4 5; do git pull -q --rebase origin main && { python3 pipeline/index_packs.py; git add library/index.json; git diff --cached --quiet || git commit -q -m "library index [skip ci]"; } && git push -q origin HEAD:main && break || { echo retry $i; sleep $((i*7)); }; done
+          # the library index is derived from packs/, so it is never part of the rebased commit: rebuild it AFTER every rebase and amend (no index conflicts between parallel runs)
+          ok=0; for i in 1 2 3 4 5 6 7 8; do
+            git fetch -q origin main && { git rebase -q origin/main || { git rebase --abort; git checkout -q --theirs -- library/index.json 2>/dev/null; false; }; } || { echo "rebase retry $i"; sleep $((i*5)); continue; }
+            git checkout -q origin/main -- library/index.json 2>/dev/null || true; python3 pipeline/index_packs.py; git add library/index.json; git commit -q --amend --no-edit
+            git push -q origin HEAD:main && { ok=1; break; } || { echo "push retry $i"; sleep $((i*5)); }
+          done
+          [ $ok = 1 ] || { echo "::error::could not publish results after 8 attempts"; exit 1; }
+      - name: Keep the pack as a run artifact too (safety net if the publish step cannot push)
+        if: steps.which.outputs.ids != '' && always()
+        uses: actions/upload-artifact@v4
+        with: { name: 'packs-${{ github.run_id }}', path: 'packs/', retention-days: 7, if-no-files-found: ignore }
       - name: Tell the page
         if: steps.which.outputs.ids != '' && always()
         env: { ZC_NTFY_DONE: 'zc-snare-done-3b0fd4cb77640a88e253c855' }
