@@ -1,0 +1,158 @@
+{
+ "job": "starset-lancaster-kw8eh",
+ "status": "FAIL",
+ "pipeline": "4.2.0",
+ "stages": {
+  "decode_s": 0.8,
+  "demucs_s": 135.2,
+  "drumsep_s": 953.6
+ },
+ "gates": [
+  {
+   "name": "duration_s",
+   "value": 279.5,
+   "limit": "30..720 s",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "mix_peak_dbfs",
+   "value": 0.0,
+   "limit": "> -30 dBFS",
+   "ok": true,
+   "note": "silent or near-silent file"
+  },
+  {
+   "name": "clipped_fraction",
+   "value": 0.00042,
+   "limit": "< 0.02",
+   "ok": true,
+   "note": "samples at full scale"
+  },
+  {
+   "name": "drums_rms_dbfs",
+   "value": -17.3,
+   "limit": "> -45 dBFS",
+   "ok": true,
+   "note": "Demucs found no drum content"
+  },
+  {
+   "name": "drums_minus_mix_db",
+   "value": -5.7,
+   "limit": "-25..+3 dB",
+   "ok": true,
+   "note": "drum share of the mix"
+  },
+  {
+   "name": "separation_residual_below_drums_db",
+   "value": 25.5,
+   "limit": ">= 12 dB",
+   "ok": true,
+   "note": "the six stems must add back up to the drum stem (reference songs 23.9..32.0; the snare-specific loss is gated per band below)"
+  },
+  {
+   "name": "snare_stem_rms_dbfs",
+   "value": -26.0,
+   "limit": "-45..-8 dBFS",
+   "ok": true,
+   "note": "reference songs -20..-30"
+  }
+ ],
+ "warnings": [
+  "lossy source: top end limited by the codec (~16 kHz for mp3); WAV/FLAC input gives a cleaner result"
+ ],
+ "started": "2026-11-06T23:02:39Z",
+ "artist": "STARSET",
+ "title": "Lancaster",
+ "mixer": "unknown",
+ "input_name": "input.mp3",
+ "input_bytes": 6708141,
+ "input_sha256": "90c6cfaa6e29eb88a6db11a00448ba980df1351bc38709f1c15ac7343b4f8342",
+ "input_codec": "mp3",
+ "input_sr": 48000,
+ "input_bitrate": 192017,
+ "duration_s": 279.5,
+ "mix_rms_dbfs": -11.6,
+ "mix_peak_dbfs": 0.0,
+ "log_tail": [
+  "[    0.0s] job starset-lancaster-kw8eh | STARSET - Lancaster | input.mp3 6708141 bytes",
+  "[    0.0s] $ ffprobe -v error -print_format json -show_format -show_streams /home/runner/work/zc-snare/zc-snare/jobs/starset-lancaster-kw8eh/input.mp3",
+  "[    0.1s] $ ffmpeg -hide_banner -loglevel error -y -i /home/runner/work/zc-snare/zc-snare/jobs/starset-lancaster-kw8eh/input.mp3 -vn -ar 44100 -ac 2 -c:a pcm_s16le /home/runner/work/zc-snare/zc-snare/work/audio/starset-lancaster-kw8eh.wav",
+  "[    0.8s] PASS duration_s = 279.5 (limit 30..720 s) ",
+  "[    0.8s] PASS mix_peak_dbfs = 0.0 (limit > -30 dBFS) silent or near-silent file",
+  "[    0.8s] PASS clipped_fraction = 0.00042 (limit < 0.02) samples at full scale",
+  "[    0.8s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m demucs -n htdemucs --two-stems=drums -d cpu -j 1 --segment 7 -o /home/runner/work/zc-snare/zc-snare/work/sep /home/runner/work/zc-snare/zc-snare/work/audio/starset-lancaster-kw8eh.wav",
+  "[  135.9s] PASS drums_rms_dbfs = -17.3 (limit > -45 dBFS) Demucs found no drum content",
+  "[  135.9s] PASS drums_minus_mix_db = -5.7 (limit -25..+3 dB) drum share of the mix",
+  "[  136.4s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python inference.py --model_type mdx23c --config_path /home/runner/work/zc-snare/zc-snare/pipeline/drumsep.yaml --start_check_point /home/runner/work/zc-snare/zc-snare/work/ds/drumsep.ckpt --input_folder /home/runner/work/zc-snare/zc-snare/work/ds/in_starset-lancaster-kw8eh --store_dir /home/runner/work/zc-snare/zc-snare/work/ds/out --force_cpu --pcm_type FLOAT --disable_detailed_pbar",
+  "[ 1089.5s] PASS separation_residual_below_drums_db = 25.5 (limit >= 12 dB) the six stems must add back up to the drum stem (reference songs 23.9..32.0; the snare-specific loss is gated per band below)",
+  "[ 1089.5s] PASS snare_stem_rms_dbfs = -26.0 (limit -45..-8 dBFS) reference songs -20..-30",
+  "[ 1089.5s] library: 11 songs; strategy order ['B_dark', 'A_bright', 'C_dense', 'D_sparse'] | nearest by separation/stem facts: [('post-malone-dead-at-the-honk-d591c', 0.36), ('asking-alexandria-the-final--d3f79', 0.37), ('asking-alexandria-breathless-d53a2', 0.39)]",
+  "[ 1089.5s] strategy B_dark: build attempt 1, excluded 0 hit(s)",
+  "[ 1107.0s] strategy B_dark: OK score 1.001",
+  "[ 1107.0s] FAIL: cannot access local variable 'best' where it is not associated with a value"
+ ],
+ "elapsed_s": 1107.0,
+ "drums_rms_dbfs": -17.3,
+ "stem_rms_dbfs": {
+  "Kick": -18.3,
+  "Snare": -26.0,
+  "Toms": -35.2,
+  "Hh": -36.0,
+  "Ride": -50.9,
+  "Crash": -49.1
+ },
+ "separation_residual_below_drums_db": 25.5,
+ "library_size": 11,
+ "strategy_order": [
+  "B_dark",
+  "A_bright",
+  "C_dense",
+  "D_sparse"
+ ],
+ "nearest_before_build": [
+  {
+   "job": "post-malone-dead-at-the-honk-d591c",
+   "artist": "Post Malone",
+   "title": "Dead at the Honky Tonk",
+   "distance": 0.36,
+   "strategy": "B_dark"
+  },
+  {
+   "job": "asking-alexandria-the-final--d3f79",
+   "artist": "Asking Alexandria",
+   "title": "The Final Episode",
+   "distance": 0.37,
+   "strategy": "A_bright"
+  },
+  {
+   "job": "asking-alexandria-breathless-d53a2",
+   "artist": "Asking Alexandria",
+   "title": "Breathless",
+   "distance": 0.39,
+   "strategy": "A_bright"
+  }
+ ],
+ "strategy_attempts": [
+  {
+   "strategy": "B_dark",
+   "ok": true,
+   "why": "",
+   "hits_aligned": 165,
+   "corr_median": 0.899,
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 3,
+    "ghost": 0
+   },
+   "template_centroid_hz": 343,
+   "centroid_limit_hz": 1500,
+   "qc_repicks": 0,
+   "score": 1.001
+  }
+ ],
+ "strategy_used": "B_dark",
+ "error": "cannot access local variable 'best' where it is not associated with a value",
+ "finished": "2026-11-06T23:21:06Z"
+}
