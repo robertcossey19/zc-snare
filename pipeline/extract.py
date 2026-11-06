@@ -1,15 +1,16 @@
 import numpy as np, soundfile as sf, scipy.signal as sg, json, sys
 SR=44100; PRE=int(0.02*SR); LEN=int(1.0*SR); W=int(0.04*SR)
+P=dict(band=(2000,9000), height=5.0)   # detection recipe; library.STRATEGIES overrides this per song (set by build_pack before extract is called)
 def envdb(y,fr):
     n=len(y)//fr; return 10*np.log10((y[:n*fr].reshape(n,fr)**2).mean(1)+1e-14)
 def candidates(m):
     fr=int(0.0025*SR)
-    c=envdb(sg.sosfilt(sg.butter(4,[2000,9000],btype='band',fs=SR,output='sos'),m),fr)
+    c=envdb(sg.sosfilt(sg.butter(4,list(P['band']),btype='band',fs=SR,output='sos'),m),fr)
     b=envdb(sg.sosfilt(sg.butter(4,[150,320],btype='band',fs=SR,output='sos'),m),fr)
     s=envdb(sg.sosfilt(sg.butter(4,[40,100],btype='band',fs=SR,output='sos'),m),fr)
     n=len(c); gain=np.full(n,-99.0)
     for i in range(16,n-6): gain[i]=c[i:i+4].max()-c[i-16:i-3].mean()
-    pk,_=sg.find_peaks(gain,height=5,distance=int(0.08/0.0025))
+    pk,_=sg.find_peaks(gain,height=P['height'],distance=int(0.08/0.0025))
     return [dict(t=int(p*fr), cg=float(gain[p]), bg=float(b[p:p+12].max()-b[p-16:p-3].mean()), sg=float(s[p:p+12].max()-s[p-16:p-3].mean()), bs=float(b[p:p+12].max()-s[p:p+12].max()), lvl=float(c[p:p+4].max())) for p in pk]
 def frac_shift(x,d):
     n=len(x); X=np.fft.rfft(x); f=np.fft.rfftfreq(n); y=np.fft.irfft(X*np.exp(-2j*np.pi*f*d),n)
@@ -23,7 +24,7 @@ def extract(x, cthr=0.5, verbose=True, gmin=0.3, gmax=2.5, sel_rel=None):
         body=[r for r in rows if r['bg']>3 and r['bs']>-3]; ref=np.percentile([r['lvl'] for r in body],75)
         rows=[r for r in body if sel_rel[0]<=r['lvl']-ref<sel_rel[1]]
         if len(rows)<12: raise ValueError(f'only {len(rows)} candidates in band {sel_rel}')
-    sos=sg.butter(4,[2000,9000],btype='band',fs=SR,output='sos'); sosw=sg.butter(2,[100,10000],btype='band',fs=SR,output='sos')
+    sos=sg.butter(4,list(P['band']),btype='band',fs=SR,output='sos'); sosw=sg.butter(2,[100,10000],btype='band',fs=SR,output='sos')
     segs=[]; meta=[]
     for r in rows:
         a=r['t']-int(0.03*SR)

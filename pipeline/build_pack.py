@@ -48,20 +48,22 @@ def align_series(x, starts, lags, gains, L):
         for ch in range(2): out[j, :, ch] = frac_shift(seg[:, ch], lag) / gains[j]
     return out
 
-def build(name, analyse_only=False, realvel=None):
+def build(name, analyse_only=False, realvel=None, strategy=None):
+    """strategy: a library.STRATEGIES entry (band, height, cthr, cthr_band); None = the reference recipe A_bright"""
     D, S = load(name); X = S['Snare']
+    st = dict(band=(2000, 9000), height=5.0, cthr=0.5, cthr_band=0.4); st.update(strategy or {})
     others = sum(S[k] for k in STEMS if k != 'Snare'); resid = D - (X + others)
     print(name, 'stem rms dBFS:', {k: round(float(20 * np.log10(np.sqrt((v ** 2).mean()) + 1e-12)), 1) for k, v in S.items()}, 'residual', round(float(20 * np.log10(np.sqrt((resid ** 2).mean()) + 1e-12)), 1))
     # ---- 1. hits: detect + sub-sample align on the snare stem itself ----
-    import extract as EX; EX.LEN = LEN
+    import extract as EX; EX.LEN = LEN; EX.P.update(band=tuple(st['band']), height=float(st['height']))
     realvel = (name in REAL_VEL) if realvel is None else realvel
-    T0, kept, meta = extract(X, 0.5, verbose=False); n = len(kept)
+    T0, kept, meta = extract(X, st['cthr'], verbose=False); n = len(kept)
     if realvel:   # quiet hits are aligned against a template of THEIR OWN band (a soft stroke is not a scaled loud stroke); levels then measured absolutely (RMS first 60 ms re 75th pct of the loud set)
         from extract import W as EXW
         sets = [(kept, meta)]
         for lname, (lo, hi) in VEL_BANDS.items():
             if lname == 'hard': continue
-            try: _, kb, mb = extract(X, 0.4, verbose=False, sel_rel=(lo, hi)); sets.append((kb, mb)); print(f'  {lname} band {lo}..{hi} dB: {len(kb)} hits aligned on own template, corr med {np.median(mb["corr"]):.2f}')
+            try: _, kb, mb = extract(X, st['cthr_band'], verbose=False, sel_rel=(lo, hi)); sets.append((kb, mb)); print(f'  {lname} band {lo}..{hi} dB: {len(kb)} hits aligned on own template, corr med {np.median(mb["corr"]):.2f}')
             except ValueError as e: print('  ', lname, e)
         raw = np.concatenate([k * np.array(m['gains'])[:, None, None] for k, m in sets]); amp = np.sqrt((raw[:, :PRE + EXW].mean(2) ** 2).mean(1))
         nh = len(kept); amp = amp / np.percentile(amp[:nh], 75)
@@ -262,7 +264,7 @@ def build(name, analyse_only=False, realvel=None):
         for i, y in enumerate(layers[lname]):
             sf.write(f'{out}/ZC_{name}_{lname}_rr{i + 1}.wav', to48(y), 48000, subtype='PCM_24'); sf.write(f'{out}/flac_{lname}_{i + 1}.flac', to48(y), 48000, format='FLAC', subtype='PCM_24')
     sf.write(f'{out}/ZC_{name}_oneshot.wav', to48(layers['hard'][0]), 48000, subtype='PCM_24')
-    info = dict(song=name, hits_aligned=n, corr_median=round(float(np.median(corr)), 3), level_sd_db=round(float(np.std(20 * np.log10(gains))), 2), noise_floor_dbfs=round(floor, 1), tail_rel_peak_db=tailinfo, slope_db_s=slope.round(0).tolist(), slope_early_db_s=[None if np.isnan(v) else float(v) for v in slope_early.round(0)], fit_to_ms=(fit_to*1000).round(0).tolist(), t60_band=t60, audit=audit, coherent_resid=coh, stem_vs_drums_tilt_db=tilt, lost_to_resid_db=dropped, hat_vs_snare_db=hat_vs_snare, selected=hinfo, layers_real=layers_real, real_velocity=realvel)
+    info = dict(song=name, hits_aligned=n, corr_median=round(float(np.median(corr)), 3), level_sd_db=round(float(np.std(20 * np.log10(gains))), 2), noise_floor_dbfs=round(floor, 1), tail_rel_peak_db=tailinfo, slope_db_s=slope.round(0).tolist(), slope_early_db_s=[None if np.isnan(v) else float(v) for v in slope_early.round(0)], fit_to_ms=(fit_to*1000).round(0).tolist(), t60_band=t60, audit=audit, coherent_resid=coh, stem_vs_drums_tilt_db=tilt, lost_to_resid_db=dropped, hat_vs_snare_db=hat_vs_snare, selected=hinfo, layers_real=layers_real, real_velocity=realvel, strategy=st)
     json.dump(info, open(f'{out}/info.json', 'w'), indent=1); print('  wrote', out)
     return info
 

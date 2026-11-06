@@ -20,7 +20,7 @@ WORK = os.environ.get('ZC_WORK', os.path.join(ROOT, 'work'))
 CKPT_SHA = 'd2a4aa53eb584d21eead358a4e66d1882ad182911be018f052b5da73be9096d0'
 CKPT_URL = 'https://huggingface.co/noblebarkrr/mvsepless_resources/resolve/main/mdx23c/mdx23c_drumsep_6stem_aufr33_jarredou.ckpt'
 MSST_COMMIT = 'f0b527736e7da24eae5b561a2bb1efd0569ec757'
-PIPELINE_VERSION = '4.1.0'
+PIPELINE_VERSION = '4.2.0'
 SR = 44100
 STEMS = ['Kick', 'Snare', 'Toms', 'Hh', 'Ride', 'Crash']
 
@@ -126,30 +126,56 @@ def main(job):
         G.check('snare_stem_rms_dbfs', report['stem_rms_dbfs']['Snare'], -45 < report['stem_rms_dbfs']['Snare'] < -8, '-45..-8 dBFS', 'reference songs -20..-30')
         report['stages']['drumsep_s'] = round(time.time() - t, 1); save()
         if G.failed: raise RuntimeError('separation gate failed')
-        # ---------- 4. build + per-file QC with re-pick ----------
+        # ---------- 4. library placement + strategy ladder + per-file QC with re-pick ----------
         t = time.time(); sys.path.insert(0, PIPE); os.chdir(WORK)
-        import build_pack
-        excl = []; info = None; qc_rows = []
-        for attempt in range(4):
-            os.environ['ZC_EXCLUDE'] = ','.join(f'{v:.3f}' for v in excl)
-            log(f'build attempt {attempt + 1}, excluded {len(excl)} hit(s)')
-            build_pack.rng.seed(7); info = build_pack.build(job, analyse_only=False, realvel=True)
-            bad = []; qc_rows = []
-            for k, h in enumerate(info['selected']):
-                lay = h['layer']; y, sr_ = sf.read(f'pack2/{job}/ZC_{job}_{lay}_rr{k % 4 + 1}.wav'); m = y.mean(1); pk = np.abs(m).max()
-                seg = m[:int(0.03 * sr_)]; P = np.abs(np.fft.rfft(seg * np.hanning(len(seg)))) ** 2; f = np.fft.rfftfreq(len(seg), 1 / sr_)
-                row = dict(slot=f'{lay}_rr{k % 4 + 1}', t=h['t'], real=bool(h.get('real')), rel_db=h.get('rel_db'), peak_dbfs=round(float(20 * np.log10(pk + 1e-12)), 1),
-                           first_half_ms_re_peak_db=round(float(20 * np.log10(np.abs(m[:int(0.0005 * sr_)]).max() / pk + 1e-9)), 1), centroid_hz=int((P * f).sum() / (P.sum() + 1e-20)), len_ms=h['len_ms'], ok=True, why='')
-                if lay in ('hard', 'medium') and row['peak_dbfs'] < -40: row.update(ok=False, why='peak under -40 dBFS')
-                lim = -13 if h.get('real') else -6   # real hits: stick attack must build from >= 13 dB down; transformed estimates have their peak in the body, so only a true abrupt start (> -6 dB) fails
-                if row['first_half_ms_re_peak_db'] > lim: row.update(ok=False, why=f'attack clipped (first 0.5 ms within {-lim} dB of peak)')
-                if lay == 'hard' and row['centroid_hz'] > 1500: row.update(ok=False, why='0-30 ms centroid > 1.5 kHz (hat bleed)')
-                if not row['ok']: bad.append(h['t'])   # real hit or estimate donor: exclude that hit and re-pick
-                qc_rows.append(row)
-            if not bad: break
-            log('per-file QC rejected', [(r['slot'], r['why']) for r in qc_rows if not r['ok']]); excl += bad
+        import build_pack, library
+        LIB = library.load(ROOT); report['library_size'] = len(LIB)
+        pre = dict(separation_residual_below_drums_db=rd, input_kbps=round(report['input_bitrate'] / 1000) if report.get('input_bitrate') else None,
+                   hat_minus_snare_stem_db=round(report['stem_rms_dbfs']['Hh'] - report['stem_rms_dbfs']['Snare'], 1))
+        order = library.strategy_order(pre, LIB); report['strategy_order'] = order; report['nearest_before_build'] = library.nearest(pre, LIB) if LIB else []
+        log('library:', len(LIB), 'songs; strategy order', order, '| nearest by separation/stem facts:', [(n['job'], n['distance']) for n in report['nearest_before_build']])
+        attempts = []; info = None; qc_rows = []; excl = []; chosen = None
+        for strat in order:
+            SP = library.STRATEGIES[strat]; excl = []; info = None; qc_rows = []
+            for attempt in range(4):
+                os.environ['ZC_EXCLUDE'] = ','.join(f'{v:.3f}' for v in excl)
+                log(f'strategy {strat}: build attempt {attempt + 1}, excluded {len(excl)} hit(s)')
+                try: build_pack.rng.seed(7); info = build_pack.build(job, analyse_only=False, realvel=True, strategy=SP)
+                except Exception as e:
+                    log(f'strategy {strat}: build raised {e}'); info = None; break
+                # adaptive hat-bleed limit: the record's own loud template sets what "bright" means on this snare (reference snares 700..1400 Hz 0-30 ms centroid)
+                yo, sro = sf.read(f'pack2/{job}/ZC_{job}_oneshot.wav'); mo = yo.mean(1)[:int(0.03 * sro)]; Po = np.abs(np.fft.rfft(mo * np.hanning(len(mo)))) ** 2; fo = np.fft.rfftfreq(len(mo), 1 / sro)
+                tcent = int((Po * fo).sum() / (Po.sum() + 1e-20)); clim = int(max(1500, 1.3 * tcent))
+                bad = []; qc_rows = []
+                for k, h in enumerate(info['selected']):
+                    lay = h['layer']; y, sr_ = sf.read(f'pack2/{job}/ZC_{job}_{lay}_rr{k % 4 + 1}.wav'); m = y.mean(1); pk = np.abs(m).max()
+                    seg = m[:int(0.03 * sr_)]; P = np.abs(np.fft.rfft(seg * np.hanning(len(seg)))) ** 2; f = np.fft.rfftfreq(len(seg), 1 / sr_)
+                    row = dict(slot=f'{lay}_rr{k % 4 + 1}', t=h['t'], real=bool(h.get('real')), rel_db=h.get('rel_db'), peak_dbfs=round(float(20 * np.log10(pk + 1e-12)), 1),
+                               first_half_ms_re_peak_db=round(float(20 * np.log10(np.abs(m[:int(0.0005 * sr_)]).max() / pk + 1e-9)), 1), centroid_hz=int((P * f).sum() / (P.sum() + 1e-20)), len_ms=h['len_ms'], ok=True, why='')
+                    if lay in ('hard', 'medium') and row['peak_dbfs'] < -40: row.update(ok=False, why='peak under -40 dBFS')
+                    lim = -13 if h.get('real') else -6   # real hits: stick attack must build from >= 13 dB down; transformed estimates have their peak in the body, so only a true abrupt start (> -6 dB) fails
+                    if row['first_half_ms_re_peak_db'] > lim: row.update(ok=False, why=f'attack clipped (first 0.5 ms within {-lim} dB of peak)')
+                    if lay == 'hard' and row['centroid_hz'] > clim: row.update(ok=False, why=f'0-30 ms centroid > {clim} Hz (hat bleed; this snare\'s template centroid {tcent} Hz)')
+                    if not row['ok']: bad.append(h['t'])   # real hit or estimate donor: exclude that hit and re-pick
+                    qc_rows.append(row)
+                if not bad: break
+                log('per-file QC rejected', [(r['slot'], r['why']) for r in qc_rows if not r['ok']]); excl += bad
+            if info is None: attempts.append(dict(strategy=strat, ok=False, why='build raised')); continue
+            tt = [h['t'] for h in info['selected']]; mind = min(abs(a - b) for i, a in enumerate(tt) for b in tt[i + 1:])
+            why = []
+            if info['hits_aligned'] < 60: why.append(f"hits_aligned {info['hits_aligned']} < 60")
+            if info['corr_median'] < 0.7: why.append(f"corr_median {info['corr_median']} < 0.70")
+            if any(not r['ok'] for r in qc_rows): why.append(f"{sum(not r['ok'] for r in qc_rows)} file(s) failed QC after 3 re-picks")
+            if mind < 0.05: why.append(f'selected hits not distinct (min gap {mind:.3f} s)')
+            attempts.append(dict(strategy=strat, ok=not why, why='; '.join(why), hits_aligned=info['hits_aligned'], corr_median=info['corr_median'], layers_real={k: int(sum(v)) for k, v in info['layers_real'].items()}, template_centroid_hz=tcent, qc_repicks=len(excl)))
+            log(f'strategy {strat}:', 'OK' if not why else 'rejected: ' + '; '.join(why))
+            if not why: chosen = strat; break
+        report['strategy_attempts'] = attempts
+        if info is None: raise RuntimeError('every strategy raised during build: ' + '; '.join(a.get('why', '') for a in attempts))
+        report['strategy_used'] = chosen or attempts[-1]['strategy']; report['template_centroid_hz'] = attempts[-1].get('template_centroid_hz')
+        if chosen and chosen != order[0]: report['warnings'].append(f"detection recipe {order[0]} did not hold on this record; {chosen} did ({library.STRATEGIES[chosen]['note']})")
         report['file_qc'] = qc_rows; report['qc_repicks'] = len(excl)
-        G.check('file_qc_all_pass', sum(not r['ok'] for r in qc_rows), all(r['ok'] for r in qc_rows), '0 failing files', 'after up to 3 re-picks')
+        G.check('file_qc_all_pass', sum(not r['ok'] for r in qc_rows), all(r['ok'] for r in qc_rows), '0 failing files', 'after up to 3 re-picks per strategy')
         # ---------- 5. gates on the measurements ----------
         a5 = info['audit']['0-5ms']; coh = info['coherent_resid']['0-5ms']; tilt = info['stem_vs_drums_tilt_db']
         G.check('hits_aligned', info['hits_aligned'], info['hits_aligned'] >= 60, '>= 60', 'reference songs 116..184')
@@ -169,10 +195,13 @@ def main(job):
         t60 = list(info['t60_band'].values())
         G.check('t60_mid_bands_s', t60[1:4], all(0.08 <= v <= 3.0 for v in t60[1:4]), '0.08..3.0 s', 'measured late decay 150 Hz-6 kHz')
         lr = {k: int(sum(v)) for k, v in info['layers_real'].items()}; report['layers_real'] = lr
-        tt = [h['t'] for h in info['selected']]; mind = min(abs(a - b) for i, a in enumerate(tt) for b in tt[i + 1:])
         G.check('selected_hits_distinct_min_gap_s', round(mind, 3), mind >= 0.05, '>= 0.05 s', 'all 16 files come from different strokes')
         report['selected'] = [dict(slot=f"{h['layer']}_rr{i % 4 + 1}", t=h['t'], real=bool(h.get('real')), rel_db=h.get('rel_db'), gap_ms=h['gap_ms'], real_to_ms=h['real_to_ms'], len_ms=h['len_ms']) for i, h in enumerate(info['selected'])]
         report['measurements'] = dict(hits_aligned=info['hits_aligned'], corr_median=info['corr_median'], level_sd_db=info['level_sd_db'], t60_band=info['t60_band'], slope_db_s=info['slope_db_s'], audit_0_5ms=a5, coherent_resid_0_5ms=coh, tilt=tilt, lost_to_resid_db=lost, hat_vs_snare_db=hvs, noise_floor_dbfs=info['noise_floor_dbfs'])
+        prof = library.profile(dict(report, status='OK')); report['profile'] = prof
+        if LIB:
+            report['nearest'] = library.nearest(prof, LIB); report['library_notes'] = library.place(prof, LIB)
+            log('nearest library songs after build:', [(n['job'], n['distance']) for n in report['nearest']]); [log('library note:', w) for w in report['library_notes']]
         for lname in ['medium', 'soft', 'ghost']:
             if lr.get(lname, 0) < 4: report['warnings'].append(f"{lname}: {lr.get(lname,0)}/4 real hits found in that velocity band on this record; the other {4 - lr.get(lname,0)} are flagged estimates (hard hit with the lighter-stroke transform)")
         # ---------- 6. golden master (known inputs only) ----------
@@ -212,6 +241,7 @@ def main(job):
         shutil.copy(f'pack2/{job}/info.json', odir); shutil.copy(f'pack2/{job}/README.txt', odir)
         report['files'] = dict(zip=f'ZC_Snare_{job}_RoundRobins.zip', oneshot=f'ZC_{job}_oneshot.wav', zip_bytes=os.path.getsize(os.path.join(odir, f'ZC_Snare_{job}_RoundRobins.zip')))
         report['status'] = 'OK'
+        json.dump(library.profile(dict(report, status='OK')), open(os.path.join(odir, 'profile.json'), 'w'), indent=1)
     except Exception as e:
         report['status'] = 'FAIL'; report['error'] = str(e); log('FAIL:', e)
         for f_ in glob.glob(os.path.join(odir, 'ZC_*')): os.remove(f_)
