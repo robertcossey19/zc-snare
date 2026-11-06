@@ -168,12 +168,30 @@ def main(job):
             if any(not r['ok'] for r in qc_rows): why.append(f"{sum(not r['ok'] for r in qc_rows)} file(s) failed QC after 3 re-picks")
             if mind < 0.05: why.append(f'selected hits not distinct (min gap {mind:.3f} s)')
             attempts.append(dict(strategy=strat, ok=not why, why='; '.join(why), hits_aligned=info['hits_aligned'], corr_median=info['corr_median'], layers_real={k: int(sum(v)) for k, v in info['layers_real'].items()}, template_centroid_hz=tcent, qc_repicks=len(excl)))
-            log(f'strategy {strat}:', 'OK' if not why else 'rejected: ' + '; '.join(why))
-            if not why: chosen = strat; break
-        report['strategy_attempts'] = attempts
-        if info is None: raise RuntimeError('every strategy raised during build: ' + '; '.join(a.get('why', '') for a in attempts))
-        report['strategy_used'] = chosen or attempts[-1]['strategy']; report['template_centroid_hz'] = attempts[-1].get('template_centroid_hz')
-        if chosen and chosen != order[0]: report['warnings'].append(f"detection recipe {order[0]} did not hold on this record; {chosen} did ({library.STRATEGIES[chosen]['note']})")
+            attempts[-1]['score'] = round(info['corr_median'] * min(info['hits_aligned'], 200) / 200.0 * (1 + 0.05 * sum(attempts[-1]['layers_real'].get(k, 0) for k in ('medium', 'soft', 'ghost'))), 3)
+            attempts[-1]['excluded'] = list(excl); attempts[-1]['qc'] = qc_rows
+            log(f'strategy {strat}:', ('OK score ' + str(attempts[-1]['score'])) if not why else 'rejected: ' + '; '.join(why))
+            marginal = not why and (info['corr_median'] < float(os.environ.get('ZC_MARGINAL_CORR', 0.85)) or info['hits_aligned'] < 100)   # passes, but under the reference packs (corr 0.92..0.95, 116..217 hits): try the other recipes too and keep the best
+            if not why and not marginal: chosen = strat; break
+            if not why and marginal and strat != order[-1]: log(f'strategy {strat} is marginal (corr {info["corr_median"]}, {info["hits_aligned"]} hits): trying the remaining recipes, best score wins')
+        report['strategy_attempts'] = [{k: v for k, v in a.items() if k not in ('qc', 'excluded')} for a in attempts]
+        if info is None and not any(a.get('ok') for a in attempts): raise RuntimeError('every strategy raised during build: ' + '; '.join(a.get('why', '') for a in attempts))
+        passing = [a for a in attempts if a.get('ok')]
+        if passing and chosen is None:
+            best = max(passing, key=lambda a: a['score']); chosen = best['strategy']
+            if attempts[-1]['strategy'] != chosen or not attempts[-1].get('ok'):   # rebuild the winner so pack2/ holds its files (deterministic: same seed, same exclusions)
+                log(f'rebuilding winner {chosen} (score {best["score"]}) ...'); os.environ['ZC_EXCLUDE'] = ','.join(f'{v:.3f}' for v in best['excluded'])
+                build_pack.rng.seed(7); info = build_pack.build(job, analyse_only=False, realvel=True, strategy=library.STRATEGIES[chosen]); qc_rows = best['qc']; excl = best['excluded']
+        if not passing:   # nothing held: report the best-looking failed recipe's measurements (most hits aligned) so the FAIL is explainable
+            built = [a for a in attempts if a.get('hits_aligned') is not None]
+            if not built: raise RuntimeError('every strategy raised during build: ' + '; '.join(a.get('why', '') for a in attempts))
+            best = max(built, key=lambda a: (a['hits_aligned'], a['corr_median']))
+            if attempts[-1] is not best or info is None:
+                os.environ['ZC_EXCLUDE'] = ','.join(f'{v:.3f}' for v in best['excluded']); build_pack.rng.seed(7)
+                info = build_pack.build(job, analyse_only=False, realvel=True, strategy=library.STRATEGIES[best['strategy']]); qc_rows = best['qc']; excl = best['excluded']
+            report['warnings'].append('no detection recipe passed the hit gates on this record; measurements below are from ' + best['strategy'] + ' (' + best['why'] + ')')
+        report['strategy_used'] = chosen or best['strategy']; report['template_centroid_hz'] = best.get('template_centroid_hz') if (not passing or chosen) else attempts[-1].get('template_centroid_hz')
+        if chosen and chosen != order[0]: report['warnings'].append(f"detection recipe {order[0]} was not the best on this record; {chosen} won ({library.STRATEGIES[chosen]['note']}); scores: " + ', '.join(f"{a['strategy']} {a.get('score', 'x')}" for a in attempts))
         report['file_qc'] = qc_rows; report['qc_repicks'] = len(excl)
         G.check('file_qc_all_pass', sum(not r['ok'] for r in qc_rows), all(r['ok'] for r in qc_rows), '0 failing files', 'after up to 3 re-picks per strategy')
         # ---------- 5. gates on the measurements ----------
