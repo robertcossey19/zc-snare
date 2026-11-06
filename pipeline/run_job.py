@@ -145,7 +145,7 @@ def main(job):
                     log(f'strategy {strat}: build raised {e}'); info = None; break
                 # adaptive hat-bleed limit: the record's own loud template sets what "bright" means on this snare (reference snares 700..1400 Hz 0-30 ms centroid)
                 yo, sro = sf.read(f'pack2/{job}/ZC_{job}_oneshot.wav'); mo = yo.mean(1)[:int(0.03 * sro)]; Po = np.abs(np.fft.rfft(mo * np.hanning(len(mo)))) ** 2; fo = np.fft.rfftfreq(len(mo), 1 / sro)
-                tcent = int((Po * fo).sum() / (Po.sum() + 1e-20)); clim = int(max(1500, 1.3 * tcent))
+                tcent = int((Po * fo).sum() / (Po.sum() + 1e-20))
                 bad = []; qc_rows = []
                 for k, h in enumerate(info['selected']):
                     lay = h['layer']; y, sr_ = sf.read(f'pack2/{job}/ZC_{job}_{lay}_rr{k % 4 + 1}.wav'); m = y.mean(1); pk = np.abs(m).max()
@@ -155,9 +155,14 @@ def main(job):
                     if lay in ('hard', 'medium') and row['peak_dbfs'] < -40: row.update(ok=False, why='peak under -40 dBFS')
                     lim = -13 if h.get('real') else -6   # real hits: stick attack must build from >= 13 dB down; transformed estimates have their peak in the body, so only a true abrupt start (> -6 dB) fails
                     if row['first_half_ms_re_peak_db'] > lim: row.update(ok=False, why=f'attack clipped (first 0.5 ms within {-lim} dB of peak)')
-                    if lay == 'hard' and row['centroid_hz'] > clim: row.update(ok=False, why=f'0-30 ms centroid > {clim} Hz (hat bleed; this snare\'s template centroid {tcent} Hz)')
-                    if not row['ok']: bad.append(h['t'])   # real hit or estimate donor: exclude that hit and re-pick
                     qc_rows.append(row)
+                # hat-bleed limit is relative to THIS snare: a bled hit is an outlier against the record's own loud strokes (reference snares 700..1400 Hz,
+                # Deftones 'Change' 1080..1500 Hz legitimately); fixed 1500 Hz failed a clean bright hit at 1501 Hz
+                pop = [r['centroid_hz'] for r in qc_rows if r['slot'].split('_')[0] in ('hard', 'medium') and r['real']] or [r['centroid_hz'] for r in qc_rows]
+                clim = int(max(1500, 1.35 * float(np.median(pop))))
+                for row in qc_rows:
+                    if row['slot'].startswith('hard') and row['centroid_hz'] > clim: row.update(ok=False, why=f'0-30 ms centroid > {clim} Hz (hat bleed; this record\'s loud strokes sit at {int(np.median(pop))} Hz)')
+                    if not row['ok']: bad.append(row['t'])   # real hit or estimate donor: exclude that hit and re-pick
                 if not bad: break
                 log('per-file QC rejected', [(r['slot'], r['why']) for r in qc_rows if not r['ok']]); excl += bad
             if info is None: attempts.append(dict(strategy=strat, ok=False, why='build raised')); continue
@@ -167,7 +172,7 @@ def main(job):
             if info['corr_median'] < 0.7: why.append(f"corr_median {info['corr_median']} < 0.70")
             if any(not r['ok'] for r in qc_rows): why.append(f"{sum(not r['ok'] for r in qc_rows)} file(s) failed QC after 3 re-picks")
             if mind < 0.05: why.append(f'selected hits not distinct (min gap {mind:.3f} s)')
-            attempts.append(dict(strategy=strat, ok=not why, why='; '.join(why), hits_aligned=info['hits_aligned'], corr_median=info['corr_median'], layers_real={k: int(sum(v)) for k, v in info['layers_real'].items()}, template_centroid_hz=tcent, qc_repicks=len(excl)))
+            attempts.append(dict(strategy=strat, ok=not why, why='; '.join(why), hits_aligned=info['hits_aligned'], corr_median=info['corr_median'], layers_real={k: int(sum(v)) for k, v in info['layers_real'].items()}, template_centroid_hz=tcent, centroid_limit_hz=clim, qc_repicks=len(excl)))
             attempts[-1]['score'] = round(info['corr_median'] * min(info['hits_aligned'], 200) / 200.0 * (1 + 0.05 * sum(attempts[-1]['layers_real'].get(k, 0) for k in ('medium', 'soft', 'ghost'))), 3)
             attempts[-1]['excluded'] = list(excl); attempts[-1]['qc'] = qc_rows
             log(f'strategy {strat}:', ('OK score ' + str(attempts[-1]['score'])) if not why else 'rejected: ' + '; '.join(why))
