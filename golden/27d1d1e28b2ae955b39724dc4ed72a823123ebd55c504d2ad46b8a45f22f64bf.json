@@ -1,0 +1,119 @@
+{
+ "name": "Architects - Blackhole",
+ "job": "arch",
+ "pipeline": "4.0.0",
+ "selected": [
+  {
+   "slot": "hard_rr1",
+   "t": 161.22,
+   "real": true,
+   "rel_db": 0.2
+  },
+  {
+   "slot": "hard_rr2",
+   "t": 59.22,
+   "real": true,
+   "rel_db": -0.2
+  },
+  {
+   "slot": "hard_rr3",
+   "t": 124.29,
+   "real": true,
+   "rel_db": -0.6
+  },
+  {
+   "slot": "hard_rr4",
+   "t": 155.22,
+   "real": true,
+   "rel_db": -0.6
+  },
+  {
+   "slot": "medium_rr1",
+   "t": 191.22,
+   "real": true,
+   "rel_db": -3.1
+  },
+  {
+   "slot": "medium_rr2",
+   "t": 165.35,
+   "real": true,
+   "rel_db": -3.7
+  },
+  {
+   "slot": "medium_rr3",
+   "t": 167.97,
+   "real": true,
+   "rel_db": -3.0
+  },
+  {
+   "slot": "medium_rr4",
+   "t": 82.1,
+   "real": true,
+   "rel_db": -4.1
+  },
+  {
+   "slot": "soft_rr1",
+   "t": 44.6,
+   "real": false,
+   "rel_db": -12
+  },
+  {
+   "slot": "soft_rr2",
+   "t": 104.6,
+   "real": false,
+   "rel_db": -12
+  },
+  {
+   "slot": "soft_rr3",
+   "t": 195.72,
+   "real": false,
+   "rel_db": -12
+  },
+  {
+   "slot": "soft_rr4",
+   "t": 24.35,
+   "real": false,
+   "rel_db": -12
+  },
+  {
+   "slot": "ghost_rr1",
+   "t": 42.97,
+   "real": false,
+   "rel_db": -20
+  },
+  {
+   "slot": "ghost_rr2",
+   "t": 28.85,
+   "real": false,
+   "rel_db": -20
+  },
+  {
+   "slot": "ghost_rr3",
+   "t": 77.22,
+   "real": false,
+   "rel_db": -20
+  },
+  {
+   "slot": "ghost_rr4",
+   "t": 183.72,
+   "real": false,
+   "rel_db": -20
+  }
+ ],
+ "layers_real": {
+  "hard": 4,
+  "medium": 4,
+  "soft": 0,
+  "ghost": 0
+ },
+ "hits_aligned": 150,
+ "corr_median": 0.927,
+ "t60_band": {
+  "band0": 0.62,
+  "band1": 0.56,
+  "band2": 0.71,
+  "band3": 0.7,
+  "band4": 0.5
+ },
+ "note": "local reference run (pipeline 4.0.1); gate = hard picks >=3/4 identical, hits/corr/T60 within tolerance, hard 4 + medium >= ref-1 real"
+}

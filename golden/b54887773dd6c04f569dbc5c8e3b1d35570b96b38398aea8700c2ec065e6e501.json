@@ -1,0 +1,119 @@
+{
+ "name": "Bring Me The Horizon - Teardrops",
+ "job": "bmth",
+ "pipeline": "4.0.0",
+ "selected": [
+  {
+   "slot": "hard_rr1",
+   "t": 178.03,
+   "real": true,
+   "rel_db": -1.8
+  },
+  {
+   "slot": "hard_rr2",
+   "t": 26.47,
+   "real": true,
+   "rel_db": -0.0
+  },
+  {
+   "slot": "hard_rr3",
+   "t": 186.78,
+   "real": true,
+   "rel_db": -0.9
+  },
+  {
+   "slot": "hard_rr4",
+   "t": 146.78,
+   "real": true,
+   "rel_db": -3.0
+  },
+  {
+   "slot": "medium_rr1",
+   "t": 141.78,
+   "real": true,
+   "rel_db": -3.8
+  },
+  {
+   "slot": "medium_rr2",
+   "t": 144.28,
+   "real": true,
+   "rel_db": -3.2
+  },
+  {
+   "slot": "medium_rr3",
+   "t": 80.22,
+   "real": false,
+   "rel_db": -6
+  },
+  {
+   "slot": "medium_rr4",
+   "t": 30.22,
+   "real": false,
+   "rel_db": -6
+  },
+  {
+   "slot": "soft_rr1",
+   "t": 183.03,
+   "real": false,
+   "rel_db": -12
+  },
+  {
+   "slot": "soft_rr2",
+   "t": 13.65,
+   "real": false,
+   "rel_db": -12
+  },
+  {
+   "slot": "soft_rr3",
+   "t": 126.47,
+   "real": false,
+   "rel_db": -12
+  },
+  {
+   "slot": "soft_rr4",
+   "t": 189.28,
+   "real": false,
+   "rel_db": -12
+  },
+  {
+   "slot": "ghost_rr1",
+   "t": 180.53,
+   "real": false,
+   "rel_db": -20
+  },
+  {
+   "slot": "ghost_rr2",
+   "t": 185.53,
+   "real": false,
+   "rel_db": -20
+  },
+  {
+   "slot": "ghost_rr3",
+   "t": 209.28,
+   "real": false,
+   "rel_db": -20
+  },
+  {
+   "slot": "ghost_rr4",
+   "t": 188.03,
+   "real": false,
+   "rel_db": -20
+  }
+ ],
+ "layers_real": {
+  "hard": 4,
+  "medium": 2,
+  "soft": 0,
+  "ghost": 0
+ },
+ "hits_aligned": 198,
+ "corr_median": 0.914,
+ "t60_band": {
+  "band0": 0.71,
+  "band1": 0.72,
+  "band2": 0.69,
+  "band3": 1.04,
+  "band4": 0.4
+ },
+ "note": "local reference run (pipeline 4.0.1); gate = hard picks >=3/4 identical, hits/corr/T60 within tolerance, hard 4 + medium >= ref-1 real"
+}

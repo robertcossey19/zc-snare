@@ -1,0 +1,119 @@
+{
+ "name": "Limp Bizkit - Making Love To Morgan Wallen",
+ "job": "lb",
+ "pipeline": "4.0.0",
+ "selected": [
+  {
+   "slot": "hard_rr1",
+   "t": 67.92,
+   "real": true,
+   "rel_db": 0.3
+  },
+  {
+   "slot": "hard_rr2",
+   "t": 134.21,
+   "real": true,
+   "rel_db": 0.6
+  },
+  {
+   "slot": "hard_rr3",
+   "t": 136.49,
+   "real": true,
+   "rel_db": 0.3
+  },
+  {
+   "slot": "hard_rr4",
+   "t": 81.63,
+   "real": true,
+   "rel_db": 0.4
+  },
+  {
+   "slot": "medium_rr1",
+   "t": 37.48,
+   "real": true,
+   "rel_db": -9.2
+  },
+  {
+   "slot": "medium_rr2",
+   "t": 108.32,
+   "real": true,
+   "rel_db": -6.3
+  },
+  {
+   "slot": "medium_rr3",
+   "t": 134.91,
+   "real": true,
+   "rel_db": -5.9
+  },
+  {
+   "slot": "medium_rr4",
+   "t": 234.99,
+   "real": true,
+   "rel_db": -3.2
+  },
+  {
+   "slot": "soft_rr1",
+   "t": 183.19,
+   "real": true,
+   "rel_db": -13.8
+  },
+  {
+   "slot": "soft_rr2",
+   "t": 114.64,
+   "real": true,
+   "rel_db": -14.7
+  },
+  {
+   "slot": "soft_rr3",
+   "t": 140.69,
+   "real": true,
+   "rel_db": -15.9
+  },
+  {
+   "slot": "soft_rr4",
+   "t": 213.05,
+   "real": false,
+   "rel_db": -12
+  },
+  {
+   "slot": "ghost_rr1",
+   "t": 237.65,
+   "real": false,
+   "rel_db": -20
+  },
+  {
+   "slot": "ghost_rr2",
+   "t": 53.06,
+   "real": false,
+   "rel_db": -20
+  },
+  {
+   "slot": "ghost_rr3",
+   "t": 34.79,
+   "real": false,
+   "rel_db": -20
+  },
+  {
+   "slot": "ghost_rr4",
+   "t": 70.21,
+   "real": false,
+   "rel_db": -20
+  }
+ ],
+ "layers_real": {
+  "hard": 4,
+  "medium": 4,
+  "soft": 3,
+  "ghost": 0
+ },
+ "hits_aligned": 139,
+ "corr_median": 0.823,
+ "t60_band": {
+  "band0": 0.58,
+  "band1": 0.63,
+  "band2": 0.67,
+  "band3": 0.54,
+  "band4": 0.44
+ },
+ "note": "local reference run (pipeline 4.0.1); gate = hard picks >=3/4 identical, hits/corr/T60 within tolerance, hard 4 + medium >= ref-1 real"
+}
