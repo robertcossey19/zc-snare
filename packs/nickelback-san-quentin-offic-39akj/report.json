@@ -1,0 +1,586 @@
+{
+ "job": "nickelback-san-quentin-offic-39akj",
+ "status": "FAIL",
+ "pipeline": "4.0.4",
+ "stages": {
+  "decode_s": 1.0,
+  "demucs_s": 149.1,
+  "drumsep_s": 1056.2,
+  "build_s": 37.0
+ },
+ "gates": [
+  {
+   "name": "duration_s",
+   "value": 233.3,
+   "limit": "30..720 s",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "mix_peak_dbfs",
+   "value": 0.0,
+   "limit": "> -30 dBFS",
+   "ok": true,
+   "note": "silent or near-silent file"
+  },
+  {
+   "name": "clipped_fraction",
+   "value": 0.0,
+   "limit": "< 0.02",
+   "ok": true,
+   "note": "samples at full scale"
+  },
+  {
+   "name": "drums_rms_dbfs",
+   "value": -18.3,
+   "limit": "> -45 dBFS",
+   "ok": true,
+   "note": "Demucs found no drum content"
+  },
+  {
+   "name": "drums_minus_mix_db",
+   "value": -5.6,
+   "limit": "-25..+3 dB",
+   "ok": true,
+   "note": "drum share of the mix"
+  },
+  {
+   "name": "separation_residual_below_drums_db",
+   "value": 23.1,
+   "limit": ">= 20 dB",
+   "ok": true,
+   "note": "the six stems must add back up to the drum stem (reference songs: 26.9..28.9)"
+  },
+  {
+   "name": "snare_stem_rms_dbfs",
+   "value": -26.9,
+   "limit": "-45..-8 dBFS",
+   "ok": true,
+   "note": "reference songs -20..-30"
+  },
+  {
+   "name": "file_qc_all_pass",
+   "value": 0,
+   "limit": "0 failing files",
+   "ok": true,
+   "note": "after up to 3 re-picks"
+  },
+  {
+   "name": "hits_aligned",
+   "value": 207,
+   "limit": ">= 60",
+   "ok": true,
+   "note": "reference songs 116..184"
+  },
+  {
+   "name": "corr_median",
+   "value": 0.951,
+   "limit": ">= 0.70",
+   "ok": true,
+   "note": "reference songs 0.816..0.933"
+  },
+  {
+   "name": "audit_0_5ms_snare_vs_drums_db",
+   "value": -1.4,
+   "limit": "|diff| <= 1.5 dB",
+   "ok": true,
+   "note": "transient intact after separation"
+  },
+  {
+   "name": "coherent_resid_below_snare_db",
+   "value": 19.5,
+   "limit": ">= 25 dB",
+   "ok": false,
+   "note": "snare the separator dropped, hit-locked"
+  },
+  {
+   "name": "tilt_150hz_5khz_max_abs_db",
+   "value": 5.3,
+   "limit": "<= 2.0 dB",
+   "ok": false,
+   "note": "snare stem vs drum stem, first 60 ms"
+  },
+  {
+   "name": "tilt_5_8khz_db",
+   "value": -8.6,
+   "limit": ">= -4 dB",
+   "ok": false,
+   "note": ""
+  },
+  {
+   "name": "noise_floor_dbfs",
+   "value": -88.2,
+   "limit": "< -60 dBFS",
+   "ok": true,
+   "note": "snare stem between hits"
+  },
+  {
+   "name": "t60_mid_bands_s",
+   "value": [
+    0.45,
+    0.59,
+    0.84
+   ],
+   "limit": "0.08..3.0 s",
+   "ok": true,
+   "note": "measured late decay 150 Hz-6 kHz"
+  },
+  {
+   "name": "selected_hits_distinct_min_gap_s",
+   "value": 2.41,
+   "limit": ">= 0.05 s",
+   "ok": true,
+   "note": "all 16 files come from different strokes"
+  }
+ ],
+ "warnings": [
+  "lossy source: top end limited by the codec (~16 kHz for mp3); WAV/FLAC input gives a cleaner result",
+  "separation residual only 23.1 dB under the drum stem (reference songs 26.9..28.9)",
+  "soft: 0/4 real hits found in that velocity band on this record; the other 4 are flagged estimates (hard hit with the lighter-stroke transform)",
+  "ghost: 0/4 real hits found in that velocity band on this record; the other 4 are flagged estimates (hard hit with the lighter-stroke transform)"
+ ],
+ "started": "2026-11-06T14:49:14Z",
+ "artist": "Nickelback",
+ "title": "San Quentin (Official Music Video)",
+ "mixer": "unknown",
+ "input_name": "input.mp3",
+ "input_bytes": 5601835,
+ "input_sha256": "a43e04de9e057b21368d26d5ff3b288c8bfdf3ee1a61502642e6f31e6d4ead5a",
+ "input_codec": "mp3",
+ "input_sr": 44100,
+ "input_bitrate": 192026,
+ "duration_s": 233.3,
+ "mix_rms_dbfs": -12.6,
+ "mix_peak_dbfs": 0.0,
+ "log_tail": [
+  "[    0.0s] job nickelback-san-quentin-offic-39akj | Nickelback - San Quentin (Official Music Video) | input.mp3 5601835 bytes",
+  "[    0.0s] $ ffprobe -v error -print_format json -show_format -show_streams /home/runner/work/zc-snare/zc-snare/jobs/nickelback-san-quentin-offic-39akj/input.mp3",
+  "[    0.2s] $ ffmpeg -hide_banner -loglevel error -y -i /home/runner/work/zc-snare/zc-snare/jobs/nickelback-san-quentin-offic-39akj/input.mp3 -vn -ar 44100 -ac 2 -c:a pcm_s16le /home/runner/work/zc-snare/zc-snare/work/audio/nickelback-san-quentin-offic-39akj.wav",
+  "[    1.0s] PASS duration_s = 233.3 (limit 30..720 s) ",
+  "[    1.0s] PASS mix_peak_dbfs = 0.0 (limit > -30 dBFS) silent or near-silent file",
+  "[    1.0s] PASS clipped_fraction = 0.0 (limit < 0.02) samples at full scale",
+  "[    1.0s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m demucs -n htdemucs --two-stems=drums -d cpu -j 1 --segment 7 -o /home/runner/work/zc-snare/zc-snare/work/sep /home/runner/work/zc-snare/zc-snare/work/audio/nickelback-san-quentin-offic-39akj.wav",
+  "[  150.0s] PASS drums_rms_dbfs = -18.3 (limit > -45 dBFS) Demucs found no drum content",
+  "[  150.1s] PASS drums_minus_mix_db = -5.6 (limit -25..+3 dB) drum share of the mix",
+  "[  150.8s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python inference.py --model_type mdx23c --config_path /home/runner/work/zc-snare/zc-snare/pipeline/drumsep.yaml --start_check_point /home/runner/work/zc-snare/zc-snare/work/ds/drumsep.ckpt --input_folder /home/runner/work/zc-snare/zc-snare/work/ds/in_nickelback-san-quentin-offic-39akj --store_dir /home/runner/work/zc-snare/zc-snare/work/ds/out --force_cpu --pcm_type FLOAT --disable_detailed_pbar",
+  "[ 1206.3s] PASS separation_residual_below_drums_db = 23.1 (limit >= 20 dB) the six stems must add back up to the drum stem (reference songs: 26.9..28.9)",
+  "[ 1206.3s] PASS snare_stem_rms_dbfs = -26.9 (limit -45..-8 dBFS) reference songs -20..-30",
+  "[ 1206.3s] build attempt 1, excluded 0 hit(s)",
+  "[ 1243.3s] PASS file_qc_all_pass = 0 (limit 0 failing files) after up to 3 re-picks",
+  "[ 1243.3s] PASS hits_aligned = 207 (limit >= 60) reference songs 116..184",
+  "[ 1243.3s] PASS corr_median = 0.951 (limit >= 0.70) reference songs 0.816..0.933",
+  "[ 1243.3s] PASS audit_0_5ms_snare_vs_drums_db = -1.4 (limit |diff| <= 1.5 dB) transient intact after separation",
+  "[ 1243.3s] FAIL coherent_resid_below_snare_db = 19.5 (limit >= 25 dB) snare the separator dropped, hit-locked",
+  "[ 1243.3s] FAIL tilt_150hz_5khz_max_abs_db = 5.3 (limit <= 2.0 dB) snare stem vs drum stem, first 60 ms",
+  "[ 1243.3s] FAIL tilt_5_8khz_db = -8.6 (limit >= -4 dB) ",
+  "[ 1243.3s] PASS noise_floor_dbfs = -88.2 (limit < -60 dBFS) snare stem between hits",
+  "[ 1243.3s] PASS t60_mid_bands_s = [0.45, 0.59, 0.84] (limit 0.08..3.0 s) measured late decay 150 Hz-6 kHz",
+  "[ 1243.3s] PASS selected_hits_distinct_min_gap_s = 2.41 (limit >= 0.05 s) all 16 files come from different strokes",
+  "[ 1243.3s] FAIL: measurement gate failed"
+ ],
+ "elapsed_s": 1243.3,
+ "drums_rms_dbfs": -18.3,
+ "stem_rms_dbfs": {
+  "Kick": -19.7,
+  "Snare": -26.9,
+  "Toms": -32.5,
+  "Hh": -34.9,
+  "Ride": -50.5,
+  "Crash": -39.6
+ },
+ "separation_residual_below_drums_db": 23.1,
+ "file_qc": [
+  {
+   "slot": "hard_rr1",
+   "t": 208.85,
+   "real": true,
+   "rel_db": 0.3,
+   "peak_dbfs": -3.7,
+   "first_half_ms_re_peak_db": -24.5,
+   "centroid_hz": 504,
+   "len_ms": 700,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "hard_rr2",
+   "t": 169.66,
+   "real": true,
+   "rel_db": 0.0,
+   "peak_dbfs": -2.0,
+   "first_half_ms_re_peak_db": -18.6,
+   "centroid_hz": 372,
+   "len_ms": 709,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "hard_rr3",
+   "t": 77.72,
+   "real": true,
+   "rel_db": 0.5,
+   "peak_dbfs": -3.0,
+   "first_half_ms_re_peak_db": -21.6,
+   "centroid_hz": 331,
+   "len_ms": 800,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "hard_rr4",
+   "t": 43.85,
+   "real": true,
+   "rel_db": 0.2,
+   "peak_dbfs": -1.2,
+   "first_half_ms_re_peak_db": -17.9,
+   "centroid_hz": 455,
+   "len_ms": 939,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "medium_rr1",
+   "t": 15.04,
+   "real": true,
+   "rel_db": -7.9,
+   "peak_dbfs": -9.4,
+   "first_half_ms_re_peak_db": -35.3,
+   "centroid_hz": 696,
+   "len_ms": 955,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "medium_rr2",
+   "t": 23.04,
+   "real": true,
+   "rel_db": -4.9,
+   "peak_dbfs": -6.5,
+   "first_half_ms_re_peak_db": -25.8,
+   "centroid_hz": 474,
+   "len_ms": 954,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "medium_rr3",
+   "t": 18.92,
+   "real": true,
+   "rel_db": -4.3,
+   "peak_dbfs": -6.5,
+   "first_half_ms_re_peak_db": -23.7,
+   "centroid_hz": 374,
+   "len_ms": 894,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "medium_rr4",
+   "t": 25.46,
+   "real": true,
+   "rel_db": -3.6,
+   "peak_dbfs": -5.2,
+   "first_half_ms_re_peak_db": -26.5,
+   "centroid_hz": 463,
+   "len_ms": 933,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr1",
+   "t": 226.75,
+   "real": false,
+   "rel_db": -12,
+   "peak_dbfs": -17.5,
+   "first_half_ms_re_peak_db": -26.4,
+   "centroid_hz": 244,
+   "len_ms": 765,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr2",
+   "t": 131.91,
+   "real": false,
+   "rel_db": -12,
+   "peak_dbfs": -16.3,
+   "first_half_ms_re_peak_db": -23.1,
+   "centroid_hz": 275,
+   "len_ms": 804,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr3",
+   "t": 151.04,
+   "real": false,
+   "rel_db": -12,
+   "peak_dbfs": -19.7,
+   "first_half_ms_re_peak_db": -21.5,
+   "centroid_hz": 255,
+   "len_ms": 1008,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr4",
+   "t": 90.79,
+   "real": false,
+   "rel_db": -12,
+   "peak_dbfs": -15.9,
+   "first_half_ms_re_peak_db": -22.4,
+   "centroid_hz": 240,
+   "len_ms": 734,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "ghost_rr1",
+   "t": 129.5,
+   "real": false,
+   "rel_db": -20,
+   "peak_dbfs": -23.1,
+   "first_half_ms_re_peak_db": -31.1,
+   "centroid_hz": 214,
+   "len_ms": 690,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "ghost_rr2",
+   "t": 160.94,
+   "real": false,
+   "rel_db": -20,
+   "peak_dbfs": -24.8,
+   "first_half_ms_re_peak_db": -32.5,
+   "centroid_hz": 231,
+   "len_ms": 908,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "ghost_rr3",
+   "t": 157.07,
+   "real": false,
+   "rel_db": -20,
+   "peak_dbfs": -23.8,
+   "first_half_ms_re_peak_db": -33.2,
+   "centroid_hz": 234,
+   "len_ms": 893,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "ghost_rr4",
+   "t": 34.17,
+   "real": false,
+   "rel_db": -20,
+   "peak_dbfs": -24.0,
+   "first_half_ms_re_peak_db": -32.3,
+   "centroid_hz": 229,
+   "len_ms": 786,
+   "ok": true,
+   "why": ""
+  }
+ ],
+ "qc_repicks": 0,
+ "layers_real": {
+  "hard": 4,
+  "medium": 4,
+  "soft": 0,
+  "ghost": 0
+ },
+ "selected": [
+  {
+   "slot": "hard_rr1",
+   "t": 208.85,
+   "real": true,
+   "rel_db": 0.3,
+   "gap_ms": 476,
+   "real_to_ms": 314,
+   "len_ms": 700
+  },
+  {
+   "slot": "hard_rr2",
+   "t": 169.66,
+   "real": true,
+   "rel_db": 0.0,
+   "gap_ms": 613,
+   "real_to_ms": 329,
+   "len_ms": 709
+  },
+  {
+   "slot": "hard_rr3",
+   "t": 77.72,
+   "real": true,
+   "rel_db": 0.5,
+   "gap_ms": 580,
+   "real_to_ms": 314,
+   "len_ms": 800
+  },
+  {
+   "slot": "hard_rr4",
+   "t": 43.85,
+   "real": true,
+   "rel_db": 0.2,
+   "gap_ms": 586,
+   "real_to_ms": 453,
+   "len_ms": 939
+  },
+  {
+   "slot": "medium_rr1",
+   "t": 15.04,
+   "real": true,
+   "rel_db": -7.9,
+   "gap_ms": 241,
+   "real_to_ms": 226,
+   "len_ms": 955
+  },
+  {
+   "slot": "medium_rr2",
+   "t": 23.04,
+   "real": true,
+   "rel_db": -4.9,
+   "gap_ms": 532,
+   "real_to_ms": 209,
+   "len_ms": 954
+  },
+  {
+   "slot": "medium_rr3",
+   "t": 18.92,
+   "real": true,
+   "rel_db": -4.3,
+   "gap_ms": 240,
+   "real_to_ms": 225,
+   "len_ms": 894
+  },
+  {
+   "slot": "medium_rr4",
+   "t": 25.46,
+   "real": true,
+   "rel_db": -3.6,
+   "gap_ms": 123,
+   "real_to_ms": 108,
+   "len_ms": 933
+  },
+  {
+   "slot": "soft_rr1",
+   "t": 226.75,
+   "real": false,
+   "rel_db": -12,
+   "gap_ms": 554,
+   "real_to_ms": 294,
+   "len_ms": 765
+  },
+  {
+   "slot": "soft_rr2",
+   "t": 131.91,
+   "real": false,
+   "rel_db": -12,
+   "gap_ms": 416,
+   "real_to_ms": 401,
+   "len_ms": 804
+  },
+  {
+   "slot": "soft_rr3",
+   "t": 151.04,
+   "real": false,
+   "rel_db": -12,
+   "gap_ms": 1675,
+   "real_to_ms": 379,
+   "len_ms": 1008
+  },
+  {
+   "slot": "soft_rr4",
+   "t": 90.79,
+   "real": false,
+   "rel_db": -12,
+   "gap_ms": 396,
+   "real_to_ms": 381,
+   "len_ms": 734
+  },
+  {
+   "slot": "ghost_rr1",
+   "t": 129.5,
+   "real": false,
+   "rel_db": -20,
+   "gap_ms": 384,
+   "real_to_ms": 369,
+   "len_ms": 690
+  },
+  {
+   "slot": "ghost_rr2",
+   "t": 160.94,
+   "real": false,
+   "rel_db": -20,
+   "gap_ms": 490,
+   "real_to_ms": 359,
+   "len_ms": 908
+  },
+  {
+   "slot": "ghost_rr3",
+   "t": 157.07,
+   "real": false,
+   "rel_db": -20,
+   "gap_ms": 479,
+   "real_to_ms": 423,
+   "len_ms": 893
+  },
+  {
+   "slot": "ghost_rr4",
+   "t": 34.17,
+   "real": false,
+   "rel_db": -20,
+   "gap_ms": 480,
+   "real_to_ms": 314,
+   "len_ms": 786
+  }
+ ],
+ "measurements": {
+  "hits_aligned": 207,
+  "corr_median": 0.951,
+  "level_sd_db": 2.88,
+  "t60_band": {
+   "band0": 0.68,
+   "band1": 0.45,
+   "band2": 0.59,
+   "band3": 0.84,
+   "band4": 0.81
+  },
+  "slope_db_s": [
+   -88.0,
+   -133.0,
+   -102.0,
+   -72.0,
+   -75.0
+  ],
+  "audit_0_5ms": {
+   "snare": -10.1,
+   "drums": -8.7,
+   "resid": -26.4,
+   "kick": -21.4,
+   "hh": -24.8,
+   "ride": -48.9,
+   "crash": -39.7,
+   "toms": -29.3
+  },
+  "coherent_resid_0_5ms": {
+   "coherent_resid_dB": -30.2,
+   "snare_dB": -10.7
+  },
+  "tilt": {
+   "60-150": -33.0,
+   "150-300": -0.5,
+   "300-600": -1.3,
+   "600-1200": -1.5,
+   "1200-2500": -2.1,
+   "2500-5000": -5.3,
+   "5000-8000": -8.6,
+   "8000-12000": -8.1,
+   "12000-16000": -11.6
+  },
+  "noise_floor_dbfs": -88.2
+ },
+ "error": "measurement gate failed",
+ "finished": "2026-11-06T15:09:57Z"
+}
