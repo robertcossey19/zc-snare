@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Pull new jobs from the mailbox
         id: pull
-        env: { ZC_NTFY_TOPIC: 'zc-snare-jobs-00a30119bd60e56e2593776a', ZC_WORK: '${{ github.workspace }}/work' }
+        env: { ZC_NTFY_TOPIC: 'zc-snare-jobs-00a30119bd60e56e2593776a', ZC_NTFY_DONE: 'zc-snare-done-3b0fd4cb77640a88e253c855', ZC_WORK: '${{ github.workspace }}/work' }
         run: python3 pipeline/intake.py
       - uses: actions/upload-artifact@v4
         if: steps.pull.outputs.ids != ''

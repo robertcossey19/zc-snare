@@ -10,7 +10,7 @@ ntfy topic in ZC_NTFY_TOPIC: {"id","url","artist","title","name","size","t0"}. T
   * writes queue/<id>.json (the page reads this to show "picked up") and prints the ids for the workflow
 An expired upload writes packs/<id>/report.json with status FAIL so the page stops waiting and says why.
 """
-import hashlib, json, os, re, sys, time, urllib.request
+import hashlib, json, os, re, subprocess, sys, time, urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORK = os.environ.get('ZC_WORK', os.path.join(ROOT, 'work'))
@@ -86,6 +86,7 @@ def main():
             log(jid, 'FAIL', e); fail_report(jid, n, f'could not fetch the upload: {e}. Re-upload and hit GO again (temp uploads live 60 min).')
             os.makedirs(os.path.join(ROOT, 'queue'), exist_ok=True)
             json.dump(dict(id=jid, status='FAIL', claimed=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())), open(os.path.join(ROOT, 'queue', jid + '.json'), 'w'))
+            subprocess.run([sys.executable, os.path.join(ROOT, 'pipeline', 'notify.py'), jid, 'FAIL', '', f'could not fetch the upload: {e}'], check=False)
             continue
         meta = dict(id=jid, artist=str(n.get('artist') or 'Unknown artist')[:60], title=str(n.get('title') or jid)[:80], mixer='',
                     source_name=str(n.get('name', ''))[:120], size=size, sha256=h.hexdigest(), ext=ext, submitted=n.get('t0'),
@@ -94,6 +95,7 @@ def main():
         json.dump(meta, open(os.path.join(ROOT, 'queue', jid + '.json'), 'w'), indent=1)
         json.dump(meta, open(os.path.join(d, 'meta.json'), 'w'))
         picked.append(jid); log(jid, 'staged', size, 'bytes', meta['sha256'][:12])
+        subprocess.run([sys.executable, os.path.join(ROOT, 'pipeline', 'notify.py'), jid, 'QUEUED'], check=False)
     out = os.environ.get('GITHUB_OUTPUT')
     if out:
         with open(out, 'a') as f: f.write('ids=' + ' '.join(picked) + '\n')
