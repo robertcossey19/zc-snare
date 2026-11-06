@@ -192,11 +192,11 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
         for i in range(f0 + 30, len(E[j]) - 6):   # real tail ends where it is no longer >= 6 dB above this hit's own background (never before 150 ms)
             if (E[j, i:i + 6] < PL[j] + 6).all(): n_cut = i * FR; break
         if gap[j] < 9: n_cut = min(n_cut, PRE + int((gap[j] - 0.015) * SR))
-        n_cut = int(min(n_cut, LEN)); ext_ms = None
+        n_cut = int(min(max(n_cut, PRE + int(0.05 * SR)), LEN)); ext_ms = None   # never cut inside the first 50 ms (a flam/double right behind the hit used to drive the slice negative)
         if n_cut < LEN:   # (b) below that point: continue each band with its own late texture at the decay rate measured for this song (late diffuse reverb = decaying noise of the same colour)
             ext_ms = int((n_cut - PRE) / SR * 1000); out = np.zeros((LEN, 2)); xf = int(0.02 * SR); wx = 0.5 * (1 - np.cos(np.pi * np.arange(xf) / xf))
             for b in range(NB):
-                src = Hb[b, n_cut - int(0.1 * SR):n_cut]; grain = int(0.04 * SR); hop = grain // 2; win = np.hanning(grain); rs = np.random.RandomState(1000 * b + j)
+                src = Hb[b, max(0, n_cut - int(0.1 * SR)):n_cut]; grain = min(int(0.04 * SR), max(16, len(src) // 2)); hop = grain // 2; win = np.hanning(grain); rs = np.random.RandomState(1000 * b + j)   # clamp: a hit cut <100 ms in (next snare right behind it) used to wrap to a negative slice and raise 'high <= 0' (Deftones, C_dense attempt 2)
                 ext = np.zeros((LEN - n_cut + xf + 2 * grain, 2))
                 for k in range(0, len(ext) - grain, hop):
                     off = rs.randint(0, len(src) - grain); ext[k:k + grain] += win[:, None] * src[off:off + grain] * rs.choice([-1, 1])
