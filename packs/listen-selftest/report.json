@@ -1,0 +1,11 @@
+{
+ "job": "listen-selftest",
+ "status": "FAIL",
+ "error": "could not fetch the upload: HTTP Error 404: Not Found. Re-upload and hit GO again (temp uploads live 60 min).",
+ "artist": null,
+ "title": null,
+ "gates": [],
+ "warnings": [],
+ "started": "2026-11-06T13:09:36Z",
+ "elapsed_s": 0
+}
