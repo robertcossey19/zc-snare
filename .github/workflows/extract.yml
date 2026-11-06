@@ -15,9 +15,6 @@ on:
 permissions:
   contents: write
   actions: write
-concurrency:
-  group: extract-queue
-  cancel-in-progress: false
 jobs:
   extract:
     runs-on: ubuntu-latest

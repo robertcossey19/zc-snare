@@ -65,6 +65,7 @@ def main():
         jid = n['id']
         if jid in seen: continue
         seen.add(jid)
+        if n.get('ntfy_time') and time.time() - float(n['ntfy_time']) > 75 * 60: continue   # older than the temp host's 60-min life: expired, never re-run (a deleted pack must not re-open a job)
         if os.path.exists(os.path.join(ROOT, 'queue', jid + '.json')) or os.path.exists(os.path.join(ROOT, 'packs', jid, 'report.json')): continue
         ext = os.path.splitext(str(n.get('name', '')))[1].lower()
         if ext not in EXT_OK: ext = '.bin'
