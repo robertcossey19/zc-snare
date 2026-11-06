@@ -1,0 +1,689 @@
+{
+ "job": "architects-blackhole-0tt01",
+ "status": "FAIL",
+ "pipeline": "4.0.3",
+ "stages": {
+  "decode_s": 0.8,
+  "demucs_s": 144.6,
+  "drumsep_s": 1054.0,
+  "build_s": 42.6
+ },
+ "gates": [
+  {
+   "name": "duration_s",
+   "value": 209.7,
+   "limit": "30..720 s",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "mix_peak_dbfs",
+   "value": 0.0,
+   "limit": "> -30 dBFS",
+   "ok": true,
+   "note": "silent or near-silent file"
+  },
+  {
+   "name": "clipped_fraction",
+   "value": 0.00156,
+   "limit": "< 0.02",
+   "ok": true,
+   "note": "samples at full scale"
+  },
+  {
+   "name": "drums_rms_dbfs",
+   "value": -14.1,
+   "limit": "> -45 dBFS",
+   "ok": true,
+   "note": "Demucs found no drum content"
+  },
+  {
+   "name": "drums_minus_mix_db",
+   "value": -5.5,
+   "limit": "-25..+3 dB",
+   "ok": true,
+   "note": "drum share of the mix"
+  },
+  {
+   "name": "separation_residual_below_drums_db",
+   "value": 27.4,
+   "limit": ">= 20 dB",
+   "ok": true,
+   "note": "the six stems must add back up to the drum stem (reference songs: 26.9..28.9)"
+  },
+  {
+   "name": "snare_stem_rms_dbfs",
+   "value": -23.3,
+   "limit": "-45..-8 dBFS",
+   "ok": true,
+   "note": "reference songs -20..-30"
+  },
+  {
+   "name": "file_qc_all_pass",
+   "value": 0,
+   "limit": "0 failing files",
+   "ok": true,
+   "note": "after up to 3 re-picks"
+  },
+  {
+   "name": "hits_aligned",
+   "value": 153,
+   "limit": ">= 60",
+   "ok": true,
+   "note": "reference songs 116..184"
+  },
+  {
+   "name": "corr_median",
+   "value": 0.931,
+   "limit": ">= 0.70",
+   "ok": true,
+   "note": "reference songs 0.816..0.933"
+  },
+  {
+   "name": "audit_0_5ms_snare_vs_drums_db",
+   "value": -0.3,
+   "limit": "|diff| <= 1.5 dB",
+   "ok": true,
+   "note": "transient intact after separation"
+  },
+  {
+   "name": "coherent_resid_below_snare_db",
+   "value": 33.2,
+   "limit": ">= 25 dB",
+   "ok": true,
+   "note": "snare the separator dropped, hit-locked"
+  },
+  {
+   "name": "tilt_150hz_5khz_max_abs_db",
+   "value": 1.1,
+   "limit": "<= 2.0 dB",
+   "ok": true,
+   "note": "snare stem vs drum stem, first 60 ms"
+  },
+  {
+   "name": "tilt_5_8khz_db",
+   "value": -1.3,
+   "limit": ">= -4 dB",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "noise_floor_dbfs",
+   "value": -82.2,
+   "limit": "< -60 dBFS",
+   "ok": true,
+   "note": "snare stem between hits"
+  },
+  {
+   "name": "t60_mid_bands_s",
+   "value": [
+    0.23,
+    0.47,
+    0.69
+   ],
+   "limit": "0.08..3.0 s",
+   "ok": true,
+   "note": "measured late decay 150 Hz-6 kHz"
+  },
+  {
+   "name": "selected_hits_distinct_min_gap_s",
+   "value": 2.44,
+   "limit": ">= 0.05 s",
+   "ok": true,
+   "note": "all 16 files come from different strokes"
+  },
+  {
+   "name": "golden_hard_picks_overlap",
+   "value": "3/4",
+   "limit": ">= 2/4 same strokes (any order)",
+   "ok": true,
+   "note": "known input (Architects - Blackhole): loud picks must come from the same population"
+  },
+  {
+   "name": "golden_hard_level_db",
+   "value": 0.15,
+   "limit": "<= 1.5 dB vs golden hard mean",
+   "ok": true,
+   "note": "loud picks at the same level as the golden picks"
+  },
+  {
+   "name": "golden_hits_aligned_tolerance",
+   "value": 153,
+   "limit": "150 +-30%",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "golden_corr_median_tolerance",
+   "value": 0.931,
+   "limit": "0.927 +-0.10",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "golden_layers_real_hard_medium",
+   "value": "hard 4 medium 4",
+   "limit": "hard 4, medium >= 3",
+   "ok": true,
+   "note": "soft/ghost counts are reported, not gated: they sit near the stem floor"
+  },
+  {
+   "name": "golden_t60_mid_tolerance",
+   "value": [
+    0.23,
+    0.47,
+    0.69
+   ],
+   "limit": "[0.56, 0.71, 0.7] +-30% or 0.25 s",
+   "ok": false,
+   "note": ""
+  }
+ ],
+ "warnings": [
+  "lossy input at 124 kbps: expect a lower HF ceiling and more pre-echo than the reference packs (built from 128-320 kbps / WAV)",
+  "lossy source: top end limited by the codec (~16 kHz for mp3); WAV/FLAC input gives a cleaner result",
+  "soft: 2/4 real hits found in that velocity band on this record; the other 2 are flagged estimates (hard hit with the lighter-stroke transform)",
+  "ghost: 0/4 real hits found in that velocity band on this record; the other 4 are flagged estimates (hard hit with the lighter-stroke transform)"
+ ],
+ "started": "2026-11-06T13:44:28Z",
+ "artist": "Architects",
+ "title": "Blackhole",
+ "mixer": "unknown",
+ "input_name": "input.mp3",
+ "input_bytes": 3272732,
+ "input_sha256": "27d1d1e28b2ae955b39724dc4ed72a823123ebd55c504d2ad46b8a45f22f64bf",
+ "input_codec": "mp3",
+ "input_sr": 44100,
+ "input_bitrate": 124816,
+ "duration_s": 209.7,
+ "mix_rms_dbfs": -8.7,
+ "mix_peak_dbfs": 0.0,
+ "log_tail": [
+  "[    0.0s] job architects-blackhole-0tt01 | Architects - Blackhole | input.mp3 3272732 bytes",
+  "[    0.0s] $ ffprobe -v error -print_format json -show_format -show_streams /home/runner/work/zc-snare/zc-snare/jobs/architects-blackhole-0tt01/input.mp3",
+  "[    0.1s] $ ffmpeg -hide_banner -loglevel error -y -i /home/runner/work/zc-snare/zc-snare/jobs/architects-blackhole-0tt01/input.mp3 -vn -ar 44100 -ac 2 -c:a pcm_s16le /home/runner/work/zc-snare/zc-snare/work/audio/architects-blackhole-0tt01.wav",
+  "[    0.8s] PASS duration_s = 209.7 (limit 30..720 s) ",
+  "[    0.8s] PASS mix_peak_dbfs = 0.0 (limit > -30 dBFS) silent or near-silent file",
+  "[    0.8s] PASS clipped_fraction = 0.00156 (limit < 0.02) samples at full scale",
+  "[    0.8s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m demucs -n htdemucs --two-stems=drums -d cpu -j 1 --segment 7 -o /home/runner/work/zc-snare/zc-snare/work/sep /home/runner/work/zc-snare/zc-snare/work/audio/architects-blackhole-0tt01.wav",
+  "[  145.2s] PASS drums_rms_dbfs = -14.1 (limit > -45 dBFS) Demucs found no drum content",
+  "[  145.4s] PASS drums_minus_mix_db = -5.5 (limit -25..+3 dB) drum share of the mix",
+  "[  146.2s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python inference.py --model_type mdx23c --config_path /home/runner/work/zc-snare/zc-snare/pipeline/drumsep.yaml --start_check_point /home/runner/work/zc-snare/zc-snare/work/ds/drumsep.ckpt --input_folder /home/runner/work/zc-snare/zc-snare/work/ds/in_architects-blackhole-0tt01 --store_dir /home/runner/work/zc-snare/zc-snare/work/ds/out --force_cpu --pcm_type FLOAT --disable_detailed_pbar",
+  "[ 1199.4s] PASS separation_residual_below_drums_db = 27.4 (limit >= 20 dB) the six stems must add back up to the drum stem (reference songs: 26.9..28.9)",
+  "[ 1199.4s] PASS snare_stem_rms_dbfs = -23.3 (limit -45..-8 dBFS) reference songs -20..-30",
+  "[ 1199.4s] build attempt 1, excluded 0 hit(s)",
+  "[ 1242.0s] PASS file_qc_all_pass = 0 (limit 0 failing files) after up to 3 re-picks",
+  "[ 1242.0s] PASS hits_aligned = 153 (limit >= 60) reference songs 116..184",
+  "[ 1242.0s] PASS corr_median = 0.931 (limit >= 0.70) reference songs 0.816..0.933",
+  "[ 1242.0s] PASS audit_0_5ms_snare_vs_drums_db = -0.3 (limit |diff| <= 1.5 dB) transient intact after separation",
+  "[ 1242.0s] PASS coherent_resid_below_snare_db = 33.2 (limit >= 25 dB) snare the separator dropped, hit-locked",
+  "[ 1242.0s] PASS tilt_150hz_5khz_max_abs_db = 1.1 (limit <= 2.0 dB) snare stem vs drum stem, first 60 ms",
+  "[ 1242.0s] PASS tilt_5_8khz_db = -1.3 (limit >= -4 dB) ",
+  "[ 1242.0s] PASS noise_floor_dbfs = -82.2 (limit < -60 dBFS) snare stem between hits",
+  "[ 1242.0s] PASS t60_mid_bands_s = [0.23, 0.47, 0.69] (limit 0.08..3.0 s) measured late decay 150 Hz-6 kHz",
+  "[ 1242.0s] PASS selected_hits_distinct_min_gap_s = 2.44 (limit >= 0.05 s) all 16 files come from different strokes",
+  "[ 1242.0s] PASS golden_hard_picks_overlap = 3/4 (limit >= 2/4 same strokes (any order)) known input (Architects - Blackhole): loud picks must come from the same population",
+  "[ 1242.0s] PASS golden_hard_level_db = 0.15 (limit <= 1.5 dB vs golden hard mean) loud picks at the same level as the golden picks",
+  "[ 1242.0s] PASS golden_hits_aligned_tolerance = 153 (limit 150 +-30%) ",
+  "[ 1242.0s] PASS golden_corr_median_tolerance = 0.931 (limit 0.927 +-0.10) ",
+  "[ 1242.0s] PASS golden_layers_real_hard_medium = hard 4 medium 4 (limit hard 4, medium >= 3) soft/ghost counts are reported, not gated: they sit near the stem floor",
+  "[ 1242.0s] FAIL golden_t60_mid_tolerance = [0.23, 0.47, 0.69] (limit [0.56, 0.71, 0.7] +-30% or 0.25 s) ",
+  "[ 1242.0s] FAIL: measurement gate failed"
+ ],
+ "elapsed_s": 1242.0,
+ "drums_rms_dbfs": -14.1,
+ "stem_rms_dbfs": {
+  "Kick": -15.2,
+  "Snare": -23.3,
+  "Toms": -27.8,
+  "Hh": -36.5,
+  "Ride": -50.3,
+  "Crash": -46.7
+ },
+ "separation_residual_below_drums_db": 27.4,
+ "file_qc": [
+  {
+   "slot": "hard_rr1",
+   "t": 161.22,
+   "real": true,
+   "rel_db": 0.0,
+   "peak_dbfs": -2.7,
+   "first_half_ms_re_peak_db": -23.8,
+   "centroid_hz": 327,
+   "len_ms": 667,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "hard_rr2",
+   "t": 59.22,
+   "real": true,
+   "rel_db": -0.2,
+   "peak_dbfs": -1.8,
+   "first_half_ms_re_peak_db": -20.1,
+   "centroid_hz": 355,
+   "len_ms": 725,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "hard_rr3",
+   "t": 155.22,
+   "real": true,
+   "rel_db": -0.8,
+   "peak_dbfs": -2.9,
+   "first_half_ms_re_peak_db": -16.8,
+   "centroid_hz": 336,
+   "len_ms": 670,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "hard_rr4",
+   "t": 131.22,
+   "real": true,
+   "rel_db": -0.8,
+   "peak_dbfs": -3.4,
+   "first_half_ms_re_peak_db": -16.0,
+   "centroid_hz": 295,
+   "len_ms": 625,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "medium_rr1",
+   "t": 191.22,
+   "real": true,
+   "rel_db": -3.7,
+   "peak_dbfs": -4.6,
+   "first_half_ms_re_peak_db": -23.9,
+   "centroid_hz": 312,
+   "len_ms": 580,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "medium_rr2",
+   "t": 165.35,
+   "real": true,
+   "rel_db": -4.2,
+   "peak_dbfs": -6.6,
+   "first_half_ms_re_peak_db": -17.8,
+   "centroid_hz": 329,
+   "len_ms": 589,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "medium_rr3",
+   "t": 141.44,
+   "real": true,
+   "rel_db": -3.7,
+   "peak_dbfs": -6.9,
+   "first_half_ms_re_peak_db": -14.9,
+   "centroid_hz": 230,
+   "len_ms": 516,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "medium_rr4",
+   "t": 82.1,
+   "real": true,
+   "rel_db": -4.1,
+   "peak_dbfs": -6.3,
+   "first_half_ms_re_peak_db": -14.7,
+   "centroid_hz": 260,
+   "len_ms": 643,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr1",
+   "t": 87.54,
+   "real": true,
+   "rel_db": -16.0,
+   "peak_dbfs": -15.5,
+   "first_half_ms_re_peak_db": -28.3,
+   "centroid_hz": 506,
+   "len_ms": 641,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr2",
+   "t": 91.85,
+   "real": true,
+   "rel_db": -11.9,
+   "peak_dbfs": -12.3,
+   "first_half_ms_re_peak_db": -31.2,
+   "centroid_hz": 659,
+   "len_ms": 828,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr3",
+   "t": 138.72,
+   "real": false,
+   "rel_db": -12,
+   "peak_dbfs": -15.9,
+   "first_half_ms_re_peak_db": -22.0,
+   "centroid_hz": 241,
+   "len_ms": 650,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "soft_rr4",
+   "t": 28.29,
+   "real": false,
+   "rel_db": -12,
+   "peak_dbfs": -15.2,
+   "first_half_ms_re_peak_db": -23.6,
+   "centroid_hz": 218,
+   "len_ms": 700,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "ghost_rr1",
+   "t": 22.1,
+   "real": false,
+   "rel_db": -20,
+   "peak_dbfs": -24.0,
+   "first_half_ms_re_peak_db": -20.6,
+   "centroid_hz": 210,
+   "len_ms": 719,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "ghost_rr2",
+   "t": 195.72,
+   "real": false,
+   "rel_db": -20,
+   "peak_dbfs": -22.9,
+   "first_half_ms_re_peak_db": -25.9,
+   "centroid_hz": 218,
+   "len_ms": 650,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "ghost_rr3",
+   "t": 25.85,
+   "real": false,
+   "rel_db": -20,
+   "peak_dbfs": -23.7,
+   "first_half_ms_re_peak_db": -38.3,
+   "centroid_hz": 226,
+   "len_ms": 710,
+   "ok": true,
+   "why": ""
+  },
+  {
+   "slot": "ghost_rr4",
+   "t": 42.97,
+   "real": false,
+   "rel_db": -20,
+   "peak_dbfs": -23.9,
+   "first_half_ms_re_peak_db": -14.6,
+   "centroid_hz": 209,
+   "len_ms": 679,
+   "ok": true,
+   "why": ""
+  }
+ ],
+ "qc_repicks": 0,
+ "layers_real": {
+  "hard": 4,
+  "medium": 4,
+  "soft": 2,
+  "ghost": 0
+ },
+ "selected": [
+  {
+   "slot": "hard_rr1",
+   "t": 161.22,
+   "real": true,
+   "rel_db": 0.0,
+   "gap_ms": 1491,
+   "real_to_ms": 179,
+   "len_ms": 667
+  },
+  {
+   "slot": "hard_rr2",
+   "t": 59.22,
+   "real": true,
+   "rel_db": -0.2,
+   "gap_ms": 680,
+   "real_to_ms": 194,
+   "len_ms": 725
+  },
+  {
+   "slot": "hard_rr3",
+   "t": 155.22,
+   "real": true,
+   "rel_db": -0.8,
+   "gap_ms": 1493,
+   "real_to_ms": 159,
+   "len_ms": 670
+  },
+  {
+   "slot": "hard_rr4",
+   "t": 131.22,
+   "real": true,
+   "rel_db": -0.8,
+   "gap_ms": 916,
+   "real_to_ms": 174,
+   "len_ms": 625
+  },
+  {
+   "slot": "medium_rr1",
+   "t": 191.22,
+   "real": true,
+   "rel_db": -3.7,
+   "gap_ms": 351,
+   "real_to_ms": 149,
+   "len_ms": 580
+  },
+  {
+   "slot": "medium_rr2",
+   "t": 165.35,
+   "real": true,
+   "rel_db": -4.2,
+   "gap_ms": 246,
+   "real_to_ms": 149,
+   "len_ms": 589
+  },
+  {
+   "slot": "medium_rr3",
+   "t": 141.44,
+   "real": true,
+   "rel_db": -3.7,
+   "gap_ms": 193,
+   "real_to_ms": 149,
+   "len_ms": 516
+  },
+  {
+   "slot": "medium_rr4",
+   "t": 82.1,
+   "real": true,
+   "rel_db": -4.1,
+   "gap_ms": 264,
+   "real_to_ms": 149,
+   "len_ms": 643
+  },
+  {
+   "slot": "soft_rr1",
+   "t": 87.54,
+   "real": true,
+   "rel_db": -16.0,
+   "gap_ms": 287,
+   "real_to_ms": 154,
+   "len_ms": 641
+  },
+  {
+   "slot": "soft_rr2",
+   "t": 91.85,
+   "real": true,
+   "rel_db": -11.9,
+   "gap_ms": 282,
+   "real_to_ms": 267,
+   "len_ms": 828
+  },
+  {
+   "slot": "soft_rr3",
+   "t": 138.72,
+   "real": false,
+   "rel_db": -12,
+   "gap_ms": 460,
+   "real_to_ms": 259,
+   "len_ms": 650
+  },
+  {
+   "slot": "soft_rr4",
+   "t": 28.29,
+   "real": false,
+   "rel_db": -12,
+   "gap_ms": 556,
+   "real_to_ms": 149,
+   "len_ms": 700
+  },
+  {
+   "slot": "ghost_rr1",
+   "t": 22.1,
+   "real": false,
+   "rel_db": -20,
+   "gap_ms": 742,
+   "real_to_ms": 149,
+   "len_ms": 719
+  },
+  {
+   "slot": "ghost_rr2",
+   "t": 195.72,
+   "real": false,
+   "rel_db": -20,
+   "gap_ms": 366,
+   "real_to_ms": 184,
+   "len_ms": 650
+  },
+  {
+   "slot": "ghost_rr3",
+   "t": 25.85,
+   "real": false,
+   "rel_db": -20,
+   "gap_ms": 357,
+   "real_to_ms": 342,
+   "len_ms": 710
+  },
+  {
+   "slot": "ghost_rr4",
+   "t": 42.97,
+   "real": false,
+   "rel_db": -20,
+   "gap_ms": 1111,
+   "real_to_ms": 149,
+   "len_ms": 679
+  }
+ ],
+ "measurements": {
+  "hits_aligned": 153,
+  "corr_median": 0.931,
+  "level_sd_db": 4.21,
+  "t60_band": {
+   "band0": 0.48,
+   "band1": 0.23,
+   "band2": 0.47,
+   "band3": 0.69,
+   "band4": 0.48
+  },
+  "slope_db_s": [
+   -126.0,
+   -256.0,
+   -127.0,
+   -87.0,
+   -126.0
+  ],
+  "audit_0_5ms": {
+   "snare": -9.7,
+   "drums": -9.4,
+   "resid": -35.6,
+   "kick": -26.0,
+   "hh": -34.2,
+   "ride": -47.5,
+   "crash": -48.2,
+   "toms": -30.6
+  },
+  "coherent_resid_0_5ms": {
+   "coherent_resid_dB": -44.1,
+   "snare_dB": -10.9
+  },
+  "tilt": {
+   "60-150": -16.9,
+   "150-300": -0.1,
+   "300-600": -0.2,
+   "600-1200": -0.2,
+   "1200-2500": -0.5,
+   "2500-5000": -1.1,
+   "5000-8000": -1.3,
+   "8000-12000": -2.9,
+   "12000-16000": -5.8
+  },
+  "noise_floor_dbfs": -82.2
+ },
+ "golden": {
+  "name": "Architects - Blackhole",
+  "hard_slots_identical": 3,
+  "slots_identical": 5,
+  "of": 16,
+  "expected": {
+   "hard_rr1": 161.22,
+   "hard_rr2": 59.22,
+   "hard_rr3": 124.29,
+   "hard_rr4": 155.22,
+   "medium_rr1": 191.22,
+   "medium_rr2": 165.35,
+   "medium_rr3": 167.97,
+   "medium_rr4": 82.1,
+   "soft_rr1": 44.6,
+   "soft_rr2": 104.6,
+   "soft_rr3": 195.72,
+   "soft_rr4": 24.35,
+   "ghost_rr1": 42.97,
+   "ghost_rr2": 28.85,
+   "ghost_rr3": 77.22,
+   "ghost_rr4": 183.72
+  },
+  "got": {
+   "hard_rr1": 161.22,
+   "hard_rr2": 59.22,
+   "hard_rr3": 155.22,
+   "hard_rr4": 131.22,
+   "medium_rr1": 191.22,
+   "medium_rr2": 165.35,
+   "medium_rr3": 141.44,
+   "medium_rr4": 82.1,
+   "soft_rr1": 87.54,
+   "soft_rr2": 91.85,
+   "soft_rr3": 138.72,
+   "soft_rr4": 28.29,
+   "ghost_rr1": 22.1,
+   "ghost_rr2": 195.72,
+   "ghost_rr3": 25.85,
+   "ghost_rr4": 42.97
+  },
+  "hard_level_diff_db": 0.15,
+  "expected_hits_aligned": 150,
+  "expected_corr_median": 0.927,
+  "expected_layers_real": {
+   "hard": 4,
+   "medium": 4,
+   "soft": 0,
+   "ghost": 0
+  }
+ },
+ "error": "measurement gate failed",
+ "finished": "2026-11-06T14:05:10Z"
+}
