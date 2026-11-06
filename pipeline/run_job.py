@@ -20,7 +20,7 @@ WORK = os.environ.get('ZC_WORK', os.path.join(ROOT, 'work'))
 CKPT_SHA = 'd2a4aa53eb584d21eead358a4e66d1882ad182911be018f052b5da73be9096d0'
 CKPT_URL = 'https://huggingface.co/noblebarkrr/mvsepless_resources/resolve/main/mdx23c/mdx23c_drumsep_6stem_aufr33_jarredou.ckpt'
 MSST_COMMIT = 'f0b527736e7da24eae5b561a2bb1efd0569ec757'
-PIPELINE_VERSION = '4.2.0'
+PIPELINE_VERSION = '4.2.1'
 SR = 44100
 STEMS = ['Kick', 'Snare', 'Toms', 'Hh', 'Ride', 'Crash']
 
@@ -180,11 +180,11 @@ def main(job):
             attempts[-1]['excluded'] = list(excl); attempts[-1]['qc'] = qc_rows
             log(f'strategy {strat}:', ('OK score ' + str(attempts[-1]['score'])) if not why else 'rejected: ' + '; '.join(why))
             marginal = not why and (info['corr_median'] < float(os.environ.get('ZC_MARGINAL_CORR', 0.85)) or info['hits_aligned'] < 100)   # passes, but under the reference packs (corr 0.92..0.95, 116..217 hits): try the other recipes too and keep the best
-            if not why and not marginal: chosen = strat; break
+            if not why and not marginal: chosen = strat; best = attempts[-1]; break   # (4.2.1) 'best' was unbound on this path: every clean first-try song crashed with UnboundLocalError (Starset Lancaster, corr 0.899)
             if not why and marginal and strat != order[-1]: log(f'strategy {strat} is marginal (corr {info["corr_median"]}, {info["hits_aligned"]} hits): trying the remaining recipes, best score wins')
         report['strategy_attempts'] = [{k: v for k, v in a.items() if k not in ('qc', 'excluded')} for a in attempts]
         if info is None and not any(a.get('ok') for a in attempts): raise RuntimeError('every strategy raised during build: ' + '; '.join(a.get('why', '') for a in attempts))
-        passing = [a for a in attempts if a.get('ok')]
+        passing = [a for a in attempts if a.get('ok')]; best = attempts[-1] if chosen and attempts else None
         if passing and chosen is None:
             best = max(passing, key=lambda a: a['score']); chosen = best['strategy']
             if attempts[-1]['strategy'] != chosen or not attempts[-1].get('ok'):   # rebuild the winner so pack2/ holds its files (deterministic: same seed, same exclusions)
