@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "post-malone-dead-at-the-honk-d591c",
+   "artist": "Post Malone",
+   "title": "Dead at the Honky Tonk",
+   "zip": "ZC_Snare_post-malone-dead-at-the-honk-d591c_RoundRobins.zip",
+   "oneshot": "ZC_post-malone-dead-at-the-honk-d591c_oneshot.wav",
+   "pipeline": "4.2.0",
+   "finished": "2026-11-06T18:54:44Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 1,
+    "ghost": 2
+   },
+   "strategy": "B_dark",
+   "hits_aligned": 115,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 2/4; the rest are flagged estimates"
+  },
+  {
    "id": "linkin-park-figure-09-d3b1a",
    "artist": "Linkin Park",
    "title": "Figure.09",
@@ -53,24 +71,6 @@
    "strategy": "A_bright",
    "hits_aligned": 166,
    "realn": "real hits in this pack: hard 4/4, medium 1/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "post-malone-dead-at-the-honk-d591c",
-   "artist": "Post Malone",
-   "title": "Dead at the Honky Tonk",
-   "zip": "ZC_Snare_post-malone-dead-at-the-honk-d591c_RoundRobins.zip",
-   "oneshot": "ZC_post-malone-dead-at-the-honk-d591c_oneshot.wav",
-   "pipeline": "4.1.0",
-   "finished": "2026-11-06T17:14:15Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 3,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 109,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 3/4, ghost 0/4; the rest are flagged estimates"
   },
   {
    "id": "underoath-it-s-dangerous-bus-d4e00",

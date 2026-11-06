@@ -1,0 +1,57 @@
+{
+ "job": "post-malone-dead-at-the-honk-d591c",
+ "artist": "Post Malone",
+ "title": "Dead at the Honky Tonk",
+ "status": "OK",
+ "pipeline": "4.2.0",
+ "strategy": "B_dark",
+ "input_sha256": "aca26e05138003c565cdac438a1a20a0abccd74d62d5bab8c1acc27641c6dac6",
+ "hits_aligned": 115,
+ "hits_per_min": 32.3,
+ "corr_median": 0.716,
+ "level_sd_db": 15.29,
+ "coherent_resid_below_snare_db": 23.9,
+ "separation_residual_below_drums_db": 27.2,
+ "hat_vs_snare_5_8k_db": -14.3,
+ "hat_vs_snare_2_5_5k_db": -16.0,
+ "tilt_5_8k_db": -1.5,
+ "lost_to_resid_db": {
+  "60-150": -0.11,
+  "150-300": -0.02,
+  "300-600": -0.04,
+  "600-1200": -0.05,
+  "1200-2500": -0.04,
+  "2500-5000": -0.04,
+  "5000-8000": -0.11,
+  "8000-12000": -0.1,
+  "12000-16000": -0.15
+ },
+ "t60_band": {
+  "band0": 0.4,
+  "band1": 0.97,
+  "band2": 1.61,
+  "band3": 0.58,
+  "band4": 0.47
+ },
+ "t60_mid_s": 1.05,
+ "noise_floor_dbfs": -91.7,
+ "layers_real": {
+  "hard": 4,
+  "medium": 4,
+  "soft": 1,
+  "ghost": 2
+ },
+ "input_kbps": 192,
+ "input_codec": "mp3",
+ "duration_s": 213.3,
+ "stem_rms_dbfs": {
+  "Kick": -18.0,
+  "Snare": -30.1,
+  "Toms": -49.7,
+  "Hh": -41.1,
+  "Ride": -54.6,
+  "Crash": -44.4
+ },
+ "hat_minus_snare_stem_db": -11.0,
+ "warnings": 6
+}
