@@ -1,6 +1,96 @@
 {
  "packs": [
   {
+   "id": "asking-alexandria-breathless-d53a2",
+   "artist": "Asking Alexandria",
+   "title": "Breathless",
+   "zip": "ZC_Snare_asking-alexandria-breathless-d53a2_RoundRobins.zip",
+   "oneshot": "ZC_asking-alexandria-breathless-d53a2_oneshot.wav",
+   "pipeline": "4.1.0",
+   "finished": "2026-11-06T17:19:24Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 1,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 302,
+   "realn": "real hits in this pack: hard 4/4, medium 1/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
+   "id": "asking-alexandria-the-final--d3f79",
+   "artist": "Asking Alexandria",
+   "title": "The Final Episode",
+   "zip": "ZC_Snare_asking-alexandria-the-final--d3f79_RoundRobins.zip",
+   "oneshot": "ZC_asking-alexandria-the-final--d3f79_oneshot.wav",
+   "pipeline": "4.1.0",
+   "finished": "2026-11-06T17:14:38Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 1,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 166,
+   "realn": "real hits in this pack: hard 4/4, medium 1/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
+   "id": "post-malone-dead-at-the-honk-d591c",
+   "artist": "Post Malone",
+   "title": "Dead at the Honky Tonk",
+   "zip": "ZC_Snare_post-malone-dead-at-the-honk-d591c_RoundRobins.zip",
+   "oneshot": "ZC_post-malone-dead-at-the-honk-d591c_oneshot.wav",
+   "pipeline": "4.1.0",
+   "finished": "2026-11-06T17:14:15Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 3,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 109,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 3/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
+   "id": "underoath-it-s-dangerous-bus-d4e00",
+   "artist": "Underoath",
+   "title": "It's Dangerous Business Walking Out Your Front Door",
+   "zip": "ZC_Snare_underoath-it-s-dangerous-bus-d4e00_RoundRobins.zip",
+   "oneshot": "ZC_underoath-it-s-dangerous-bus-d4e00_oneshot.wav",
+   "pipeline": "4.1.0",
+   "finished": "2026-11-06T17:10:37Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 129,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
+   "id": "linkin-park-figure-09-d3b1a",
+   "artist": "Linkin Park",
+   "title": "Figure.09",
+   "zip": "ZC_Snare_linkin-park-figure-09-d3b1a_RoundRobins.zip",
+   "oneshot": "ZC_linkin-park-figure-09-d3b1a_oneshot.wav",
+   "pipeline": "4.1.0",
+   "finished": "2026-11-06T16:58:07Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 1,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 130,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "nickelback-san-quentin-offic-39akj",
    "artist": "Nickelback",
    "title": "San Quentin",
@@ -55,5 +145,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 3
+ "count": 8
 }
