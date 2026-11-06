@@ -1,6 +1,6 @@
 import numpy as np, soundfile as sf, scipy.signal as sg, json, sys
 SR=44100; PRE=int(0.02*SR); LEN=int(1.0*SR); W=int(0.04*SR)
-P=dict(band=(2000,9000), height=5.0)   # detection recipe; library.STRATEGIES overrides this per song (set by build_pack before extract is called)
+P=dict(band=(2000,9000), height=5.0); MAXC=600   # detection recipe; library.STRATEGIES overrides this per song (set by build_pack before extract is called)
 def envdb(y,fr):
     n=len(y)//fr; return 10*np.log10((y[:n*fr].reshape(n,fr)**2).mean(1)+1e-14)
 def candidates(m):
@@ -24,6 +24,9 @@ def extract(x, cthr=0.5, verbose=True, gmin=0.3, gmax=2.5, sel_rel=None):
         body=[r for r in rows if r['bg']>3 and r['bs']>-3]; ref=np.percentile([r['lvl'] for r in body],75)
         rows=[r for r in body if sel_rel[0]<=r['lvl']-ref<sel_rel[1]]
         if len(rows)<12: raise ValueError(f'only {len(rows)} candidates in band {sel_rel}')
+    if sel_rel is None and len(rows)>MAXC:   # memory cap: a dense record throws 1000+ crack-band candidates (Metallica Fuel 1500+ -> 7.4 GB and an OOM kill); keep the loudest body-carrying ones, then the loudest rest
+        body=sorted([r for r in rows if r['bg']>3 and r['bs']>-3],key=lambda r:-r['lvl']); rest=sorted([r for r in rows if not (r['bg']>3 and r['bs']>-3)],key=lambda r:-r['lvl'])
+        rows=sorted((body+rest)[:MAXC],key=lambda r:r['t'])
     sos=sg.butter(4,list(P['band']),btype='band',fs=SR,output='sos'); sosw=sg.butter(2,[100,10000],btype='band',fs=SR,output='sos')
     segs=[]; meta=[]
     for r in rows:
@@ -62,7 +65,7 @@ def extract(x, cthr=0.5, verbose=True, gmin=0.3, gmax=2.5, sel_rel=None):
         T=np.tensordot(w,al/np.maximum(gains,1e-3)[:,None,None],axes=(0,0))
         if verbose: print(f' it{it}: kept {ok.sum()}/{n} corr med {np.median(corr[ok]):.2f} gain sd dB {np.std(20*np.log10(gains[ok])):.1f}')
     if ok.sum()<2: raise ValueError(f'only {int(ok.sum())} hits aligned')
-    kept=al[ok]/np.maximum(gains,1e-3)[ok][:,None,None]
+    kept=al[ok]/np.maximum(gains,1e-3)[ok][:,None,None]; del al, segs
     stats={}
     for a,b_,lab in [(0,0.01,'0-10ms'),(0.01,0.05,'10-50'),(0.05,0.15,'50-150'),(0.15,0.4,'150-400'),(0.4,0.9,'400-900')]:
         ia=PRE+int(a*SR); ib=PRE+int(b_*SR); eT=(T[ia:ib]**2).mean(); eI=(kept[:,ia:ib]**2).mean(); N=len(kept)
