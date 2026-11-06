@@ -15,6 +15,7 @@ on:
 permissions:
   contents: write
   actions: write
+  issues: write
 jobs:
   extract:
     runs-on: ubuntu-latest
@@ -71,6 +72,11 @@ jobs:
         env: { ZC_NTFY_DONE: 'zc-snare-done-3b0fd4cb77640a88e253c855' }
         run: |
           sha=$(git rev-parse HEAD); for id in ${{ steps.which.outputs.ids }}; do python3 pipeline/notify.py "$id" auto "$sha"; done
+      - name: Mail the pack (Gmail SMTP if ZC_SMTP_PASS is set, else FormSubmit, else a GitHub issue that GitHub e-mails to the owner)
+        if: steps.which.outputs.ids != '' && always()
+        env: { ZC_EMAIL: '${{ secrets.ZC_EMAIL }}', ZC_SMTP_PASS: '${{ secrets.ZC_SMTP_PASS }}', GH_TOKEN: '${{ github.token }}' }
+        run: |
+          sha=$(git rev-parse HEAD); for id in ${{ steps.which.outputs.ids }}; do python3 pipeline/mail.py "$id" "$sha" || true; done
       - name: Delete the song artifact
         if: github.event.inputs.intake_run != '' && always()
         env: { GH_TOKEN: '${{ github.token }}' }
