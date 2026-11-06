@@ -121,8 +121,11 @@ def main(job):
             S[s], _ = sf.read(p, dtype='float64')
         n = min(len(D), *[len(v) for v in S.values()]); resid = D[:n] - sum(v[:n] for v in S.values())
         report['stem_rms_dbfs'] = {k: round(db(v), 1) for k, v in S.items()}; rd = round(db(D) - db(resid), 1); report['separation_residual_below_drums_db'] = rd
-        G.check('separation_residual_below_drums_db', rd, rd >= 20, '>= 20 dB', 'the six stems must add back up to the drum stem (reference songs: 26.9..28.9)')
-        if rd < 25: report['warnings'].append(f'separation residual only {rd} dB under the drum stem (reference songs 26.9..28.9)')
+        # Global residual = what DrumSep assigned to no drum stem. On dense guitar records Demucs leaves guitar bleed in the drum stem and DrumSep rightly
+        # puts it nowhere (Nickelback 23.9 dB, Metallica Enter Sandman 17.9 dB) - that is not snare loss. The hard floor is 12 dB (stems do not add up at all);
+        # what the snare actually lost is gated per band after the build (snare_lost_to_residual_max_db <= 1.0 dB, hit-locked, 150 Hz-8 kHz, first 60 ms).
+        G.check('separation_residual_below_drums_db', rd, rd >= 12, '>= 12 dB', 'the six stems must add back up to the drum stem (reference songs 23.9..32.0; the snare-specific loss is gated per band below)')
+        if rd < 25: report['warnings'].append(f'separation residual {rd} dB under the drum stem (reference songs 23.9..32.0): the drum stem carries non-drum bleed the drum separator assigns to no stem; the snare-specific loss gate below is what counts')
         G.check('snare_stem_rms_dbfs', report['stem_rms_dbfs']['Snare'], -45 < report['stem_rms_dbfs']['Snare'] < -8, '-45..-8 dBFS', 'reference songs -20..-30')
         report['stages']['drumsep_s'] = round(time.time() - t, 1); save()
         if G.failed: raise RuntimeError('separation gate failed')
