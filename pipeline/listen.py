@@ -42,6 +42,10 @@ def main():
                     try: m = json.loads(line)
                     except Exception: continue
                     if m.get('event') == 'message':
+                        try: jid = str(json.loads(m.get('message', '')).get('id', ''))
+                        except Exception: jid = ''
+                        if jid and (os.path.exists(os.path.join(ROOT, 'queue', jid + '.json')) or os.path.exists(os.path.join(ROOT, 'packs', jid, 'report.json'))):
+                            log('already claimed, ignoring', jid); continue
                         log('job note', m.get('message', '')[:120]); out(1); return
         except Exception as e:
             log('stream dropped:', e)
