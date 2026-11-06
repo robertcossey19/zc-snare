@@ -1,0 +1,106 @@
+{
+ "job": "metallica-enter-sandman-d491e",
+ "status": "FAIL",
+ "pipeline": "4.1.0",
+ "stages": {
+  "decode_s": 0.8,
+  "demucs_s": 195.2,
+  "drumsep_s": 1846.2
+ },
+ "gates": [
+  {
+   "name": "duration_s",
+   "value": 331.6,
+   "limit": "30..720 s",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "name": "mix_peak_dbfs",
+   "value": 0.0,
+   "limit": "> -30 dBFS",
+   "ok": true,
+   "note": "silent or near-silent file"
+  },
+  {
+   "name": "clipped_fraction",
+   "value": 0.0,
+   "limit": "< 0.02",
+   "ok": true,
+   "note": "samples at full scale"
+  },
+  {
+   "name": "drums_rms_dbfs",
+   "value": -20.7,
+   "limit": "> -45 dBFS",
+   "ok": true,
+   "note": "Demucs found no drum content"
+  },
+  {
+   "name": "drums_minus_mix_db",
+   "value": -6.2,
+   "limit": "-25..+3 dB",
+   "ok": true,
+   "note": "drum share of the mix"
+  },
+  {
+   "name": "separation_residual_below_drums_db",
+   "value": 17.9,
+   "limit": ">= 20 dB",
+   "ok": false,
+   "note": "the six stems must add back up to the drum stem (reference songs: 26.9..28.9)"
+  },
+  {
+   "name": "snare_stem_rms_dbfs",
+   "value": -30.5,
+   "limit": "-45..-8 dBFS",
+   "ok": true,
+   "note": "reference songs -20..-30"
+  }
+ ],
+ "warnings": [
+  "lossy source: top end limited by the codec (~16 kHz for mp3); WAV/FLAC input gives a cleaner result",
+  "separation residual only 17.9 dB under the drum stem (reference songs 26.9..28.9)"
+ ],
+ "started": "2026-11-06T16:44:39Z",
+ "artist": "Metallica",
+ "title": "Enter Sandman",
+ "mixer": "unknown",
+ "input_name": "input.mp3",
+ "input_bytes": 7959751,
+ "input_sha256": "a31f498fe1074963e0b1a03564119bdb283b57201a7d7d0908f360442f776730",
+ "input_codec": "mp3",
+ "input_sr": 44100,
+ "input_bitrate": 192018,
+ "duration_s": 331.6,
+ "mix_rms_dbfs": -14.5,
+ "mix_peak_dbfs": 0.0,
+ "log_tail": [
+  "[    0.0s] job metallica-enter-sandman-d491e | Metallica - Enter Sandman | input.mp3 7959751 bytes",
+  "[    0.0s] $ ffprobe -v error -print_format json -show_format -show_streams /home/runner/work/zc-snare/zc-snare/jobs/metallica-enter-sandman-d491e/input.mp3",
+  "[    0.1s] $ ffmpeg -hide_banner -loglevel error -y -i /home/runner/work/zc-snare/zc-snare/jobs/metallica-enter-sandman-d491e/input.mp3 -vn -ar 44100 -ac 2 -c:a pcm_s16le /home/runner/work/zc-snare/zc-snare/work/audio/metallica-enter-sandman-d491e.wav",
+  "[    0.8s] PASS duration_s = 331.6 (limit 30..720 s) ",
+  "[    0.8s] PASS mix_peak_dbfs = 0.0 (limit > -30 dBFS) silent or near-silent file",
+  "[    0.8s] PASS clipped_fraction = 0.0 (limit < 0.02) samples at full scale",
+  "[    0.8s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m demucs -n htdemucs --two-stems=drums -d cpu -j 1 --segment 7 -o /home/runner/work/zc-snare/zc-snare/work/sep /home/runner/work/zc-snare/zc-snare/work/audio/metallica-enter-sandman-d491e.wav",
+  "[  195.9s] PASS drums_rms_dbfs = -20.7 (limit > -45 dBFS) Demucs found no drum content",
+  "[  196.0s] PASS drums_minus_mix_db = -6.2 (limit -25..+3 dB) drum share of the mix",
+  "[  196.6s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python inference.py --model_type mdx23c --config_path /home/runner/work/zc-snare/zc-snare/pipeline/drumsep.yaml --start_check_point /home/runner/work/zc-snare/zc-snare/work/ds/drumsep.ckpt --input_folder /home/runner/work/zc-snare/zc-snare/work/ds/in_metallica-enter-sandman-d491e --store_dir /home/runner/work/zc-snare/zc-snare/work/ds/out --force_cpu --pcm_type FLOAT --disable_detailed_pbar",
+  "[ 2042.2s] FAIL separation_residual_below_drums_db = 17.9 (limit >= 20 dB) the six stems must add back up to the drum stem (reference songs: 26.9..28.9)",
+  "[ 2042.2s] PASS snare_stem_rms_dbfs = -30.5 (limit -45..-8 dBFS) reference songs -20..-30",
+  "[ 2042.2s] FAIL: separation gate failed"
+ ],
+ "elapsed_s": 2042.2,
+ "drums_rms_dbfs": -20.7,
+ "stem_rms_dbfs": {
+  "Kick": -24.3,
+  "Snare": -30.5,
+  "Toms": -28.5,
+  "Hh": -33.2,
+  "Ride": -51.5,
+  "Crash": -34.1
+ },
+ "separation_residual_below_drums_db": 17.9,
+ "error": "separation gate failed",
+ "finished": "2026-11-06T17:18:41Z"
+}
