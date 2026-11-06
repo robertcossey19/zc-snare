@@ -1,0 +1,11 @@
+{
+ "job": "limp-bizkit-making-love-to-m-xaom8",
+ "status": "FAIL",
+ "error": "could not fetch the upload: HTTP Error 404: Not Found. Re-upload and hit GO again (temp uploads live 60 min).",
+ "artist": "Limp Bizkit",
+ "title": "Making Love To Morgan Wallen",
+ "gates": [],
+ "warnings": [],
+ "started": "2026-11-06T13:07:49Z",
+ "elapsed_s": 0
+}
