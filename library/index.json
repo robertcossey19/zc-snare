@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "metallica-enter-sandman-d491e",
+   "artist": "Metallica",
+   "title": "Enter Sandman",
+   "zip": "ZC_Snare_metallica-enter-sandman-d491e_RoundRobins.zip",
+   "oneshot": "ZC_metallica-enter-sandman-d491e_oneshot.wav",
+   "pipeline": "4.2.0",
+   "finished": "2026-11-06T19:20:39Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 4,
+    "ghost": 0
+   },
+   "strategy": "D_sparse",
+   "hits_aligned": 172,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 4/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "deftones-change-in-the-house-d4460",
    "artist": "Deftones",
    "title": "Change (In the House of Flies)",
@@ -181,5 +199,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 10
+ "count": 11
 }
