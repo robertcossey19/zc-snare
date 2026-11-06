@@ -47,7 +47,9 @@ jobs:
       - name: Start extract
         if: steps.ids.outputs.ids != ''
         env: { GH_TOKEN: '${{ github.token }}' }
-        run: gh workflow run extract -R "$GITHUB_REPOSITORY" -f ids="${{ steps.ids.outputs.ids }}" -f intake_run="${{ github.run_id }}"
+        run: |
+          # one extract run per song so a batch runs in parallel (public repo: 20 concurrent jobs); each run only deletes the shared artifact when it is the last one
+          for id in ${{ steps.ids.outputs.ids }}; do gh workflow run extract -R "$GITHUB_REPOSITORY" -f ids="$id" -f intake_run="${{ github.run_id }}"; sleep 2; done
       - name: Hand off to the next listener
         if: always()
         env: { GH_TOKEN: '${{ github.token }}' }

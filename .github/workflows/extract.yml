@@ -81,4 +81,7 @@ jobs:
         if: github.event.inputs.intake_run != '' && always()
         env: { GH_TOKEN: '${{ github.token }}' }
         run: |
+          # other extract runs from the same intake batch may still need the songs: only delete when none is queued or running besides this one
+          others=$(gh run list -R "$GITHUB_REPOSITORY" -w extract --json databaseId,status --jq '[.[] | select(.databaseId != ${{ github.run_id }}) | select(.status == "queued" or .status == "in_progress" or .status == "waiting")] | length')
+          if [ "${others:-0}" != "0" ]; then echo "$others other extract run(s) active - leaving the artifact (3-day retention)"; exit 0; fi
           for a in $(gh api "repos/$GITHUB_REPOSITORY/actions/runs/${{ github.event.inputs.intake_run }}/artifacts" --jq '.artifacts[].id'); do gh api -X DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/$a" && echo "deleted artifact $a"; done
