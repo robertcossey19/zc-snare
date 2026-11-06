@@ -100,6 +100,11 @@ def build(name, analyse_only=False, realvel=None):
     bands = [(60, 150), (150, 300), (300, 600), (600, 1200), (1200, 2500), (2500, 5000), (5000, 8000), (8000, 12000), (12000, 16000)]
     tilt = {f'{a}-{b}': round(float(10 * np.log10(Ps[(f >= a) & (f < b)].sum() / Pd[(f >= a) & (f < b)].sum())), 1) for a, b in bands}
     print('  snare-stem minus drum-stem level per band, first 60 ms (dB; negative = separator removed energy there, expected where hat/kick live):', tilt)
+    # what the separator dropped into NOTHING (not into kick/hat/cymbal stems): snare vs snare+unassigned residual, hit-locked, first 60 ms
+    _, Pr = spec(AR[hm], 0, 0.06); dropped = {f'{a}-{b}': round(float(10 * np.log10(Ps[(f >= a) & (f < b)].sum() / (Ps + Pr)[(f >= a) & (f < b)].sum())), 2) for a, b in bands}
+    _, Ph = spec(A['Hh'][hm], 0, 0.06); _, Pc = spec(A['Crash'][hm], 0, 0.06); hat_vs_snare = {f'{a}-{b}': round(float(10 * np.log10((Ph + Pc)[(f >= a) & (f < b)].sum() / Ps[(f >= a) & (f < b)].sum())), 1) for a, b in bands}
+    print('  snare lost to unassigned residual per band (dB; this is the real separation loss):', dropped)
+    print('  hat+crash stems vs snare stem at the snare onsets per band (dB; how much cymbal rides the backbeat on this record):', hat_vs_snare)
     # ---- 4. tail: masked (next-snare excluded) median envelope per band -> measured decay slope per band; stem noise floor ----
     E = np.array([env_db(h.mean(1)) for h in kept]); f0 = PRE // FR; t_ax = (np.arange(E.shape[1]) * FR - PRE) / SR
     HB = np.array([bandsplit(h) for h in kept]); EB = np.array([[env_db(HB[j, b].mean(1)) for b in range(NB)] for j in range(n)])
@@ -257,7 +262,7 @@ def build(name, analyse_only=False, realvel=None):
         for i, y in enumerate(layers[lname]):
             sf.write(f'{out}/ZC_{name}_{lname}_rr{i + 1}.wav', to48(y), 48000, subtype='PCM_24'); sf.write(f'{out}/flac_{lname}_{i + 1}.flac', to48(y), 48000, format='FLAC', subtype='PCM_24')
     sf.write(f'{out}/ZC_{name}_oneshot.wav', to48(layers['hard'][0]), 48000, subtype='PCM_24')
-    info = dict(song=name, hits_aligned=n, corr_median=round(float(np.median(corr)), 3), level_sd_db=round(float(np.std(20 * np.log10(gains))), 2), noise_floor_dbfs=round(floor, 1), tail_rel_peak_db=tailinfo, slope_db_s=slope.round(0).tolist(), slope_early_db_s=[None if np.isnan(v) else float(v) for v in slope_early.round(0)], fit_to_ms=(fit_to*1000).round(0).tolist(), t60_band=t60, audit=audit, coherent_resid=coh, stem_vs_drums_tilt_db=tilt, selected=hinfo, layers_real=layers_real, real_velocity=realvel)
+    info = dict(song=name, hits_aligned=n, corr_median=round(float(np.median(corr)), 3), level_sd_db=round(float(np.std(20 * np.log10(gains))), 2), noise_floor_dbfs=round(floor, 1), tail_rel_peak_db=tailinfo, slope_db_s=slope.round(0).tolist(), slope_early_db_s=[None if np.isnan(v) else float(v) for v in slope_early.round(0)], fit_to_ms=(fit_to*1000).round(0).tolist(), t60_band=t60, audit=audit, coherent_resid=coh, stem_vs_drums_tilt_db=tilt, lost_to_resid_db=dropped, hat_vs_snare_db=hat_vs_snare, selected=hinfo, layers_real=layers_real, real_velocity=realvel)
     json.dump(info, open(f'{out}/info.json', 'w'), indent=1); print('  wrote', out)
     return info
 
