@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "underoath-it-s-dangerous-bus-d4e00",
+   "artist": "Underoath",
+   "title": "It's Dangerous Business Walking Out Your Front Door",
+   "zip": "ZC_Snare_underoath-it-s-dangerous-bus-d4e00_RoundRobins.zip",
+   "oneshot": "ZC_underoath-it-s-dangerous-bus-d4e00_oneshot.wav",
+   "pipeline": "4.3.1",
+   "finished": "2026-11-07T01:51:01Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 131,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "deftones-change-in-the-house-d4460",
    "artist": "Deftones",
    "title": "Change (In the House of Flies)",
@@ -35,24 +53,6 @@
    "strategy": "A_bright",
    "hits_aligned": 170,
    "realn": "real hits in this pack: hard 4/4, medium 2/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "underoath-it-s-dangerous-bus-d4e00",
-   "artist": "Underoath",
-   "title": "It's Dangerous Business Walking Out Your Front Door",
-   "zip": "ZC_Snare_underoath-it-s-dangerous-bus-d4e00_RoundRobins.zip",
-   "oneshot": "ZC_underoath-it-s-dangerous-bus-d4e00_oneshot.wav",
-   "pipeline": "4.3.0",
-   "finished": "2026-11-07T01:09:36Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 130,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   },
   {
    "id": "asking-alexandria-breathless-d53a2",
