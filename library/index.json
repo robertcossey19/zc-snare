@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "asking-alexandria-breathless-d53a2",
+   "artist": "Asking Alexandria",
+   "title": "Breathless",
+   "zip": "ZC_Snare_asking-alexandria-breathless-d53a2_RoundRobins.zip",
+   "oneshot": "ZC_asking-alexandria-breathless-d53a2_oneshot.wav",
+   "pipeline": "4.3.0",
+   "finished": "2026-11-07T01:02:46Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 3,
+    "soft": 0,
+    "ghost": 1
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 297,
+   "realn": "real hits in this pack: hard 4/4, medium 3/4, soft 0/4, ghost 1/4; the rest are flagged estimates"
+  },
+  {
    "id": "metallica-enter-sandman-d491e",
    "artist": "Metallica",
    "title": "Enter Sandman",
@@ -89,24 +107,6 @@
    "strategy": "B_dark",
    "hits_aligned": 135,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 1/4; the rest are flagged estimates"
-  },
-  {
-   "id": "asking-alexandria-breathless-d53a2",
-   "artist": "Asking Alexandria",
-   "title": "Breathless",
-   "zip": "ZC_Snare_asking-alexandria-breathless-d53a2_RoundRobins.zip",
-   "oneshot": "ZC_asking-alexandria-breathless-d53a2_oneshot.wav",
-   "pipeline": "4.1.0",
-   "finished": "2026-11-06T17:19:24Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 1,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 302,
-   "realn": "real hits in this pack: hard 4/4, medium 1/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   },
   {
    "id": "asking-alexandria-the-final--d3f79",

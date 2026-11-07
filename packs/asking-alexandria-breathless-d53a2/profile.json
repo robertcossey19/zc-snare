@@ -1,0 +1,57 @@
+{
+ "job": "asking-alexandria-breathless-d53a2",
+ "artist": "Asking Alexandria",
+ "title": "Breathless",
+ "status": "OK",
+ "pipeline": "4.3.0",
+ "strategy": "A_bright",
+ "input_sha256": "22c92c158d76165668a8b7e19badd8214d6013505fe07b60e8b1d0f385500204",
+ "hits_aligned": 297,
+ "hits_per_min": 68.7,
+ "corr_median": 0.909,
+ "level_sd_db": 2.41,
+ "coherent_resid_below_snare_db": 35.1,
+ "separation_residual_below_drums_db": 24.0,
+ "hat_vs_snare_5_8k_db": -7.6,
+ "hat_vs_snare_2_5_5k_db": -9.5,
+ "tilt_5_8k_db": -3.6,
+ "lost_to_resid_db": {
+  "60-150": -0.22,
+  "150-300": -0.0,
+  "300-600": -0.0,
+  "600-1200": -0.01,
+  "1200-2500": -0.02,
+  "2500-5000": -0.04,
+  "5000-8000": -0.29,
+  "8000-12000": -0.4,
+  "12000-16000": -0.58
+ },
+ "t60_band": {
+  "band0": 0.46,
+  "band1": 0.45,
+  "band2": 0.41,
+  "band3": 0.59,
+  "band4": 0.47
+ },
+ "t60_mid_s": 0.48,
+ "noise_floor_dbfs": -84.7,
+ "layers_real": {
+  "hard": 4,
+  "medium": 3,
+  "soft": 0,
+  "ghost": 1
+ },
+ "input_kbps": 192,
+ "input_codec": "mp3",
+ "duration_s": 259.3,
+ "stem_rms_dbfs": {
+  "Kick": -17.2,
+  "Snare": -24.6,
+  "Toms": -25.7,
+  "Hh": -36.3,
+  "Ride": -51.8,
+  "Crash": -35.4
+ },
+ "hat_minus_snare_stem_db": -11.7,
+ "warnings": 6
+}
