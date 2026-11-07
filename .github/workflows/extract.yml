@@ -86,8 +86,11 @@ jobs:
           git commit -q -m "packs: ${{ steps.which.outputs.ids }} [skip ci]" || { echo "nothing to commit"; exit 0; }
           # the library index is derived from packs/, so it is never part of the rebased commit: rebuild it AFTER every rebase and amend (no index conflicts between parallel runs)
           ok=0; for i in 1 2 3 4 5 6 7 8; do
-            git fetch -q origin main && { git rebase -q origin/main || { git rebase --abort; git checkout -q --theirs -- library/index.json 2>/dev/null; false; }; } || { echo "rebase retry $i"; sleep $((i*5)); continue; }
-            git checkout -q origin/main -- library/index.json 2>/dev/null || true; python3 pipeline/index_packs.py; git add library/index.json; git commit -q --amend --no-edit
+            git fetch -q origin main || { echo "fetch retry $i"; sleep $((i*5)); continue; }
+            # carry origin's index inside our commit before rebasing (3-way merge then sees identical content: no conflict), rebuild it after
+            git checkout -q origin/main -- library/index.json 2>/dev/null && git commit -q --amend --no-edit || true
+            git rebase -q origin/main || { git rebase --abort 2>/dev/null; echo "rebase retry $i"; sleep $((i*5)); continue; }
+            python3 pipeline/index_packs.py; git add library/index.json; git commit -q --amend --no-edit
             git push -q origin HEAD:main && { ok=1; break; } || { echo "push retry $i"; sleep $((i*5)); }
           done
           [ $ok = 1 ] || { echo "::error::could not publish results after 8 attempts"; exit 1; }
