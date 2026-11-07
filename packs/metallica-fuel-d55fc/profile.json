@@ -3,43 +3,43 @@
  "artist": "Metallica",
  "title": "Fuel",
  "status": "OK",
- "pipeline": "4.2.0",
+ "pipeline": "4.3.0",
  "strategy": "C_dense",
  "input_sha256": "ddf41710808ca20cf771c444dc5b554ce263532f3087bfd1cb97f06b61c2f107",
- "hits_aligned": 290,
- "hits_per_min": 64.5,
- "corr_median": 0.68,
- "level_sd_db": 2.84,
- "coherent_resid_below_snare_db": 36.1,
- "separation_residual_below_drums_db": 23.1,
- "hat_vs_snare_5_8k_db": -6.7,
- "hat_vs_snare_2_5_5k_db": -14.1,
+ "hits_aligned": 291,
+ "hits_per_min": 64.7,
+ "corr_median": 0.675,
+ "level_sd_db": 2.79,
+ "coherent_resid_below_snare_db": 38.5,
+ "separation_residual_below_drums_db": 22.8,
+ "hat_vs_snare_5_8k_db": -6.6,
+ "hat_vs_snare_2_5_5k_db": -14.2,
  "tilt_5_8k_db": -2.5,
  "lost_to_resid_db": {
-  "60-150": -0.11,
+  "60-150": -0.08,
   "150-300": -0.0,
-  "300-600": -0.01,
+  "300-600": -0.0,
   "600-1200": -0.0,
   "1200-2500": -0.0,
   "2500-5000": -0.01,
-  "5000-8000": -0.03,
-  "8000-12000": -0.04,
-  "12000-16000": -0.11
+  "5000-8000": -0.02,
+  "8000-12000": -0.03,
+  "12000-16000": -0.09
  },
  "t60_band": {
-  "band0": 0.77,
-  "band1": 0.74,
-  "band2": 0.83,
-  "band3": 0.81,
-  "band4": 0.58
+  "band0": 0.86,
+  "band1": 0.9,
+  "band2": 0.82,
+  "band3": 0.9,
+  "band4": 0.42
  },
- "t60_mid_s": 0.79,
- "noise_floor_dbfs": -78.7,
+ "t60_mid_s": 0.87,
+ "noise_floor_dbfs": -78.9,
  "layers_real": {
   "hard": 4,
   "medium": 4,
   "soft": 2,
-  "ghost": 1
+  "ghost": 0
  },
  "input_kbps": 192,
  "input_codec": "mp3",
@@ -48,10 +48,10 @@
   "Kick": -19.5,
   "Snare": -25.7,
   "Toms": -31.8,
-  "Hh": -31.0,
-  "Ride": -53.5,
-  "Crash": -35.4
+  "Hh": -31.1,
+  "Ride": -54.0,
+  "Crash": -35.5
  },
- "hat_minus_snare_stem_db": -5.3,
- "warnings": 6
+ "hat_minus_snare_stem_db": -5.4,
+ "warnings": 7
 }
