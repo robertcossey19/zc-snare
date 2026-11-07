@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "asking-alexandria-breathless-d53a2",
+   "artist": "Asking Alexandria",
+   "title": "Breathless",
+   "zip": "ZC_Snare_asking-alexandria-breathless-d53a2_RoundRobins.zip",
+   "oneshot": "ZC_asking-alexandria-breathless-d53a2_oneshot.wav",
+   "pipeline": "4.3.1",
+   "finished": "2026-11-07T02:01:56Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 2,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 298,
+   "realn": "real hits in this pack: hard 4/4, medium 2/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "linkin-park-figure-09-d3b1a",
    "artist": "Linkin Park",
    "title": "Figure.09",
@@ -71,24 +89,6 @@
    "strategy": "C_dense",
    "hits_aligned": 149,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "asking-alexandria-breathless-d53a2",
-   "artist": "Asking Alexandria",
-   "title": "Breathless",
-   "zip": "ZC_Snare_asking-alexandria-breathless-d53a2_RoundRobins.zip",
-   "oneshot": "ZC_asking-alexandria-breathless-d53a2_oneshot.wav",
-   "pipeline": "4.3.0",
-   "finished": "2026-11-07T01:02:46Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 3,
-    "soft": 0,
-    "ghost": 1
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 297,
-   "realn": "real hits in this pack: hard 4/4, medium 3/4, soft 0/4, ghost 1/4; the rest are flagged estimates"
   },
   {
    "id": "post-malone-dead-at-the-honk-d591c",
