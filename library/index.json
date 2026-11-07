@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "linkin-park-figure-09-d3b1a",
+   "artist": "Linkin Park",
+   "title": "Figure.09",
+   "zip": "ZC_Snare_linkin-park-figure-09-d3b1a_RoundRobins.zip",
+   "oneshot": "ZC_linkin-park-figure-09-d3b1a_oneshot.wav",
+   "pipeline": "4.3.1",
+   "finished": "2026-11-07T01:59:27Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 2,
+    "ghost": 3
+   },
+   "strategy": "D_sparse",
+   "hits_aligned": 134,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 3/4; the rest are flagged estimates"
+  },
+  {
    "id": "asking-alexandria-the-final--d3f79",
    "artist": "Asking Alexandria",
    "title": "The Final Episode",
@@ -89,24 +107,6 @@
    "strategy": "B_dark",
    "hits_aligned": 115,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 2/4; the rest are flagged estimates"
-  },
-  {
-   "id": "linkin-park-figure-09-d3b1a",
-   "artist": "Linkin Park",
-   "title": "Figure.09",
-   "zip": "ZC_Snare_linkin-park-figure-09-d3b1a_RoundRobins.zip",
-   "oneshot": "ZC_linkin-park-figure-09-d3b1a_oneshot.wav",
-   "pipeline": "4.2.0",
-   "finished": "2026-11-06T18:50:59Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 1,
-    "ghost": 1
-   },
-   "strategy": "B_dark",
-   "hits_aligned": 135,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 1/4; the rest are flagged estimates"
   },
   {
    "id": "nickelback-san-quentin-offic-39akj",
