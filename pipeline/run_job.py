@@ -20,7 +20,7 @@ WORK = os.environ.get('ZC_WORK', os.path.join(ROOT, 'work'))
 CKPT_SHA = 'd2a4aa53eb584d21eead358a4e66d1882ad182911be018f052b5da73be9096d0'
 CKPT_URL = 'https://huggingface.co/noblebarkrr/mvsepless_resources/resolve/main/mdx23c/mdx23c_drumsep_6stem_aufr33_jarredou.ckpt'
 MSST_COMMIT = 'f0b527736e7da24eae5b561a2bb1efd0569ec757'
-PIPELINE_VERSION = '4.2.1'
+PIPELINE_VERSION = '4.3.0'
 SR = 44100
 STEMS = ['Kick', 'Snare', 'Toms', 'Hh', 'Ride', 'Crash']
 
@@ -223,8 +223,10 @@ def main(job):
         G.check('t60_mid_bands_s', t60[1:4], all(0.08 <= v <= 3.0 for v in t60[1:4]), '0.08..3.0 s', 'measured late decay 150 Hz-6 kHz')
         lr = {k: int(sum(v)) for k, v in info['layers_real'].items()}; report['layers_real'] = lr
         G.check('selected_hits_distinct_min_gap_s', round(mind, 3), mind >= 0.05, '>= 0.05 s', 'all 16 files come from different strokes')
-        report['selected'] = [dict(slot=f"{h['layer']}_rr{i % 4 + 1}", t=h['t'], real=bool(h.get('real')), rel_db=h.get('rel_db'), gap_ms=h['gap_ms'], real_to_ms=h['real_to_ms'], len_ms=h['len_ms']) for i, h in enumerate(info['selected'])]
-        report['measurements'] = dict(hits_aligned=info['hits_aligned'], corr_median=info['corr_median'], level_sd_db=info['level_sd_db'], t60_band=info['t60_band'], slope_db_s=info['slope_db_s'], audit_0_5ms=a5, coherent_resid_0_5ms=coh, tilt=tilt, lost_to_resid_db=lost, hat_vs_snare_db=hvs, noise_floor_dbfs=info['noise_floor_dbfs'])
+        report['selected'] = [dict(slot=f"{h['layer']}_rr{i % 4 + 1}", t=h['t'], real=bool(h.get('real')), rel_db=h.get('rel_db'), gap_ms=h['gap_ms'], real_to_ms=h['real_to_ms'], reclaimed_ms=h.get('reclaimed_ms'), len_ms=h['len_ms']) for i, h in enumerate(info['selected'])]
+        thin = info.get('thin_stem') or {}; rb = [k for k, v in thin.items() if v.get('reclaim')]
+        if rb: report['warnings'].append(f"thin snare stem in {', '.join(rb)} (band1 150-600, band2 600-2k, band3 2-6k, band4 >6k Hz): the separator handed this record's hit-locked snare ring beyond ~100 ms to the hat/cymbal stems (other-stem excess at 100 ms, low-hat vs high-hat hits: " + '; '.join(f"{k} {thin[k]['other_excess_100_low_hat']}/{thin[k]['other_excess_100_high_hat']} dB" for k in rb) + "). Those bands' tails were reclaimed from that material per hit (Wiener gain against its pre-hit background, other strokes masked); see selected[].reclaimed_ms")
+        report['measurements'] = dict(hits_aligned=info['hits_aligned'], corr_median=info['corr_median'], level_sd_db=info['level_sd_db'], t60_band=info['t60_band'], slope_db_s=info['slope_db_s'], audit_0_5ms=a5, coherent_resid_0_5ms=coh, tilt=tilt, lost_to_resid_db=lost, hat_vs_snare_db=hvs, noise_floor_dbfs=info['noise_floor_dbfs'], thin_stem=thin, reclaim_bands=info.get('reclaim_bands'))
         prof = library.profile(dict(report, status='OK')); report['profile'] = prof
         if LIB:
             report['nearest'] = library.nearest(prof, LIB); report['library_notes'] = library.place(prof, LIB)

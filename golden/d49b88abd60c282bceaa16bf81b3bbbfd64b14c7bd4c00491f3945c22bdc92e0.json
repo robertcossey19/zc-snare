@@ -1,103 +1,103 @@
 {
  "name": "Nothing More - If It Doesn't Hurt",
  "job": "nm",
- "pipeline": "4.0.0",
+ "pipeline": "4.3.0",
  "selected": [
   {
    "slot": "hard_rr1",
    "t": 84.61,
-   "real": true,
-   "rel_db": 0.9
+   "rel_db": 0.9,
+   "real": true
   },
   {
    "slot": "hard_rr2",
-   "t": 41.66,
-   "real": true,
-   "rel_db": 0.4
+   "t": 87.14,
+   "rel_db": 0.5,
+   "real": true
   },
   {
    "slot": "hard_rr3",
-   "t": 119.35,
-   "real": true,
-   "rel_db": 1.5
+   "t": 133.24,
+   "rel_db": -0.2,
+   "real": true
   },
   {
    "slot": "hard_rr4",
-   "t": 160.08,
-   "real": true,
-   "rel_db": -0.4
+   "t": 41.66,
+   "rel_db": 0.4,
+   "real": true
   },
   {
    "slot": "medium_rr1",
    "t": 176.35,
-   "real": true,
-   "rel_db": -3.9
+   "rel_db": -3.9,
+   "real": true
   },
   {
    "slot": "medium_rr2",
-   "t": 165.61,
-   "real": true,
-   "rel_db": -3.1
+   "t": 176.03,
+   "rel_db": -4.5,
+   "real": true
   },
   {
    "slot": "medium_rr3",
-   "t": 112.08,
-   "real": true,
-   "rel_db": -7.0
+   "t": 175.87,
+   "rel_db": -3.6,
+   "real": true
   },
   {
    "slot": "medium_rr4",
-   "t": 176.03,
-   "real": true,
-   "rel_db": -4.5
+   "t": 165.61,
+   "rel_db": -3.1,
+   "real": true
   },
   {
    "slot": "soft_rr1",
    "t": 24.13,
-   "real": true,
-   "rel_db": -14.9
+   "rel_db": -14.9,
+   "real": true
   },
   {
    "slot": "soft_rr2",
    "t": 19.25,
-   "real": true,
-   "rel_db": -15.3
+   "rel_db": -15.3,
+   "real": true
   },
   {
    "slot": "soft_rr3",
-   "t": 87.14,
-   "real": false,
-   "rel_db": -12
+   "t": 104.82,
+   "rel_db": -12,
+   "real": false
   },
   {
    "slot": "soft_rr4",
-   "t": 133.24,
-   "real": false,
-   "rel_db": -12
+   "t": 174.77,
+   "rel_db": -12,
+   "real": false
   },
   {
    "slot": "ghost_rr1",
    "t": 112.38,
-   "real": true,
-   "rel_db": -22.9
+   "rel_db": -22.9,
+   "real": true
   },
   {
    "slot": "ghost_rr2",
-   "t": 70.71,
-   "real": false,
-   "rel_db": -20
+   "t": 44.19,
+   "rel_db": -20,
+   "real": false
   },
   {
    "slot": "ghost_rr3",
-   "t": 44.19,
-   "real": false,
-   "rel_db": -20
+   "t": 164.66,
+   "rel_db": -20,
+   "real": false
   },
   {
    "slot": "ghost_rr4",
-   "t": 104.82,
-   "real": false,
-   "rel_db": -20
+   "t": 160.08,
+   "rel_db": -20,
+   "real": false
   }
  ],
  "layers_real": {
@@ -115,5 +115,5 @@
   "band3": 0.55,
   "band4": 0.37
  },
- "note": "local reference run (pipeline 4.0.1); gate = hard picks >=3/4 identical, hits/corr/T60 within tolerance, hard 4 + medium >= ref-1 real"
+ "note": "local reference run (pipeline 4.0.1); gate = hard picks >=3/4 identical, hits/corr/T60 within tolerance, hard 4 + medium >= ref-1 real | 4.3.0: picks regenerated on the build machine after the selection score changed (exposure: background under the hit and tail SNR weigh more; NaN-safe envelope conformity). Same strokes population; 2-3 of 4 loud picks identical to 4.0.0."
 }

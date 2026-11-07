@@ -12,6 +12,10 @@ on:
         description: 'intake run id whose artifact holds the songs (blank for jobs/ committed by hand)'
         required: false
         default: ''
+      rebuild:
+        description: 'rebuild existing packs in place: space-separated id=https://tmpfiles.org/dl/... pairs (same song, same id; artist/title kept from the old report)'
+        required: false
+        default: ''
 permissions:
   contents: write
   actions: write
@@ -29,7 +33,16 @@ jobs:
         id: which
         run: |
           set -e
-          if [ -n "${{ github.event.inputs.ids }}" ]; then ids="${{ github.event.inputs.ids }}"; else
+          for pair in ${{ github.event.inputs.rebuild }}; do id="${pair%%=*}"; url="${pair#*=}"; mkdir -p "jobs/$id"
+            curl -sSL -A "Mozilla/5.0 zc-snare-rebuild" -o "jobs/$id/input.mp3" "$url"; ls -la "jobs/$id/input.mp3"; file "jobs/$id/input.mp3" | grep -qi html && { echo "::error::$id: temp link returned a web page (expired?)"; exit 1; }
+            python3 - "$id" <<'PY'
+          import json, os, sys; jid = sys.argv[1]; old = {}
+          try: old = json.load(open(f'packs/{jid}/report.json'))
+          except Exception: pass
+          json.dump(dict(id=jid, artist=old.get('artist') or 'Unknown artist', title=old.get('title') or jid, mixer=old.get('mixer') or '', rebuild_of=old.get('pipeline')), open(f'jobs/{jid}/meta.json', 'w'))
+          PY
+            ids="$ids $id"; done
+          if [ -n "$ids" ]; then :; elif [ -n "${{ github.event.inputs.ids }}" ]; then ids="${{ github.event.inputs.ids }}"; else
             ids=""; for d in jobs/*/; do [ -d "$d" ] || continue; id=$(basename "$d"); ls "$d"input.* >/dev/null 2>&1 || continue; [ -f "packs/$id/report.json" ] && continue; ids="$ids $id"; done; fi
           for id in $ids; do if [ -d "work/intake/$id" ]; then mkdir -p "jobs/$id"; mv work/intake/$id/input.* "jobs/$id/"; cp "work/intake/$id/meta.json" "jobs/$id/meta.json"; fi; ls -la "jobs/$id" || true; done
           echo "ids=$ids" >> "$GITHUB_OUTPUT"; echo "jobs to run: [$ids]"
