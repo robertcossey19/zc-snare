@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "underoath-it-s-dangerous-bus-d4e00",
+   "artist": "Underoath",
+   "title": "It's Dangerous Business Walking Out Your Front Door",
+   "zip": "ZC_Snare_underoath-it-s-dangerous-bus-d4e00_RoundRobins.zip",
+   "oneshot": "ZC_underoath-it-s-dangerous-bus-d4e00_oneshot.wav",
+   "pipeline": "4.3.0",
+   "finished": "2026-11-07T01:09:36Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 130,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "asking-alexandria-breathless-d53a2",
    "artist": "Asking Alexandria",
    "title": "Breathless",
@@ -125,24 +143,6 @@
    "strategy": "A_bright",
    "hits_aligned": 166,
    "realn": "real hits in this pack: hard 4/4, medium 1/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "underoath-it-s-dangerous-bus-d4e00",
-   "artist": "Underoath",
-   "title": "It's Dangerous Business Walking Out Your Front Door",
-   "zip": "ZC_Snare_underoath-it-s-dangerous-bus-d4e00_RoundRobins.zip",
-   "oneshot": "ZC_underoath-it-s-dangerous-bus-d4e00_oneshot.wav",
-   "pipeline": "4.1.0",
-   "finished": "2026-11-06T17:10:37Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 129,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   },
   {
    "id": "nickelback-san-quentin-offic-39akj",
