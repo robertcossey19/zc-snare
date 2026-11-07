@@ -34,9 +34,13 @@ jobs:
         run: |
           set -e
           for pair in ${{ github.event.inputs.rebuild }}; do id="${pair%%=*}"; url="${pair#*=}"; mkdir -p "jobs/$id"
-            curl -sSL -A "Mozilla/5.0 zc-snare-rebuild" -o "jobs/$id/input.mp3" "$url"; ls -la "jobs/$id/input.mp3"; file "jobs/$id/input.mp3" | grep -qi html && { echo "::error::$id: temp link returned a web page (expired?)"; exit 1; }
-            python3 - "$id" <<'PY'
-          import json, os, sys; jid = sys.argv[1]; old = {}
+            python3 - "$id" "$url" <<'PY'
+          import json, os, sys; sys.path.insert(0, 'pipeline'); import intake
+          jid, url = sys.argv[1], sys.argv[2]; direct = intake.resolve(url)   # tmpfiles page -> tokenised /dl/ link
+          data = intake.get(direct, 300).read()
+          if len(data) < 200000 or data[:15].lower().startswith(b'<!doctype html'): print(f'::error::{jid}: temp link returned {len(data)} bytes (expired?)'); sys.exit(1)
+          open(f'jobs/{jid}/input.mp3', 'wb').write(data); print(jid, len(data), 'bytes from', direct)
+          old = {}
           try: old = json.load(open(f'packs/{jid}/report.json'))
           except Exception: pass
           json.dump(dict(id=jid, artist=old.get('artist') or 'Unknown artist', title=old.get('title') or jid, mixer=old.get('mixer') or '', rebuild_of=old.get('pipeline')), open(f'jobs/{jid}/meta.json', 'w'))
