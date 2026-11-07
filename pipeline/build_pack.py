@@ -249,8 +249,8 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
                     for o_ in bo[(bo > starts[j] + PRE + int(0.05 * SR)) & (bo < starts[j] + LEN)]: ok[(pos >= o_ - int(0.01 * SR)) & (pos <= o_ + int(0.06 * SR))] = False
                     tk = np.arange(k0, k1) * FR / SR; vk = eo[k0:k1]; fit = np.polyfit(tk[ok[k0:k1]], vk[ok[k0:k1]], 1) if ok[k0:k1].sum() >= 8 else None
                     if os.environ.get('ZC_DEBUG'): print(f'    reclaim dbg hit t{meta["times"][j]:.1f} band{b}: ncb {int((ncb-PRE)/SR*1000)} ms, window {int((k0*FR-PRE)/SR*1000)}..{int((k1*FR-PRE)/SR*1000)} ms, ok {int(ok[k0:k1].sum())}/{k1-k0}, bgo {bgo:.1f}, eo@k0 {eo[k0] if k0 < len(eo) else 0:.1f}, slope {fit[0] if fit is not None else None}')
-                    if k1 - k0 >= 4 and (fit is None or fit[0] < -20):   # at least 20 ms of hit-locked material; when long enough to fit, it must decay (a flat excess is wash or a hat pattern, not this hit's tail)
-                        if ok[k0:k1].sum() >= 20: sl = float(np.clip(fit[0], -300, -30))
+                    if k1 - k0 >= 4 and (fit is None or fit[0] < -60):   # 4.3.1: at least 20 ms of hit-locked material; when long enough to fit it must decay at a snare rate (<= -60 dB/s, T60 <= 1 s). Fuel: the >6 kHz material locked to the hits decayed at -21..-34 dB/s = ride/crash wash riding the backbeat, not the snare -> rejected
+                        if ok[k0:k1].sum() >= 20: sl = float(np.clip(fit[0], -300, -60))
                         g = np.zeros(len(eo)); P = 10 ** (eo / 10); g[k0:k1] = np.sqrt(np.maximum(P[k0:k1] - Pbg, 0) / P[k0:k1]); g[k0:k1][~ok[k0:k1]] = 0
                         gi = np.interp(np.arange(LEN), np.arange(len(eo)) * FR + FR // 2, g); rec = Ob[b] * gi[:, None]
                         lvl = np.interp(np.arange(len(eo)), np.arange(k0, k1)[ok[k0:k1]], vk[ok[k0:k1]]) if ok[k0:k1].sum() >= 2 else eo   # level (dB) across masked frames = interpolation from the unmasked neighbours
@@ -259,6 +259,9 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
                             fill = grains(srcm, LEN, b, j, seed=1); ef = env_db(fill.mean(1)); kk = np.arange(len(eo)); hole = (~ok) & (kk >= k0) & (kk < k1)
                             amp = np.interp(np.arange(LEN), kk * FR + FR // 2, np.where(hole, 10 ** ((lvl - np.maximum(ef[:len(lvl)], -120)) / 20), 0))
                             rec += fill * amp[:, None]
+                        # 4.3.1 ceiling: a decaying hit never gets louder. The reclaimed band may not exceed the lowest level this band's real stem already reached (30 ms after the onset .. junction), decaying from there at the band's rate
+                        er = env_db(rec.mean(1)); kk2 = np.arange(len(eo)); ceil_ = float(np.min(EB[j, b, f0 + 6:k0 + 1])) + sl * np.maximum(kk2 - k0, 0) * FR / SR
+                        gc = np.minimum(1.0, 10 ** ((ceil_ - er[:len(eo)]) / 20)); gc[:k0] = 1.0; rec *= np.interp(np.arange(LEN), kk2 * FR + FR // 2, gc)[:, None]
                         yb[ncb - xf:ncb] = yb[ncb - xf:ncb] * (1 - wx)[:, None] + rec[ncb - xf:ncb] * wx[:, None]; yb[ncb:k1 * FR] = rec[ncb:k1 * FR]; nc = k1 * FR
                         rec_ms[f'band{b}'] = [int((ncb - PRE) / SR * 1000), int((k1 * FR - PRE) / SR * 1000)]
                     else: nc = ncb
