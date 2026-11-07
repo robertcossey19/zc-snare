@@ -1,12 +1,12 @@
 {
  "job": "deftones-change-in-the-house-d4460",
  "status": "OK",
- "pipeline": "4.2.0",
+ "pipeline": "4.3.0",
  "stages": {
-  "decode_s": 1.1,
-  "demucs_s": 207.9,
-  "drumsep_s": 1960.3,
-  "build_s": 238.7
+  "decode_s": 1.2,
+  "demucs_s": 214.2,
+  "drumsep_s": 2030.9,
+  "build_s": 438.6
  },
  "gates": [
   {
@@ -32,28 +32,28 @@
   },
   {
    "name": "drums_rms_dbfs",
-   "value": -21.4,
+   "value": -21.5,
    "limit": "> -45 dBFS",
    "ok": true,
    "note": "Demucs found no drum content"
   },
   {
    "name": "drums_minus_mix_db",
-   "value": -10.5,
+   "value": -10.6,
    "limit": "-25..+3 dB",
    "ok": true,
    "note": "drum share of the mix"
   },
   {
    "name": "separation_residual_below_drums_db",
-   "value": 26.1,
+   "value": 26.3,
    "limit": ">= 12 dB",
    "ok": true,
    "note": "the six stems must add back up to the drum stem (reference songs 23.9..32.0; the snare-specific loss is gated per band below)"
   },
   {
    "name": "snare_stem_rms_dbfs",
-   "value": -31.3,
+   "value": -31.4,
    "limit": "-45..-8 dBFS",
    "ok": true,
    "note": "reference songs -20..-30"
@@ -67,35 +67,35 @@
   },
   {
    "name": "hits_aligned",
-   "value": 147,
+   "value": 149,
    "limit": ">= 60",
    "ok": true,
    "note": "reference songs 116..184"
   },
   {
    "name": "corr_median",
-   "value": 0.689,
+   "value": 0.703,
    "limit": ">= 0.55",
    "ok": true,
    "note": "reference songs 0.76..0.95; 0.55..0.70 passes with a variation warning"
   },
   {
    "name": "audit_0_5ms_snare_vs_drums_db",
-   "value": -0.3,
+   "value": -0.4,
    "limit": "|diff| <= 1.5 dB",
    "ok": true,
    "note": "transient intact after separation"
   },
   {
    "name": "coherent_resid_below_snare_db",
-   "value": 43.8,
+   "value": 41.6,
    "limit": ">= 12 dB",
    "ok": true,
    "note": "hit-locked snare energy the separator assigned to no stem (reference songs 42..44; dense mixes 18..25)"
   },
   {
    "name": "snare_lost_to_residual_max_db",
-   "value": 0.03,
+   "value": 0.04,
    "limit": "<= 1.0 dB",
    "ok": true,
    "note": "snare stem vs snare+unassigned residual, 150 Hz-8 kHz, first 60 ms: the real separation loss"
@@ -110,9 +110,9 @@
   {
    "name": "t60_mid_bands_s",
    "value": [
-    0.47,
-    0.47,
-    0.47
+    0.51,
+    0.51,
+    0.52
    ],
    "limit": "0.08..3.0 s",
    "ok": true,
@@ -120,7 +120,7 @@
   },
   {
    "name": "selected_hits_distinct_min_gap_s",
-   "value": 0.74,
+   "value": 1.73,
    "limit": ">= 0.05 s",
    "ok": true,
    "note": "all 16 files come from different strokes"
@@ -128,13 +128,12 @@
  ],
  "warnings": [
   "lossy source: top end limited by the codec (~16 kHz for mp3); WAV/FLAC input gives a cleaner result",
-  "detection recipe A_bright was not the best on this record; D_sparse won (sparse or quiet-snare record (few hits aligned on A): 3.5 dB rise, corr floor 0.40); scores: A_bright 0.595, C_dense x, B_dark 0.559, D_sparse 0.608",
-  "hit-to-hit waveform correlation 0.689 (reference packs 0.76..0.95): this record's snare varies more from stroke to stroke (player, dense mix, or bleed in the snare stem) - expect audibly different round robins; every file still passed the per-file QC (clean attack, no hat-bleed centroid, level)",
-  "snare stem sits -5.7 dB under the full drum stem at 5-8 kHz on the hits: on this record the hat/cymbals ride the backbeat (+0.2 dB hat+crash vs snare in that band); that energy is in the hat/crash stems, not lost (loss to residual -0.03 dB)",
-  "soft: 0/4 real hits found in that velocity band on this record; the other 4 are flagged estimates (hard hit with the lighter-stroke transform)",
+  "snare stem sits -5.9 dB under the full drum stem at 5-8 kHz on the hits: on this record the hat/cymbals ride the backbeat (+0.4 dB hat+crash vs snare in that band); that energy is in the hat/crash stems, not lost (loss to residual -0.04 dB)",
+  "thin snare stem in band3 (band1 150-600, band2 600-2k, band3 2-6k, band4 >6k Hz): the separator handed this record's hit-locked snare ring beyond ~100 ms to the hat/cymbal stems (other-stem excess at 100 ms, low-hat vs high-hat hits: band3 7.5/5.7 dB). Those bands' tails were reclaimed from that material per hit (Wiener gain against its pre-hit background, other strokes masked); see selected[].reclaimed_ms",
+  "soft: 1/4 real hits found in that velocity band on this record; the other 3 are flagged estimates (hard hit with the lighter-stroke transform)",
   "ghost: 0/4 real hits found in that velocity band on this record; the other 4 are flagged estimates (hard hit with the lighter-stroke transform)"
  ],
- "started": "2026-11-06T18:24:56Z",
+ "started": "2026-11-07T00:37:47Z",
  "artist": "Deftones",
  "title": "Change (In the House of Flies)",
  "mixer": "unknown",
@@ -155,655 +154,798 @@
   "[    1.2s] PASS mix_peak_dbfs = 0.0 (limit > -30 dBFS) silent or near-silent file",
   "[    1.2s] PASS clipped_fraction = 0.00042 (limit < 0.02) samples at full scale",
   "[    1.2s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m demucs -n htdemucs --two-stems=drums -d cpu -j 1 --segment 7 -o /home/runner/work/zc-snare/zc-snare/work/sep /home/runner/work/zc-snare/zc-snare/work/audio/deftones-change-in-the-house-d4460.wav",
-  "[  209.0s] PASS drums_rms_dbfs = -21.4 (limit > -45 dBFS) Demucs found no drum content",
-  "[  209.0s] PASS drums_minus_mix_db = -10.5 (limit -25..+3 dB) drum share of the mix",
-  "[  209.7s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python inference.py --model_type mdx23c --config_path /home/runner/work/zc-snare/zc-snare/pipeline/drumsep.yaml --start_check_point /home/runner/work/zc-snare/zc-snare/work/ds/drumsep.ckpt --input_folder /home/runner/work/zc-snare/zc-snare/work/ds/in_deftones-change-in-the-house-d4460 --store_dir /home/runner/work/zc-snare/zc-snare/work/ds/out --force_cpu --pcm_type FLOAT --disable_detailed_pbar",
-  "[ 2169.4s] PASS separation_residual_below_drums_db = 26.1 (limit >= 12 dB) the six stems must add back up to the drum stem (reference songs 23.9..32.0; the snare-specific loss is gated per band below)",
-  "[ 2169.4s] PASS snare_stem_rms_dbfs = -31.3 (limit -45..-8 dBFS) reference songs -20..-30",
-  "[ 2169.4s] library: 8 songs; strategy order ['A_bright', 'C_dense', 'B_dark', 'D_sparse'] | nearest by separation/stem facts: [('asking-alexandria-the-final--d3f79', 0.98), ('nickelback-san-quentin-offic-39akj', 1.12), ('linkin-park-figure-09-d3b1a', 1.3)]",
-  "[ 2169.4s] strategy A_bright: build attempt 1, excluded 0 hit(s)",
-  "[ 2195.6s] per-file QC rejected [('hard_rr1', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr2', \"0-30 ms centroid > 1500 Hz (hat bleed; this record's loud strokes sit at 1005 Hz)\"), ('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
-  "[ 2195.6s] strategy A_bright: build attempt 2, excluded 3 hit(s)",
-  "[ 2222.3s] strategy A_bright: OK score 0.595",
-  "[ 2222.3s] strategy A_bright is marginal (corr 0.698, 142 hits): trying the remaining recipes, best score wins",
-  "[ 2222.3s] strategy C_dense: build attempt 1, excluded 0 hit(s)",
-  "[ 2250.9s] per-file QC rejected [('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)'), ('hard_rr4', \"0-30 ms centroid > 1500 Hz (hat bleed; this record's loud strokes sit at 1011 Hz)\")]",
-  "[ 2250.9s] strategy C_dense: build attempt 2, excluded 2 hit(s)",
-  "[ 2279.3s] strategy C_dense: build raised high <= 0",
-  "[ 2279.3s] strategy B_dark: build attempt 1, excluded 0 hit(s)",
-  "[ 2305.0s] per-file QC rejected [('hard_rr1', \"0-30 ms centroid > 1500 Hz (hat bleed; this record's loud strokes sit at 1109 Hz)\"), ('hard_rr4', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
-  "[ 2305.0s] strategy B_dark: build attempt 2, excluded 2 hit(s)",
-  "[ 2330.4s] per-file QC rejected [('hard_rr4', \"0-30 ms centroid > 1709 Hz (hat bleed; this record's loud strokes sit at 1266 Hz)\")]",
-  "[ 2330.4s] strategy B_dark: build attempt 3, excluded 3 hit(s)",
-  "[ 2355.8s] strategy B_dark: OK score 0.559",
-  "[ 2355.8s] strategy B_dark is marginal (corr 0.7, 133 hits): trying the remaining recipes, best score wins",
-  "[ 2355.8s] strategy D_sparse: build attempt 1, excluded 0 hit(s)",
-  "[ 2382.0s] per-file QC rejected [('hard_rr4', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
-  "[ 2382.0s] strategy D_sparse: build attempt 2, excluded 1 hit(s)",
-  "[ 2408.1s] strategy D_sparse: OK score 0.608",
-  "[ 2408.1s] PASS file_qc_all_pass = 0 (limit 0 failing files) after up to 7 re-picks per strategy",
-  "[ 2408.1s] PASS hits_aligned = 147 (limit >= 60) reference songs 116..184",
-  "[ 2408.1s] PASS corr_median = 0.689 (limit >= 0.55) reference songs 0.76..0.95; 0.55..0.70 passes with a variation warning",
-  "[ 2408.1s] PASS audit_0_5ms_snare_vs_drums_db = -0.3 (limit |diff| <= 1.5 dB) transient intact after separation",
-  "[ 2408.1s] PASS coherent_resid_below_snare_db = 43.8 (limit >= 12 dB) hit-locked snare energy the separator assigned to no stem (reference songs 42..44; dense mixes 18..25)",
-  "[ 2408.1s] PASS snare_lost_to_residual_max_db = 0.03 (limit <= 1.0 dB) snare stem vs snare+unassigned residual, 150 Hz-8 kHz, first 60 ms: the real separation loss",
-  "[ 2408.1s] PASS noise_floor_dbfs = -97.7 (limit < -60 dBFS) snare stem between hits",
-  "[ 2408.1s] PASS t60_mid_bands_s = [0.47, 0.47, 0.47] (limit 0.08..3.0 s) measured late decay 150 Hz-6 kHz",
-  "[ 2408.1s] PASS selected_hits_distinct_min_gap_s = 0.74 (limit >= 0.05 s) all 16 files come from different strokes",
-  "[ 2408.1s] nearest library songs after build: [('linkin-park-figure-09-d3b1a', 1.14), ('asking-alexandria-the-final--d3f79', 1.5), ('underoath-it-s-dangerous-bus-d4e00', 1.62)]",
-  "[ 2408.1s] library note: hits_per_min = 29.4: outside the library range 30.7..69.9 (n=8)",
-  "[ 2408.1s] library note: corr_median = 0.689: outside the library range 0.73..0.95 (n=8)",
-  "[ 2408.1s] library note: t60_mid_s = 0.47: outside the library range 0.48..1.14 (n=8)",
-  "[ 2408.1s] library note: hat_minus_snare_stem_db = -0.9: outside the library range -13.3..-3.9 (n=8)",
-  "[ 2408.1s] library note: noise_floor_dbfs = -97.7: outside the library range -95.8..-83.2 (n=8)",
-  "[ 2408.1s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python /home/runner/work/zc-snare/zc-snare/pipeline/pack_readme.py deftones-change-in-the-house-d4460 Deftones Change (In the House of Flies) unknown"
+  "[  215.3s] PASS drums_rms_dbfs = -21.5 (limit > -45 dBFS) Demucs found no drum content",
+  "[  215.4s] PASS drums_minus_mix_db = -10.6 (limit -25..+3 dB) drum share of the mix",
+  "[  216.0s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python inference.py --model_type mdx23c --config_path /home/runner/work/zc-snare/zc-snare/pipeline/drumsep.yaml --start_check_point /home/runner/work/zc-snare/zc-snare/work/ds/drumsep.ckpt --input_folder /home/runner/work/zc-snare/zc-snare/work/ds/in_deftones-change-in-the-house-d4460 --store_dir /home/runner/work/zc-snare/zc-snare/work/ds/out --force_cpu --pcm_type FLOAT --disable_detailed_pbar",
+  "[ 2246.3s] PASS separation_residual_below_drums_db = 26.3 (limit >= 12 dB) the six stems must add back up to the drum stem (reference songs 23.9..32.0; the snare-specific loss is gated per band below)",
+  "[ 2246.3s] PASS snare_stem_rms_dbfs = -31.4 (limit -45..-8 dBFS) reference songs -20..-30",
+  "[ 2246.3s] library: 10 songs; strategy order ['C_dense', 'A_bright', 'B_dark', 'D_sparse'] | nearest by separation/stem facts: [('metallica-fuel-d55fc', 0.9), ('asking-alexandria-the-final--d3f79', 1.0), ('nickelback-san-quentin-offic-39akj', 1.15)]",
+  "[ 2246.3s] strategy C_dense: build attempt 1, excluded 0 hit(s)",
+  "[ 2279.4s] per-file QC rejected [('hard_rr2', \"0-30 ms centroid > 1500 Hz (hat bleed; this record's loud strokes sit at 900 Hz)\"), ('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[ 2279.4s] strategy C_dense: build attempt 2, excluded 2 hit(s)",
+  "[ 2312.4s] per-file QC rejected [('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[ 2312.4s] strategy C_dense: build attempt 3, excluded 3 hit(s)",
+  "[ 2345.3s] strategy C_dense: OK score 0.655",
+  "[ 2345.3s] strategy C_dense is marginal (corr 0.703, 149 hits): trying the remaining recipes, best score wins",
+  "[ 2345.3s] strategy A_bright: build attempt 1, excluded 0 hit(s)",
+  "[ 2376.8s] per-file QC rejected [('hard_rr2', \"0-30 ms centroid > 1500 Hz (hat bleed; this record's loud strokes sit at 900 Hz)\"), ('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[ 2376.8s] strategy A_bright: build attempt 2, excluded 2 hit(s)",
+  "[ 2408.2s] per-file QC rejected [('hard_rr4', \"0-30 ms centroid > 1500 Hz (hat bleed; this record's loud strokes sit at 940 Hz)\")]",
+  "[ 2408.2s] strategy A_bright: build attempt 3, excluded 3 hit(s)",
+  "[ 2439.7s] per-file QC rejected [('hard_rr4', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[ 2439.7s] strategy A_bright: build attempt 4, excluded 4 hit(s)",
+  "[ 2470.9s] strategy A_bright: OK score 0.641",
+  "[ 2470.9s] strategy A_bright is marginal (corr 0.698, 147 hits): trying the remaining recipes, best score wins",
+  "[ 2470.9s] strategy B_dark: build attempt 1, excluded 0 hit(s)",
+  "[ 2501.6s] per-file QC rejected [('hard_rr2', \"0-30 ms centroid > 1500 Hz (hat bleed; this record's loud strokes sit at 940 Hz)\"), ('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[ 2501.6s] strategy B_dark: build attempt 2, excluded 2 hit(s)",
+  "[ 2531.9s] per-file QC rejected [('hard_rr4', \"0-30 ms centroid > 1500 Hz (hat bleed; this record's loud strokes sit at 979 Hz)\")]",
+  "[ 2531.9s] strategy B_dark: build attempt 3, excluded 3 hit(s)",
+  "[ 2562.1s] strategy B_dark: OK score 0.627",
+  "[ 2562.1s] strategy B_dark is marginal (corr 0.701, 143 hits): trying the remaining recipes, best score wins",
+  "[ 2562.1s] strategy D_sparse: build attempt 1, excluded 0 hit(s)",
+  "[ 2592.0s] per-file QC rejected [('hard_rr2', \"0-30 ms centroid > 1500 Hz (hat bleed; this record's loud strokes sit at 940 Hz)\"), ('hard_rr3', 'attack clipped (first 0.5 ms within 13 dB of peak)')]",
+  "[ 2592.0s] strategy D_sparse: build attempt 2, excluded 2 hit(s)",
+  "[ 2622.1s] per-file QC rejected [('hard_rr4', \"0-30 ms centroid > 1500 Hz (hat bleed; this record's loud strokes sit at 979 Hz)\")]",
+  "[ 2622.1s] strategy D_sparse: build attempt 3, excluded 3 hit(s)",
+  "[ 2652.1s] strategy D_sparse: OK score 0.645",
+  "[ 2652.1s] rebuilding winner C_dense (score 0.655) ...",
+  "[ 2684.9s] PASS file_qc_all_pass = 0 (limit 0 failing files) after up to 7 re-picks per strategy",
+  "[ 2684.9s] PASS hits_aligned = 149 (limit >= 60) reference songs 116..184",
+  "[ 2684.9s] PASS corr_median = 0.703 (limit >= 0.55) reference songs 0.76..0.95; 0.55..0.70 passes with a variation warning",
+  "[ 2684.9s] PASS audit_0_5ms_snare_vs_drums_db = -0.4 (limit |diff| <= 1.5 dB) transient intact after separation",
+  "[ 2684.9s] PASS coherent_resid_below_snare_db = 41.6 (limit >= 12 dB) hit-locked snare energy the separator assigned to no stem (reference songs 42..44; dense mixes 18..25)",
+  "[ 2684.9s] PASS snare_lost_to_residual_max_db = 0.04 (limit <= 1.0 dB) snare stem vs snare+unassigned residual, 150 Hz-8 kHz, first 60 ms: the real separation loss",
+  "[ 2684.9s] PASS noise_floor_dbfs = -97.7 (limit < -60 dBFS) snare stem between hits",
+  "[ 2684.9s] PASS t60_mid_bands_s = [0.51, 0.51, 0.52] (limit 0.08..3.0 s) measured late decay 150 Hz-6 kHz",
+  "[ 2684.9s] PASS selected_hits_distinct_min_gap_s = 1.73 (limit >= 0.05 s) all 16 files come from different strokes",
+  "[ 2684.9s] nearest library songs after build: [('metallica-fuel-d55fc', 1.02), ('linkin-park-figure-09-d3b1a', 1.13), ('metallica-enter-sandman-d491e', 1.29)]",
+  "[ 2684.9s] library note: hits_per_min = 29.8: outside the library range 31.1..69.9 (n=10)",
+  "[ 2684.9s] library note: hat_minus_snare_stem_db = -0.8: outside the library range -13.3..-2.8 (n=10)",
+  "[ 2684.9s] library note: noise_floor_dbfs = -97.7: outside the library range -96.3..-78.7 (n=10)",
+  "[ 2684.9s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python /home/runner/work/zc-snare/zc-snare/pipeline/pack_readme.py deftones-change-in-the-house-d4460 Deftones Change (In the House of Flies) unknown"
  ],
- "elapsed_s": 2408.1,
- "drums_rms_dbfs": -21.4,
+ "elapsed_s": 2685.0,
+ "drums_rms_dbfs": -21.5,
  "stem_rms_dbfs": {
-  "Kick": -22.9,
-  "Snare": -31.3,
-  "Toms": -39.0,
+  "Kick": -23.0,
+  "Snare": -31.4,
+  "Toms": -39.1,
   "Hh": -32.2,
-  "Ride": -51.4,
-  "Crash": -38.0
+  "Ride": -51.0,
+  "Crash": -38.1
  },
- "separation_residual_below_drums_db": 26.1,
- "library_size": 8,
+ "separation_residual_below_drums_db": 26.3,
+ "library_size": 10,
  "strategy_order": [
-  "A_bright",
   "C_dense",
+  "A_bright",
   "B_dark",
   "D_sparse"
  ],
  "nearest_before_build": [
   {
+   "job": "metallica-fuel-d55fc",
+   "artist": "Metallica",
+   "title": "Fuel",
+   "distance": 0.9,
+   "strategy": "C_dense"
+  },
+  {
    "job": "asking-alexandria-the-final--d3f79",
    "artist": "Asking Alexandria",
    "title": "The Final Episode",
-   "distance": 0.98,
+   "distance": 1.0,
    "strategy": "A_bright"
   },
   {
    "job": "nickelback-san-quentin-offic-39akj",
    "artist": "Nickelback",
    "title": "San Quentin",
-   "distance": 1.12,
-   "strategy": "A_bright"
-  },
-  {
-   "job": "linkin-park-figure-09-d3b1a",
-   "artist": "Linkin Park",
-   "title": "Figure.09",
-   "distance": 1.3,
+   "distance": 1.15,
    "strategy": "A_bright"
   }
  ],
  "strategy_attempts": [
   {
+   "strategy": "C_dense",
+   "ok": true,
+   "why": "",
+   "hits_aligned": 149,
+   "corr_median": 0.703,
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 1,
+    "ghost": 0
+   },
+   "template_centroid_hz": 968,
+   "centroid_limit_hz": 1500,
+   "qc_repicks": 3,
+   "score": 0.655
+  },
+  {
    "strategy": "A_bright",
    "ok": true,
    "why": "",
-   "hits_aligned": 142,
+   "hits_aligned": 147,
    "corr_median": 0.698,
    "layers_real": {
     "hard": 4,
     "medium": 4,
-    "soft": 0,
+    "soft": 1,
     "ghost": 0
    },
-   "template_centroid_hz": 1262,
-   "centroid_limit_hz": 1710,
-   "qc_repicks": 3,
-   "score": 0.595
-  },
-  {
-   "strategy": "C_dense",
-   "ok": false,
-   "why": "build raised"
+   "template_centroid_hz": 968,
+   "centroid_limit_hz": 1500,
+   "qc_repicks": 4,
+   "score": 0.641
   },
   {
    "strategy": "B_dark",
    "ok": true,
    "why": "",
-   "hits_aligned": 133,
-   "corr_median": 0.7,
+   "hits_aligned": 143,
+   "corr_median": 0.701,
    "layers_real": {
     "hard": 4,
     "medium": 4,
-    "soft": 0,
+    "soft": 1,
     "ghost": 0
    },
-   "template_centroid_hz": 1261,
-   "centroid_limit_hz": 1709,
+   "template_centroid_hz": 968,
+   "centroid_limit_hz": 1500,
    "qc_repicks": 3,
-   "score": 0.559
+   "score": 0.627
   },
   {
    "strategy": "D_sparse",
    "ok": true,
    "why": "",
-   "hits_aligned": 147,
-   "corr_median": 0.689,
+   "hits_aligned": 149,
+   "corr_median": 0.693,
    "layers_real": {
     "hard": 4,
     "medium": 4,
-    "soft": 0,
+    "soft": 1,
     "ghost": 0
    },
-   "template_centroid_hz": 1519,
-   "centroid_limit_hz": 1709,
-   "qc_repicks": 1,
-   "score": 0.608
+   "template_centroid_hz": 968,
+   "centroid_limit_hz": 1500,
+   "qc_repicks": 3,
+   "score": 0.645
   }
  ],
- "strategy_used": "D_sparse",
- "template_centroid_hz": 1519,
+ "strategy_used": "C_dense",
+ "template_centroid_hz": 968,
  "file_qc": [
   {
    "slot": "hard_rr1",
-   "t": 228.19,
+   "t": 81.6,
    "real": true,
-   "rel_db": -1.7,
-   "peak_dbfs": -1.2,
-   "first_half_ms_re_peak_db": -21.9,
-   "centroid_hz": 1519,
-   "len_ms": 427,
+   "rel_db": 0.4,
+   "peak_dbfs": -1.9,
+   "first_half_ms_re_peak_db": -16.5,
+   "centroid_hz": 968,
+   "len_ms": 602,
    "ok": true,
    "why": ""
   },
   {
    "slot": "hard_rr2",
-   "t": 222.95,
+   "t": 88.61,
    "real": true,
-   "rel_db": -2.2,
-   "peak_dbfs": -2.7,
-   "first_half_ms_re_peak_db": -20.2,
-   "centroid_hz": 1261,
-   "len_ms": 412,
+   "rel_db": 1.0,
+   "peak_dbfs": -1.3,
+   "first_half_ms_re_peak_db": -21.7,
+   "centroid_hz": 913,
+   "len_ms": 562,
    "ok": true,
    "why": ""
   },
   {
    "slot": "hard_rr3",
-   "t": 224.63,
+   "t": 90.36,
    "real": true,
-   "rel_db": -1.7,
-   "peak_dbfs": -2.7,
-   "first_half_ms_re_peak_db": -20.2,
-   "centroid_hz": 1391,
-   "len_ms": 337,
+   "rel_db": 1.9,
+   "peak_dbfs": -1.0,
+   "first_half_ms_re_peak_db": -21.1,
+   "centroid_hz": 1237,
+   "len_ms": 492,
    "ok": true,
    "why": ""
   },
   {
    "slot": "hard_rr4",
-   "t": 231.37,
+   "t": 58.93,
    "real": true,
-   "rel_db": -0.1,
-   "peak_dbfs": -2.1,
-   "first_half_ms_re_peak_db": -21.7,
-   "centroid_hz": 1526,
-   "len_ms": 477,
+   "rel_db": -0.6,
+   "peak_dbfs": -1.9,
+   "first_half_ms_re_peak_db": -20.3,
+   "centroid_hz": 1040,
+   "len_ms": 741,
    "ok": true,
    "why": ""
   },
   {
    "slot": "medium_rr1",
-   "t": 211.81,
+   "t": 64.11,
    "real": true,
-   "rel_db": -8.0,
-   "peak_dbfs": -8.6,
-   "first_half_ms_re_peak_db": -24.4,
-   "centroid_hz": 1271,
-   "len_ms": 472,
+   "rel_db": -3.0,
+   "peak_dbfs": -4.7,
+   "first_half_ms_re_peak_db": -30.8,
+   "centroid_hz": 667,
+   "len_ms": 1284,
    "ok": true,
    "why": ""
   },
   {
    "slot": "medium_rr2",
-   "t": 227.45,
+   "t": 113.06,
    "real": true,
-   "rel_db": -4.6,
-   "peak_dbfs": -6.6,
-   "first_half_ms_re_peak_db": -18.9,
-   "centroid_hz": 956,
-   "len_ms": 400,
+   "rel_db": -3.5,
+   "peak_dbfs": -4.1,
+   "first_half_ms_re_peak_db": -27.6,
+   "centroid_hz": 794,
+   "len_ms": 690,
    "ok": true,
    "why": ""
   },
   {
    "slot": "medium_rr3",
-   "t": 64.11,
+   "t": 246.54,
    "real": true,
-   "rel_db": -3.4,
-   "peak_dbfs": -5.9,
-   "first_half_ms_re_peak_db": -23.4,
-   "centroid_hz": 654,
-   "len_ms": 337,
+   "rel_db": -4.0,
+   "peak_dbfs": -3.8,
+   "first_half_ms_re_peak_db": -34.1,
+   "centroid_hz": 990,
+   "len_ms": 703,
    "ok": true,
    "why": ""
   },
   {
    "slot": "medium_rr4",
-   "t": 246.54,
+   "t": 127.05,
    "real": true,
-   "rel_db": -4.4,
-   "peak_dbfs": -5.1,
-   "first_half_ms_re_peak_db": -21.8,
-   "centroid_hz": 1140,
-   "len_ms": 386,
+   "rel_db": -7.2,
+   "peak_dbfs": -9.8,
+   "first_half_ms_re_peak_db": -29.7,
+   "centroid_hz": 522,
+   "len_ms": 433,
    "ok": true,
    "why": ""
   },
   {
    "slot": "soft_rr1",
-   "t": 233.05,
-   "real": false,
-   "rel_db": -12,
-   "peak_dbfs": -19.1,
-   "first_half_ms_re_peak_db": -16.4,
-   "centroid_hz": 1010,
-   "len_ms": 476,
+   "t": 86.19,
+   "real": true,
+   "rel_db": -14.5,
+   "peak_dbfs": -15.3,
+   "first_half_ms_re_peak_db": -24.3,
+   "centroid_hz": 452,
+   "len_ms": 368,
    "ok": true,
    "why": ""
   },
   {
    "slot": "soft_rr2",
-   "t": 234.71,
+   "t": 65.87,
    "real": false,
    "rel_db": -12,
-   "peak_dbfs": -17.8,
-   "first_half_ms_re_peak_db": -16.9,
-   "centroid_hz": 805,
-   "len_ms": 437,
+   "peak_dbfs": -16.9,
+   "first_half_ms_re_peak_db": -21.2,
+   "centroid_hz": 612,
+   "len_ms": 511,
    "ok": true,
    "why": ""
   },
   {
    "slot": "soft_rr3",
-   "t": 236.41,
+   "t": 92.09,
    "real": false,
    "rel_db": -12,
-   "peak_dbfs": -14.0,
-   "first_half_ms_re_peak_db": -15.7,
-   "centroid_hz": 707,
-   "len_ms": 481,
+   "peak_dbfs": -16.6,
+   "first_half_ms_re_peak_db": -13.8,
+   "centroid_hz": 687,
+   "len_ms": 459,
    "ok": true,
    "why": ""
   },
   {
    "slot": "soft_rr4",
-   "t": 238.94,
+   "t": 207.91,
    "real": false,
    "rel_db": -12,
-   "peak_dbfs": -17.4,
-   "first_half_ms_re_peak_db": -20.0,
-   "centroid_hz": 665,
-   "len_ms": 497,
+   "peak_dbfs": -17.5,
+   "first_half_ms_re_peak_db": -23.6,
+   "centroid_hz": 957,
+   "len_ms": 406,
    "ok": true,
    "why": ""
   },
   {
    "slot": "ghost_rr1",
-   "t": 243.16,
+   "t": 37.96,
    "real": false,
    "rel_db": -20,
-   "peak_dbfs": -23.0,
-   "first_half_ms_re_peak_db": -28.8,
-   "centroid_hz": 567,
-   "len_ms": 463,
+   "peak_dbfs": -24.9,
+   "first_half_ms_re_peak_db": -24.2,
+   "centroid_hz": 517,
+   "len_ms": 556,
    "ok": true,
    "why": ""
   },
   {
    "slot": "ghost_rr2",
-   "t": 244.85,
+   "t": 79.86,
    "real": false,
    "rel_db": -20,
-   "peak_dbfs": -26.3,
-   "first_half_ms_re_peak_db": -24.1,
-   "centroid_hz": 521,
-   "len_ms": 441,
+   "peak_dbfs": -25.5,
+   "first_half_ms_re_peak_db": -13.5,
+   "centroid_hz": 430,
+   "len_ms": 490,
    "ok": true,
    "why": ""
   },
   {
    "slot": "ghost_rr3",
-   "t": 206.03,
+   "t": 62.38,
    "real": false,
    "rel_db": -20,
-   "peak_dbfs": -27.9,
-   "first_half_ms_re_peak_db": -15.3,
-   "centroid_hz": 575,
-   "len_ms": 408,
+   "peak_dbfs": -24.7,
+   "first_half_ms_re_peak_db": -30.5,
+   "centroid_hz": 467,
+   "len_ms": 1225,
    "ok": true,
    "why": ""
   },
   {
    "slot": "ghost_rr4",
-   "t": 187.22,
+   "t": 45.03,
    "real": false,
    "rel_db": -20,
-   "peak_dbfs": -27.2,
-   "first_half_ms_re_peak_db": -24.0,
-   "centroid_hz": 545,
-   "len_ms": 452,
+   "peak_dbfs": -24.8,
+   "first_half_ms_re_peak_db": -30.0,
+   "centroid_hz": 542,
+   "len_ms": 606,
    "ok": true,
    "why": ""
   }
  ],
- "qc_repicks": 1,
+ "qc_repicks": 3,
  "layers_real": {
   "hard": 4,
   "medium": 4,
-  "soft": 0,
+  "soft": 1,
   "ghost": 0
  },
  "selected": [
   {
    "slot": "hard_rr1",
-   "t": 228.19,
+   "t": 81.6,
    "real": true,
-   "rel_db": -1.7,
-   "gap_ms": 701,
-   "real_to_ms": 149,
-   "len_ms": 427
+   "rel_db": 0.4,
+   "gap_ms": 852,
+   "real_to_ms": 169,
+   "reclaimed_ms": {
+    "band3": [
+     179,
+     269
+    ]
+   },
+   "len_ms": 602
   },
   {
    "slot": "hard_rr2",
-   "t": 222.95,
+   "t": 88.61,
    "real": true,
-   "rel_db": -2.2,
-   "gap_ms": 180,
+   "rel_db": 1.0,
+   "gap_ms": 1737,
    "real_to_ms": 149,
-   "len_ms": 412
+   "reclaimed_ms": {},
+   "len_ms": 562
   },
   {
    "slot": "hard_rr3",
-   "t": 224.63,
+   "t": 90.36,
    "real": true,
-   "rel_db": -1.7,
-   "gap_ms": 875,
+   "rel_db": 1.9,
+   "gap_ms": 801,
    "real_to_ms": 149,
-   "len_ms": 337
+   "reclaimed_ms": {},
+   "len_ms": 492
   },
   {
    "slot": "hard_rr4",
-   "t": 231.37,
+   "t": 58.93,
    "real": true,
-   "rel_db": -0.1,
-   "gap_ms": 215,
+   "rel_db": -0.6,
+   "gap_ms": 1075,
    "real_to_ms": 149,
-   "len_ms": 477
+   "reclaimed_ms": {
+    "band3": [
+     99,
+     259
+    ]
+   },
+   "len_ms": 741
   },
   {
    "slot": "medium_rr1",
-   "t": 211.81,
+   "t": 64.11,
    "real": true,
-   "rel_db": -8.0,
-   "gap_ms": 981,
+   "rel_db": -3.0,
+   "gap_ms": 220,
    "real_to_ms": 149,
-   "len_ms": 472
+   "reclaimed_ms": {
+    "band3": [
+     99,
+     204
+    ]
+   },
+   "len_ms": 1284
   },
   {
    "slot": "medium_rr2",
-   "t": 227.45,
+   "t": 113.06,
    "real": true,
-   "rel_db": -4.6,
-   "gap_ms": 524,
+   "rel_db": -3.5,
+   "gap_ms": 219,
    "real_to_ms": 149,
-   "len_ms": 400
+   "reclaimed_ms": {
+    "band3": [
+     99,
+     204
+    ]
+   },
+   "len_ms": 690
   },
   {
    "slot": "medium_rr3",
-   "t": 64.11,
+   "t": 246.54,
    "real": true,
-   "rel_db": -3.4,
-   "gap_ms": 220,
+   "rel_db": -4.0,
+   "gap_ms": 292,
    "real_to_ms": 149,
-   "len_ms": 337
+   "reclaimed_ms": {
+    "band3": [
+     99,
+     234
+    ]
+   },
+   "len_ms": 703
   },
   {
    "slot": "medium_rr4",
-   "t": 246.54,
+   "t": 127.05,
    "real": true,
-   "rel_db": -4.4,
-   "gap_ms": 205,
+   "rel_db": -7.2,
+   "gap_ms": 195,
    "real_to_ms": 149,
-   "len_ms": 386
+   "reclaimed_ms": {},
+   "len_ms": 433
   },
   {
    "slot": "soft_rr1",
-   "t": 233.05,
-   "real": false,
-   "rel_db": -12,
-   "gap_ms": 819,
+   "t": 86.19,
+   "real": true,
+   "rel_db": -14.5,
+   "gap_ms": 227,
    "real_to_ms": 149,
-   "len_ms": 476
+   "reclaimed_ms": {},
+   "len_ms": 368
   },
   {
    "slot": "soft_rr2",
-   "t": 234.71,
+   "t": 65.87,
    "real": false,
    "rel_db": -12,
-   "gap_ms": 1696,
+   "gap_ms": 637,
    "real_to_ms": 149,
-   "len_ms": 437
+   "reclaimed_ms": {},
+   "len_ms": 511
   },
   {
    "slot": "soft_rr3",
-   "t": 236.41,
+   "t": 92.09,
    "real": false,
    "rel_db": -12,
-   "gap_ms": 187,
+   "gap_ms": 472,
    "real_to_ms": 149,
-   "len_ms": 481
+   "reclaimed_ms": {
+    "band3": [
+     99,
+     119
+    ]
+   },
+   "len_ms": 459
   },
   {
    "slot": "soft_rr4",
-   "t": 238.94,
+   "t": 207.91,
    "real": false,
    "rel_db": -12,
-   "gap_ms": 333,
+   "gap_ms": 1481,
    "real_to_ms": 149,
-   "len_ms": 497
+   "reclaimed_ms": {},
+   "len_ms": 406
   },
   {
    "slot": "ghost_rr1",
-   "t": 243.16,
+   "t": 37.96,
    "real": false,
    "rel_db": -20,
-   "gap_ms": 1055,
+   "gap_ms": 768,
    "real_to_ms": 149,
-   "len_ms": 463
+   "reclaimed_ms": {},
+   "len_ms": 556
   },
   {
    "slot": "ghost_rr2",
-   "t": 244.85,
+   "t": 79.86,
    "real": false,
    "rel_db": -20,
-   "gap_ms": 653,
+   "gap_ms": 1731,
    "real_to_ms": 149,
-   "len_ms": 441
+   "reclaimed_ms": {
+    "band3": [
+     99,
+     139
+    ]
+   },
+   "len_ms": 490
   },
   {
    "slot": "ghost_rr3",
-   "t": 206.03,
+   "t": 62.38,
    "real": false,
    "rel_db": -20,
-   "gap_ms": 1041,
+   "gap_ms": 628,
    "real_to_ms": 149,
-   "len_ms": 408
+   "reclaimed_ms": {
+    "band3": [
+     99,
+     274
+    ]
+   },
+   "len_ms": 1225
   },
   {
    "slot": "ghost_rr4",
-   "t": 187.22,
+   "t": 45.03,
    "real": false,
    "rel_db": -20,
-   "gap_ms": 237,
+   "gap_ms": 1758,
    "real_to_ms": 149,
-   "len_ms": 452
+   "reclaimed_ms": {
+    "band3": [
+     99,
+     174
+    ]
+   },
+   "len_ms": 606
   }
  ],
  "measurements": {
-  "hits_aligned": 147,
-  "corr_median": 0.689,
-  "level_sd_db": 3.75,
+  "hits_aligned": 149,
+  "corr_median": 0.703,
+  "level_sd_db": 2.43,
   "t60_band": {
-   "band0": 0.47,
-   "band1": 0.47,
-   "band2": 0.47,
-   "band3": 0.47,
-   "band4": 0.47
+   "band0": 0.51,
+   "band1": 0.51,
+   "band2": 0.51,
+   "band3": 0.52,
+   "band4": 0.42
   },
   "slope_db_s": [
-   -128.0,
-   -128.0,
-   -128.0,
-   -128.0,
-   -128.0
+   -118.0,
+   -118.0,
+   -118.0,
+   -114.0,
+   -144.0
   ],
   "audit_0_5ms": {
    "snare": -10.5,
-   "drums": -10.2,
-   "resid": -41.1,
-   "kick": -53.2,
-   "hh": -29.9,
-   "ride": -58.0,
-   "crash": -44.0,
-   "toms": -46.5
+   "drums": -10.1,
+   "resid": -42.0,
+   "kick": -54.4,
+   "hh": -30.1,
+   "ride": -57.3,
+   "crash": -43.0,
+   "toms": -54.8
   },
   "coherent_resid_0_5ms": {
-   "coherent_resid_dB": -56.8,
-   "snare_dB": -13.0
+   "coherent_resid_dB": -55.1,
+   "snare_dB": -13.5
   },
   "tilt": {
-   "60-150": -3.4,
+   "60-150": -2.3,
    "150-300": -0.1,
    "300-600": -0.3,
    "600-1200": -0.1,
    "1200-2500": -0.6,
-   "2500-5000": -3.8,
-   "5000-8000": -5.7,
-   "8000-12000": -10.6,
-   "12000-16000": -17.7
+   "2500-5000": -4.0,
+   "5000-8000": -5.9,
+   "8000-12000": -10.9,
+   "12000-16000": -17.8
   },
   "lost_to_resid_db": {
-   "60-150": -0.07,
+   "60-150": -0.09,
    "150-300": -0.0,
    "300-600": -0.0,
    "600-1200": -0.0,
    "1200-2500": -0.0,
    "2500-5000": -0.02,
-   "5000-8000": -0.03,
-   "8000-12000": -0.1,
-   "12000-16000": -0.73
+   "5000-8000": -0.04,
+   "8000-12000": -0.12,
+   "12000-16000": -0.74
   },
   "hat_vs_snare_db": {
-   "60-150": -19.4,
-   "150-300": -38.7,
-   "300-600": -25.3,
-   "600-1200": -30.4,
-   "1200-2500": -20.0,
-   "2500-5000": -3.6,
-   "5000-8000": 0.2,
-   "8000-12000": 8.2,
-   "12000-16000": 16.9
+   "60-150": -20.5,
+   "150-300": -40.3,
+   "300-600": -24.7,
+   "600-1200": -30.8,
+   "1200-2500": -19.7,
+   "2500-5000": -3.3,
+   "5000-8000": 0.4,
+   "8000-12000": 8.5,
+   "12000-16000": 17.0
   },
-  "noise_floor_dbfs": -97.7
+  "noise_floor_dbfs": -97.7,
+  "thin_stem": {
+   "band0": {
+    "other_excess_db_100_150_250": [
+     5.7,
+     1.1,
+     -0.2
+    ],
+    "stem_excess_db_150": -18.9,
+    "other_excess_100_low_hat": 3.6,
+    "other_excess_100_high_hat": 7.7,
+    "reclaim": false
+   },
+   "band1": {
+    "other_excess_db_100_150_250": [
+     -6.6,
+     -9.4,
+     -12.8
+    ],
+    "stem_excess_db_150": -9.5,
+    "other_excess_100_low_hat": -7.4,
+    "other_excess_100_high_hat": -2.9,
+    "reclaim": false
+   },
+   "band2": {
+    "other_excess_db_100_150_250": [
+     -5.9,
+     -9.7,
+     -14.1
+    ],
+    "stem_excess_db_150": -6.5,
+    "other_excess_100_low_hat": -10.4,
+    "other_excess_100_high_hat": -4.4,
+    "reclaim": false
+   },
+   "band3": {
+    "other_excess_db_100_150_250": [
+     6.4,
+     3.9,
+     2.0
+    ],
+    "stem_excess_db_150": -15.1,
+    "other_excess_100_low_hat": 7.5,
+    "other_excess_100_high_hat": 5.7,
+    "reclaim": true
+   },
+   "band4": {
+    "other_excess_db_100_150_250": [
+     10.6,
+     7.6,
+     5.2
+    ],
+    "stem_excess_db_150": -16.9,
+    "other_excess_100_low_hat": 5.4,
+    "other_excess_100_high_hat": 11.9,
+    "reclaim": false
+   }
+  },
+  "reclaim_bands": [
+   0,
+   0,
+   0,
+   1,
+   0
+  ]
  },
  "profile": {
   "job": "deftones-change-in-the-house-d4460",
   "artist": "Deftones",
   "title": "Change (In the House of Flies)",
   "status": "OK",
-  "pipeline": "4.2.0",
-  "strategy": "D_sparse",
+  "pipeline": "4.3.0",
+  "strategy": "C_dense",
   "input_sha256": "7617d97e3cbd200e05fe209b4cbca73ebde0b805d6245981ee5c7598ca66fd22",
-  "hits_aligned": 147,
-  "hits_per_min": 29.4,
-  "corr_median": 0.689,
-  "level_sd_db": 3.75,
-  "coherent_resid_below_snare_db": 43.8,
-  "separation_residual_below_drums_db": 26.1,
-  "hat_vs_snare_5_8k_db": 0.2,
-  "hat_vs_snare_2_5_5k_db": -3.6,
-  "tilt_5_8k_db": -5.7,
+  "hits_aligned": 149,
+  "hits_per_min": 29.8,
+  "corr_median": 0.703,
+  "level_sd_db": 2.43,
+  "coherent_resid_below_snare_db": 41.6,
+  "separation_residual_below_drums_db": 26.3,
+  "hat_vs_snare_5_8k_db": 0.4,
+  "hat_vs_snare_2_5_5k_db": -3.3,
+  "tilt_5_8k_db": -5.9,
   "lost_to_resid_db": {
-   "60-150": -0.07,
+   "60-150": -0.09,
    "150-300": -0.0,
    "300-600": -0.0,
    "600-1200": -0.0,
    "1200-2500": -0.0,
    "2500-5000": -0.02,
-   "5000-8000": -0.03,
-   "8000-12000": -0.1,
-   "12000-16000": -0.73
+   "5000-8000": -0.04,
+   "8000-12000": -0.12,
+   "12000-16000": -0.74
   },
   "t60_band": {
-   "band0": 0.47,
-   "band1": 0.47,
-   "band2": 0.47,
-   "band3": 0.47,
-   "band4": 0.47
+   "band0": 0.51,
+   "band1": 0.51,
+   "band2": 0.51,
+   "band3": 0.52,
+   "band4": 0.42
   },
-  "t60_mid_s": 0.47,
+  "t60_mid_s": 0.51,
   "noise_floor_dbfs": -97.7,
   "layers_real": {
    "hard": 4,
    "medium": 4,
-   "soft": 0,
+   "soft": 1,
    "ghost": 0
   },
   "input_kbps": 192,
   "input_codec": "mp3",
   "duration_s": 299.5,
   "stem_rms_dbfs": {
-   "Kick": -22.9,
-   "Snare": -31.3,
-   "Toms": -39.0,
+   "Kick": -23.0,
+   "Snare": -31.4,
+   "Toms": -39.1,
    "Hh": -32.2,
-   "Ride": -51.4,
-   "Crash": -38.0
+   "Ride": -51.0,
+   "Crash": -38.1
   },
-  "hat_minus_snare_stem_db": -0.9,
-  "warnings": 4
+  "hat_minus_snare_stem_db": -0.8,
+  "warnings": 3
  },
  "nearest": [
+  {
+   "job": "metallica-fuel-d55fc",
+   "artist": "Metallica",
+   "title": "Fuel",
+   "distance": 1.02,
+   "strategy": "C_dense"
+  },
   {
    "job": "linkin-park-figure-09-d3b1a",
    "artist": "Linkin Park",
    "title": "Figure.09",
-   "distance": 1.14,
-   "strategy": "A_bright"
+   "distance": 1.13,
+   "strategy": "B_dark"
   },
   {
-   "job": "asking-alexandria-the-final--d3f79",
-   "artist": "Asking Alexandria",
-   "title": "The Final Episode",
-   "distance": 1.5,
-   "strategy": "A_bright"
-  },
-  {
-   "job": "underoath-it-s-dangerous-bus-d4e00",
-   "artist": "Underoath",
-   "title": "It's Dangerous Business Walking Out Your Front Door",
-   "distance": 1.62,
-   "strategy": "A_bright"
+   "job": "metallica-enter-sandman-d491e",
+   "artist": "Metallica",
+   "title": "Enter Sandman",
+   "distance": 1.29,
+   "strategy": "D_sparse"
   }
  ],
  "library_notes": [
-  "hits_per_min = 29.4: outside the library range 30.7..69.9 (n=8)",
-  "corr_median = 0.689: outside the library range 0.73..0.95 (n=8)",
-  "t60_mid_s = 0.47: outside the library range 0.48..1.14 (n=8)",
-  "hat_minus_snare_stem_db = -0.9: outside the library range -13.3..-3.9 (n=8)",
-  "noise_floor_dbfs = -97.7: outside the library range -95.8..-83.2 (n=8)"
+  "hits_per_min = 29.8: outside the library range 31.1..69.9 (n=10)",
+  "hat_minus_snare_stem_db = -0.8: outside the library range -13.3..-2.8 (n=10)",
+  "noise_floor_dbfs = -97.7: outside the library range -96.3..-78.7 (n=10)"
  ],
  "files": {
   "zip": "ZC_Snare_deftones-change-in-the-house-d4460_RoundRobins.zip",
   "oneshot": "ZC_deftones-change-in-the-house-d4460_oneshot.wav",
-  "zip_bytes": 1999523
+  "zip_bytes": 2928543
  },
- "finished": "2026-11-06T19:05:04Z"
+ "finished": "2026-11-07T01:22:32Z"
 }
