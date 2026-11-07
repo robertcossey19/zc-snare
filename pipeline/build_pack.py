@@ -260,7 +260,7 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
                             amp = np.interp(np.arange(LEN), kk * FR + FR // 2, np.where(hole, 10 ** ((lvl - np.maximum(ef[:len(lvl)], -120)) / 20), 0))
                             rec += fill * amp[:, None]
                         # 4.3.1 ceiling: a decaying hit never gets louder. The reclaimed band may not exceed the lowest level this band's real stem already reached (30 ms after the onset .. junction), decaying from there at the band's rate
-                        er = env_db(rec.mean(1)); kk2 = np.arange(len(eo)); ceil_ = float(np.min(EB[j, b, f0 + 6:k0 + 1])) + sl * np.maximum(kk2 - k0, 0) * FR / SR
+                        er = env_db(rec.mean(1)); kk2 = np.arange(len(eo)); ceil_ = float(np.min(sg.medfilt(EB[j, b], 5)[f0 + 6:k0 + 1])) + sl * np.maximum(kk2 - k0, 0) * FR / SR
                         gc = np.minimum(1.0, 10 ** ((ceil_ - er[:len(eo)]) / 20)); gc[:k0] = 1.0; rec *= np.interp(np.arange(LEN), kk2 * FR + FR // 2, gc)[:, None]
                         yb[ncb - xf:ncb] = yb[ncb - xf:ncb] * (1 - wx)[:, None] + rec[ncb - xf:ncb] * wx[:, None]; yb[ncb:k1 * FR] = rec[ncb:k1 * FR]; nc = k1 * FR
                         rec_ms[f'band{b}'] = [int((ncb - PRE) / SR * 1000), int((k1 * FR - PRE) / SR * 1000)]
@@ -271,6 +271,20 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
                 te = np.arange(len(ext)) / SR; ext *= (10 ** (sl * te / 20))[:, None]
                 yb[nc - xf:nc] = yb[nc - xf:nc] * (1 - wx)[:, None] + ext[:xf] * wx[:, None]; yb[nc:] = ext[xf:xf + LEN - nc]; out += yb
             y = out
+        # 4.3.1 decay guard (every song, every hit): one snare hit decays. From 60 ms on, no band above 150 Hz may rise more than 3 dB over the lowest
+        # level it has already reached in this file; whatever does is another event (next hit's pre-ring, a hat/ride stroke the masks missed, cymbal
+        # wash in a continuation) and is held down to that level. It only ever attenuates, never shapes a real decay (ring-mode beating stays within 3 dB).
+        Bs = bandsplit(y); yg = np.zeros((LEN, 2)); kg = f0 + 12
+        for b in range(NB):
+            if b == 0: yg += Bs[b]; continue
+            frb = 4 * FR if b == 1 else FR; e = env_db(Bs[b].mean(1), frb); k6 = (f0 * FR) // frb + (12 * FR) // frb
+            if len(e) <= k6 + 2: yg += Bs[b]; continue
+            em = sg.medfilt(e, 5)   # 5-frame median: a separator-mask flicker (one or two near-silent frames) must not set the floor for the rest of the file
+            rm = np.maximum(np.minimum.accumulate(em[k6:]), float(e[f0:f0 + 6].max()) - 70.0)   # and nothing below peak-70 dB is held (inaudible under the stem floor anyway)
+            g = np.ones(len(e)); g[k6:] = np.minimum(1.0, 10 ** ((rm + 3 - e[k6:]) / 20))
+            yg += Bs[b] * np.interp(np.arange(LEN), np.arange(len(e)) * frb + frb // 2, g)[:, None]
+            if os.environ.get('ZC_DEBUG') and g.min() < 0.5: w = np.where(g < 0.5)[0]; print(f'    guard dbg hit t{meta["times"][j]:.1f} band{b}: {len(w)} frames held, first {int((w[0] * frb - PRE) / SR * 1000)} ms, deepest {20 * np.log10(g.min()):.1f} dB at {int((np.argmin(g) * frb - PRE) / SR * 1000)} ms, env there {e[np.argmin(g)]:.1f} vs floor {rm[np.argmin(g) - k6]:.1f}')
+        guard_db = float(np.max(np.clip(env_db(y.mean(1)) - env_db(yg.mean(1)), 0, None)[f0 + 12:])) if LEN // FR > f0 + 13 else 0.0; y = yg
         # (c) end the file where the envelope is below -88 dBFS (inaudible; the stem floor is {floor:.0f}), 40 ms fade
         e = env_db(y.mean(1)); end = LEN
         for i in range(f0 + 40, len(e)):
@@ -294,7 +308,7 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
         fi = np.ones(LEN); fi[:st] = 0; fi[st:st + k] = 0.5 * (1 - np.cos(np.pi * np.arange(k) / k)); pre_echo_ms = round((pkx - st) / SR * 1000, 2)
         y = (y * fi[:, None])[st:end]
         lv = float(np.clip(rel[j], -30, 1.5)) if real_level else float(np.clip(rel[j], -1.5, 1.5))   # real layers keep the record's actual level re the loud cluster; hard = natural spread, capped
-        return y * 10 ** (lv / 20), dict(t=round(meta['times'][j], 2), gap_ms=int(gap[j] * 1000), bg_rel_peak_db=round(float(bgrel[j]), 1), sub_excess_db=round(float(subx[j]), 1), real_to_ms=ext_ms, reclaimed_ms=rec_ms, attack_to_peak_ms=pre_echo_ms, len_ms=int(len(y) / SR * 1000), dbg=dict(st=round((st - PRE) / SR * 1000, 2), n0d=round((n0 - PRE) / SR * 1000, 2), n0s=round((n0s - PRE) / SR * 1000, 2), n10=round((n10 - PRE) / SR * 1000, 2), pkx=round((pkx - PRE) / SR * 1000, 2), pks=round((pks - PRE) / SR * 1000, 2), end_ms=int(end / SR * 1000)), lvl_db=round(float(lv), 2), corr=round(float(corr[j]), 3))
+        return y * 10 ** (lv / 20), dict(t=round(meta['times'][j], 2), gap_ms=int(gap[j] * 1000), bg_rel_peak_db=round(float(bgrel[j]), 1), sub_excess_db=round(float(subx[j]), 1), guard_db=round(guard_db, 1), real_to_ms=ext_ms, reclaimed_ms=rec_ms, attack_to_peak_ms=pre_echo_ms, len_ms=int(len(y) / SR * 1000), dbg=dict(st=round((st - PRE) / SR * 1000, 2), n0d=round((n0 - PRE) / SR * 1000, 2), n0s=round((n0s - PRE) / SR * 1000, 2), n10=round((n10 - PRE) / SR * 1000, 2), pkx=round((pkx - PRE) / SR * 1000, 2), pks=round((pks - PRE) / SR * 1000, 2), end_ms=int(end / SR * 1000)), lvl_db=round(float(lv), 2), corr=round(float(corr[j]), 3))
     layers = {'hard': [], 'medium': [], 'soft': [], 'ghost': []}; hinfo = []; layers_real = {}
     spec_v = {'medium': dict(tilt=[(3000, -2.5)], w=0.9, g=0.8, a=0.95, lv=-6), 'soft': dict(tilt=[(2000, -5)], w=0.75, g=0.5, a=0.85, lv=-12), 'ghost': dict(tilt=[(1500, -8), (5000, -4)], w=0.6, g=0.3, a=0.7, lv=-20)}
     def est(j, lname):
