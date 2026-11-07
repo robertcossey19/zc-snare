@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "metallica-fuel-d55fc",
+   "artist": "Metallica",
+   "title": "Fuel",
+   "zip": "ZC_Snare_metallica-fuel-d55fc_RoundRobins.zip",
+   "oneshot": "ZC_metallica-fuel-d55fc_oneshot.wav",
+   "pipeline": "4.3.1",
+   "finished": "2026-11-07T02:09:06Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 1
+   },
+   "strategy": "C_dense",
+   "hits_aligned": 294,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 1/4; the rest are flagged estimates"
+  },
+  {
    "id": "asking-alexandria-breathless-d53a2",
    "artist": "Asking Alexandria",
    "title": "Breathless",
@@ -163,5 +181,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 9
+ "count": 10
 }
