@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "underoath-it-s-dangerous-bus-d4e00",
+   "artist": "Underoath",
+   "title": "It's Dangerous Business Walking Out Your Front Door",
+   "zip": "ZC_Snare_underoath-it-s-dangerous-bus-d4e00_RoundRobins.zip",
+   "oneshot": "ZC_underoath-it-s-dangerous-bus-d4e00_oneshot.wav",
+   "pipeline": "5.0.4",
+   "finished": "2026-11-09T13:45:58Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "B_dark",
+   "hits_aligned": 132,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "metallica-enter-sandman-d491e",
    "artist": "Metallica",
    "title": "Enter Sandman",
@@ -161,24 +179,6 @@
    "strategy": "B_dark",
    "hits_aligned": 133,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "underoath-it-s-dangerous-bus-d4e00",
-   "artist": "Underoath",
-   "title": "It's Dangerous Business Walking Out Your Front Door",
-   "zip": "ZC_Snare_underoath-it-s-dangerous-bus-d4e00_RoundRobins.zip",
-   "oneshot": "ZC_underoath-it-s-dangerous-bus-d4e00_oneshot.wav",
-   "pipeline": "5.0.2",
-   "finished": "2026-11-09T12:36:00Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "B_dark",
-   "hits_aligned": 130,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   },
   {
    "id": "post-malone-dead-at-the-honk-d591c",
