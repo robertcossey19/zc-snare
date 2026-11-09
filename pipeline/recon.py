@@ -18,7 +18,7 @@ The first 8 ms (stick, head crack) are never touched: time-domain crossfade from
 reconstruction between 8 and 18 ms.
 """
 import numpy as np, scipy.signal as sg, warnings
-from scipy.ndimage import uniform_filter
+from scipy.ndimage import uniform_filter, binary_dilation
 SR = 44100; NFFT = 1024; HOP = 256
 PROP_F = 700.0     # below this: phase-propagated (tonal drum modes); above: random/GL (noise-like reverb/wires)
 FILL_LOW_DB = 1.5  # holes are filled 1.5 dB under this hit's level (a quieter bin may be this hit's own; the separator ducking it under a kick is the common case)
@@ -219,6 +219,19 @@ def reconstruct(hit, prior, gap_s, gl_iters=4, seed=0, tol_extra_db=2.0, dbg=Non
         bleed = ex > tol; hole = ex < -np.maximum(tol + 1.0, 6.0)   # a dip deeper than the natural spread is the separator ducking this hit under a kick/hat (left in, the file's decay guard would lock the whole rest of the tail to that dip -> a cliff)
         bleed[:, :k8] = False; hole[:, :k30] = False
         if gap_fr < T: bleed[:, gap_fr:] = True   # the next snare's attack is not this hit: always rebuilt from the prior there
+        # hysteresis: a hat or cymbal stroke is one connected time-frequency region whose excess over the ensemble falls off towards its edges.
+        # The core test (ex > tol, up to 8 dB) catches its loud part only; the 3-8 dB wash around it was kept, and where the kept wash met the
+        # fill (or the next hit's gap) the file stepped down by that much (measured: 6-13 dB walls at 120-230 ms in 5.0.2 packs). Every bin
+        # adjacent in time or frequency to a flagged bin and more than half the natural spread above the ensemble is bleed as well, grown until
+        # the region stops growing (bounded at 120 frames = 640 ms).
+        grow_ok = ex > P.sig[c]; grow_ok[:, :k30] = False   # one natural spread; the body (< 30 ms) is never grown into
+        if gap_fr < T: grow_ok[:, gap_fr:] = True
+        along_t = np.ones((1, 3), bool)   # grown along time only: a stroke's wash precedes/follows its loud part in the same bins, while
+        for _ in range(120):              # growing across frequency ran into the hit's own partials (which sit above the median too)
+            nb = binary_dilation(bleed, structure=along_t) & grow_ok
+            if nb.sum() == bleed.sum(): break
+            bleed = nb
+        info.setdefault('bleed_grown_frac', []).append(round(float((bleed[:, k8:gap_fr] & ~(ex[:, k8:gap_fr] > tol[:, k8:gap_fr])).mean()), 3))
         # per-band continuity: a snare's decay has no step. Frame by frame from 30 ms, each band's level (over its non-bleed bins) is expected to
         # follow the ensemble's own frame-to-frame change; a drop of > 5 dB under that expectation is the separator ducking this hit under a kick
         # or a hat stroke (the per-bin test alone cannot catch it: +-tol per bin lets an 8 dB step through), and the whole band is rebuilt there

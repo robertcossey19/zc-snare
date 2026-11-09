@@ -42,8 +42,9 @@ Real snare hits lifted off the record. Nothing is synthesised; the audible part 
     raw stem, untouched. From there every STFT bin (1024/256) is checked against an ENSEMBLE PRIOR built from up to 100 aligned hits of the
     same layer: per bin, the median magnitude over the hits whose tail is clean there (a frame counts only before that hit's next snare and
     only where the drum stem's other material - kick, hat, ride - is not in event over the snare in that band). A bin that sits above the
-    ensemble by more than its measured hit-to-hit spread (+2 dB) is bleed (hat/ride/kick leak); a bin well below it after 30 ms is a hole
-    the separator ducked. Only those bins are rebuilt, to the ensemble level at this hit's own level (phase kept where close, otherwise
+    ensemble by more than its measured hit-to-hit spread (+2 dB) is bleed (hat/ride/kick leak), and so is every bin before/after it in time
+    that still sits more than one spread above the ensemble (the stroke's quieter wash around its loud part - 5.0.4; without this the kept
+    wash met the rebuilt region with a 6-13 dB wall). A bin well below the ensemble after 30 ms is a hole the separator ducked. Only those bins are rebuilt, to the ensemble level at this hit's own level (phase kept where close, otherwise
     re-estimated by Griffin-Lim); everything else is the record. Where the ensemble itself runs out of clean evidence (prior real to
     {sel[0].get('reclaimed_ms',{}).get('prior_real_to_ms','?') if isinstance(sel[0].get('reclaimed_ms'),dict) else '?'} ms, median over bins) each
     bin continues at that band's decay rate measured over the ensemble's late region (ESTIMATE; well under the hit's audible level).

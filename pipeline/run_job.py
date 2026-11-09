@@ -20,7 +20,7 @@ WORK = os.environ.get('ZC_WORK', os.path.join(ROOT, 'work'))
 CKPT_SHA = 'd2a4aa53eb584d21eead358a4e66d1882ad182911be018f052b5da73be9096d0'
 CKPT_URL = 'https://huggingface.co/noblebarkrr/mvsepless_resources/resolve/main/mdx23c/mdx23c_drumsep_6stem_aufr33_jarredou.ckpt'
 MSST_COMMIT = 'f0b527736e7da24eae5b561a2bb1efd0569ec757'
-PIPELINE_VERSION = '5.0.3'
+PIPELINE_VERSION = '5.0.4'
 SR = 44100
 STEMS = ['Kick', 'Snare', 'Toms', 'Hh', 'Ride', 'Crash']
 
