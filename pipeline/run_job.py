@@ -20,7 +20,7 @@ WORK = os.environ.get('ZC_WORK', os.path.join(ROOT, 'work'))
 CKPT_SHA = 'd2a4aa53eb584d21eead358a4e66d1882ad182911be018f052b5da73be9096d0'
 CKPT_URL = 'https://huggingface.co/noblebarkrr/mvsepless_resources/resolve/main/mdx23c/mdx23c_drumsep_6stem_aufr33_jarredou.ckpt'
 MSST_COMMIT = 'f0b527736e7da24eae5b561a2bb1efd0569ec757'
-PIPELINE_VERSION = '5.0.2'
+PIPELINE_VERSION = '5.0.3'
 SR = 44100
 STEMS = ['Kick', 'Snare', 'Toms', 'Hh', 'Ride', 'Crash']
 
@@ -259,8 +259,12 @@ def main(job):
             # sensitive; what must hold is that the winners are the same loud strokes at the same level.
             G.check('golden_hard_picks_overlap', f'{hard_same}/4', hard_same >= 2, '>= 2/4 same strokes (any order)', f"known input ({g.get('name')}): loud picks must come from the same population")
             G.check('golden_hard_level_db', round(hard_db_diff, 2), hard_db_diff <= 1.5, '<= 1.5 dB vs golden hard mean', 'loud picks at the same level as the golden picks')
-            G.check('golden_hits_aligned_tolerance', info['hits_aligned'], abs(info['hits_aligned'] - g['hits_aligned']) <= 0.3 * g['hits_aligned'], f"{g['hits_aligned']} +-30%")
-            G.check('golden_corr_median_tolerance', info['corr_median'], abs(info['corr_median'] - g['corr_median']) <= 0.1, f"{g['corr_median']} +-0.10")
+            g_recipe = g.get('strategy') or order[0]   # goldens recorded before the recipe race ran the default recipe
+            if chosen == g_recipe:
+                G.check('golden_hits_aligned_tolerance', info['hits_aligned'], abs(info['hits_aligned'] - g['hits_aligned']) <= 0.3 * g['hits_aligned'], f"{g['hits_aligned']} +-30%")
+                G.check('golden_corr_median_tolerance', info['corr_median'], abs(info['corr_median'] - g['corr_median']) <= 0.1, f"{g['corr_median']} +-0.10")
+            else:   # a different detection recipe won on this run: it aligns a different hit population (more hits at a lower correlation, or fewer tighter ones), so the alignment statistics are not comparable with the golden run; the hard picks, their level and the layers still are
+                report['warnings'].append(f"golden run used recipe {g_recipe} ({g['hits_aligned']} hits, corr {g['corr_median']}); this run's race picked {chosen} ({info['hits_aligned']} hits, corr {info['corr_median']}) - alignment statistics not compared (different hit population), hard picks / level / layers compared as usual")
             G.check('golden_layers_real_hard_medium', f"hard {lr.get('hard',0)} medium {lr.get('medium',0)}", lr.get('hard', 0) == 4 and lr.get('medium', 0) >= g['layers_real']['medium'] - 1,
                     f"hard 4, medium >= {g['layers_real']['medium'] - 1}", 'soft/ghost counts are reported, not gated: they sit near the stem floor')
             if 't60_band' in g:
