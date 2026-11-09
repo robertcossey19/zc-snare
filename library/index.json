@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "metallica-enter-sandman-d491e",
+   "artist": "Metallica",
+   "title": "Enter Sandman",
+   "zip": "ZC_Snare_metallica-enter-sandman-d491e_RoundRobins.zip",
+   "oneshot": "ZC_metallica-enter-sandman-d491e_oneshot.wav",
+   "pipeline": "5.0.1",
+   "finished": "2026-11-09T09:19:55Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 1
+   },
+   "strategy": "D_sparse",
+   "hits_aligned": 191,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 1/4; the rest are flagged estimates"
+  },
+  {
    "id": "limp-bizkit-making-love-to-m-xaom8",
    "artist": "Limp Bizkit",
    "title": "Making Love To Morgan Wallen",
@@ -163,5 +181,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 9
+ "count": 10
 }
