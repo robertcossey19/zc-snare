@@ -3,18 +3,18 @@
  "artist": "Asking Alexandria",
  "title": "The Final Episode",
  "status": "OK",
- "pipeline": "5.0.2",
- "strategy": "A_bright",
+ "pipeline": "5.0.4",
+ "strategy": "C_dense",
  "input_sha256": "816e34b1cc3b45c7e5b75fa814b00f0043309028f4e5f1780ae7a01e398cb32f",
- "hits_aligned": 170,
- "hits_per_min": 36.4,
- "corr_median": 0.94,
- "level_sd_db": 3.46,
- "coherent_resid_below_snare_db": 25.6,
+ "hits_aligned": 164,
+ "hits_per_min": 35.1,
+ "corr_median": 0.943,
+ "level_sd_db": 1.19,
+ "coherent_resid_below_snare_db": 29.6,
  "separation_residual_below_drums_db": 26.2,
- "hat_vs_snare_5_8k_db": -0.9,
- "hat_vs_snare_2_5_5k_db": -3.7,
- "tilt_5_8k_db": -5.2,
+ "hat_vs_snare_5_8k_db": -1.2,
+ "hat_vs_snare_2_5_5k_db": -4.2,
+ "tilt_5_8k_db": -5.1,
  "lost_to_resid_db": {
   "60-150": -0.03,
   "150-300": -0.0,
@@ -24,17 +24,17 @@
   "2500-5000": -0.03,
   "5000-8000": -0.05,
   "8000-12000": -0.09,
-  "12000-16000": -0.7
+  "12000-16000": -0.66
  },
  "t60_band": {
-  "band0": 0.61,
-  "band1": 0.52,
-  "band2": 0.4,
-  "band3": 0.74,
-  "band4": 0.74
+  "band0": 0.59,
+  "band1": 0.51,
+  "band2": 0.42,
+  "band3": 0.71,
+  "band4": 0.79
  },
  "t60_mid_s": 0.55,
- "noise_floor_dbfs": -91.2,
+ "noise_floor_dbfs": -92.3,
  "layers_real": {
   "hard": 4,
   "medium": 3,
@@ -45,13 +45,13 @@
  "input_codec": "mp3",
  "duration_s": 280.4,
  "stem_rms_dbfs": {
-  "Kick": -18.7,
-  "Snare": -27.4,
-  "Toms": -34.0,
-  "Hh": -35.2,
-  "Ride": -55.7,
-  "Crash": -34.0
+  "Kick": -18.3,
+  "Snare": -27.0,
+  "Toms": -33.8,
+  "Hh": -34.7,
+  "Ride": -55.6,
+  "Crash": -33.7
  },
- "hat_minus_snare_stem_db": -7.8,
+ "hat_minus_snare_stem_db": -7.7,
  "warnings": 5
 }
