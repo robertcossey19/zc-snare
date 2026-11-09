@@ -1,11 +1,39 @@
 {
  "job": "limp-bizkit-making-love-to-m-xaom8",
- "status": "FAIL",
- "error": "could not fetch the upload: HTTP Error 404: Not Found. Re-upload and hit GO again (temp uploads live 60 min).",
+ "status": "RUNNING",
+ "pipeline": "5.0.1",
+ "stages": {
+  "decode_s": 1.0,
+  "demucs_s": 161.7
+ },
+ "gates": [],
+ "warnings": [
+  "lossy source: top end limited by the codec (~16 kHz for mp3); WAV/FLAC input gives a cleaner result"
+ ],
+ "started": "2026-11-09T08:29:18Z",
  "artist": "Limp Bizkit",
  "title": "Making Love To Morgan Wallen",
- "gates": [],
- "warnings": [],
- "started": "2026-11-06T13:07:49Z",
- "elapsed_s": 0
+ "mixer": "unknown",
+ "input_name": "input.mp3",
+ "input_bytes": 6052604,
+ "input_sha256": "8e282e378f9cd3ae8e176ac4980b130562076dac94516af7bba20957bd3d51e8",
+ "input_codec": "mp3",
+ "input_sr": 44100,
+ "input_bitrate": 192024,
+ "duration_s": 252.1,
+ "mix_rms_dbfs": -10.0,
+ "mix_peak_dbfs": 0.0,
+ "log_tail": [
+  "[    0.0s] job limp-bizkit-making-love-to-m-xaom8 | Limp Bizkit - Making Love To Morgan Wallen | input.mp3 6052604 bytes",
+  "[    0.0s] $ ffprobe -v error -print_format json -show_format -show_streams /home/runner/work/zc-snare/zc-snare/jobs/limp-bizkit-making-love-to-m-xaom8/input.mp3",
+  "[    0.3s] $ ffmpeg -hide_banner -loglevel error -y -i /home/runner/work/zc-snare/zc-snare/jobs/limp-bizkit-making-love-to-m-xaom8/input.mp3 -vn -ar 44100 -ac 2 -c:a pcm_s16le /home/runner/work/zc-snare/zc-snare/work/audio/limp-bizkit-making-love-to-m-xaom8.wav",
+  "[    1.0s] PASS duration_s = 252.1 (limit 30..720 s) ",
+  "[    1.0s] PASS mix_peak_dbfs = 0.0 (limit > -30 dBFS) silent or near-silent file",
+  "[    1.0s] PASS clipped_fraction = 5e-05 (limit < 0.02) samples at full scale",
+  "[    1.0s] $ /opt/hostedtoolcache/Python/3.12.16/x64/bin/python -m demucs -n htdemucs --two-stems=drums -d cpu -j 1 --segment 7 -o /home/runner/work/zc-snare/zc-snare/work/sep /home/runner/work/zc-snare/zc-snare/work/audio/limp-bizkit-making-love-to-m-xaom8.wav",
+  "[  162.5s] PASS drums_rms_dbfs = -17.8 (limit > -45 dBFS) Demucs found no drum content",
+  "[  162.7s] PASS drums_minus_mix_db = -7.9 (limit -25..+3 dB) drum share of the mix"
+ ],
+ "elapsed_s": 162.7,
+ "drums_rms_dbfs": -17.8
 }
