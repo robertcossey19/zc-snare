@@ -17,25 +17,7 @@
    "strategy": "A_bright",
    "hits_aligned": 131,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "architects-blackhole-22anq",
-   "artist": "Architects",
-   "title": "Blackhole",
-   "zip": "ZC_Snare_architects-blackhole-22anq_RoundRobins.zip",
-   "oneshot": "ZC_architects-blackhole-22anq_oneshot.wav",
-   "pipeline": "4.0.4",
-   "finished": "2026-11-06T14:37:12Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 2,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 152,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 2
+ "count": 1
 }
