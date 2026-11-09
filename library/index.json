@@ -107,25 +107,7 @@
    "strategy": "A_bright",
    "hits_aligned": 152,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "nothing-more-if-it-doesn-t-h-ztf6s",
-   "artist": "Nothing More",
-   "title": "If It Doesn't Hurt",
-   "zip": "ZC_Snare_nothing-more-if-it-doesn-t-h-ztf6s_RoundRobins.zip",
-   "oneshot": "ZC_nothing-more-if-it-doesn-t-h-ztf6s_oneshot.wav",
-   "pipeline": "4.0.2",
-   "finished": "2026-11-06T13:45:28Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 1,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 135,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 7
+ "count": 6
 }
