@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "asking-alexandria-the-final--d3f79",
+   "artist": "Asking Alexandria",
+   "title": "The Final Episode",
+   "zip": "ZC_Snare_asking-alexandria-the-final--d3f79_RoundRobins.zip",
+   "oneshot": "ZC_asking-alexandria-the-final--d3f79_oneshot.wav",
+   "pipeline": "5.0.2",
+   "finished": "2026-11-09T12:29:40Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 3,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 170,
+   "realn": "real hits in this pack: hard 4/4, medium 3/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "post-malone-dead-at-the-honk-d591c",
    "artist": "Post Malone",
    "title": "Dead at the Honky Tonk",
@@ -107,24 +125,6 @@
    "strategy": "D_sparse",
    "hits_aligned": 148,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "asking-alexandria-the-final--d3f79",
-   "artist": "Asking Alexandria",
-   "title": "The Final Episode",
-   "zip": "ZC_Snare_asking-alexandria-the-final--d3f79_RoundRobins.zip",
-   "oneshot": "ZC_asking-alexandria-the-final--d3f79_oneshot.wav",
-   "pipeline": "5.0.1",
-   "finished": "2026-11-09T09:09:12Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 163,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   },
   {
    "id": "asking-alexandria-breathless-d53a2",
