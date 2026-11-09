@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "linkin-park-figure-09-d3b1a",
+   "artist": "Linkin Park",
+   "title": "Figure.09",
+   "zip": "ZC_Snare_linkin-park-figure-09-d3b1a_RoundRobins.zip",
+   "oneshot": "ZC_linkin-park-figure-09-d3b1a_oneshot.wav",
+   "pipeline": "5.0.2",
+   "finished": "2026-11-09T12:45:58Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 2,
+    "ghost": 0
+   },
+   "strategy": "B_dark",
+   "hits_aligned": 133,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "nickelback-san-quentin-offic-39akj",
    "artist": "Nickelback",
    "title": "San Quentin",
@@ -179,24 +197,6 @@
    "strategy": "D_sparse",
    "hits_aligned": 148,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "linkin-park-figure-09-d3b1a",
-   "artist": "Linkin Park",
-   "title": "Figure.09",
-   "zip": "ZC_Snare_linkin-park-figure-09-d3b1a_RoundRobins.zip",
-   "oneshot": "ZC_linkin-park-figure-09-d3b1a_oneshot.wav",
-   "pipeline": "5.0.1",
-   "finished": "2026-11-09T09:01:18Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 2,
-    "ghost": 0
-   },
-   "strategy": "D_sparse",
-   "hits_aligned": 132,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
  "count": 11
