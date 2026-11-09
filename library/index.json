@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "post-malone-dead-at-the-honk-d591c",
+   "artist": "Post Malone",
+   "title": "Dead at the Honky Tonk",
+   "zip": "ZC_Snare_post-malone-dead-at-the-honk-d591c_RoundRobins.zip",
+   "oneshot": "ZC_post-malone-dead-at-the-honk-d591c_oneshot.wav",
+   "pipeline": "5.0.4",
+   "finished": "2026-11-09T13:47:41Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 1
+   },
+   "strategy": "B_dark",
+   "hits_aligned": 127,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 1/4; the rest are flagged estimates"
+  },
+  {
    "id": "underoath-it-s-dangerous-bus-d4e00",
    "artist": "Underoath",
    "title": "It's Dangerous Business Walking Out Your Front Door",
@@ -179,24 +197,6 @@
    "strategy": "B_dark",
    "hits_aligned": 133,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "post-malone-dead-at-the-honk-d591c",
-   "artist": "Post Malone",
-   "title": "Dead at the Honky Tonk",
-   "zip": "ZC_Snare_post-malone-dead-at-the-honk-d591c_RoundRobins.zip",
-   "oneshot": "ZC_post-malone-dead-at-the-honk-d591c_oneshot.wav",
-   "pipeline": "5.0.2",
-   "finished": "2026-11-09T12:29:02Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 1,
-    "ghost": 1
-   },
-   "strategy": "D_sparse",
-   "hits_aligned": 115,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 1/4; the rest are flagged estimates"
   }
  ],
  "count": 11
