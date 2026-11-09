@@ -109,24 +109,6 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   },
   {
-   "id": "post-malone-dead-at-the-honk-d591c",
-   "artist": "Post Malone",
-   "title": "Dead at the Honky Tonk",
-   "zip": "ZC_Snare_post-malone-dead-at-the-honk-d591c_RoundRobins.zip",
-   "oneshot": "ZC_post-malone-dead-at-the-honk-d591c_oneshot.wav",
-   "pipeline": "4.2.0",
-   "finished": "2026-11-06T18:54:44Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 1,
-    "ghost": 2
-   },
-   "strategy": "B_dark",
-   "hits_aligned": 115,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 2/4; the rest are flagged estimates"
-  },
-  {
    "id": "nickelback-san-quentin-offic-39akj",
    "artist": "Nickelback",
    "title": "San Quentin",
@@ -181,5 +163,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 10
+ "count": 9
 }
