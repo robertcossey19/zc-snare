@@ -9,6 +9,8 @@ import numpy as np, soundfile as sf, scipy.signal as sg, json, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from extract import extract, frac_shift, candidates, envdb, SR, PRE
 from hit_dsp import shelf, wires, glide, attack, bandsplit, NB, XO
+from recon import Prior, reconstruct, layer_prior
+EXTRA = int(0.06 * SR)   # 5.0: extra pre-roll handed to the reconstruction (per-hit background frames 55..25 ms before the onset)
 FR = int(0.005 * SR)
 LEN = int(1.3 * SR)            # analysis window per hit (s)
 rng = np.random.RandomState(7)
@@ -105,6 +107,9 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
     # what the separator dropped into NOTHING (not into kick/hat/cymbal stems): snare vs snare+unassigned residual, hit-locked, first 60 ms
     _, Pr = spec(AR[hm], 0, 0.06); dropped = {f'{a}-{b}': round(float(10 * np.log10(Ps[(f >= a) & (f < b)].sum() / (Ps + Pr)[(f >= a) & (f < b)].sum())), 2) for a, b in bands}
     _, Ph = spec(A['Hh'][hm], 0, 0.06); _, Pc = spec(A['Crash'][hm], 0, 0.06); hat_vs_snare = {f'{a}-{b}': round(float(10 * np.log10((Ph + Pc)[(f >= a) & (f < b)].sum() / Ps[(f >= a) & (f < b)].sum())), 1) for a, b in bands}
+    i0h, i1h = PRE, PRE + int(0.03 * SR)   # 5.0: cymbal stroke coincident with this hit (hat/ride/crash stems 0-30 ms vs the snare stem 0-30 ms, dB). The first 8 ms of a file are the raw stem: a coincident stroke there is bleed no mask can take out, so selection avoids it
+    hat_on = 10 * np.log10(((A['Hh'] + A['Ride'] + A['Crash'])[:, i0h:i1h] ** 2).mean((1, 2)) + 1e-20) - 10 * np.log10((kept[:, i0h:i1h] ** 2).mean((1, 2)) + 1e-20)
+    print(f'  cymbal-stroke coincidence (hat+ride+crash vs snare, 0-30 ms, dB) pct 10/50/90: {np.percentile(hat_on, [10, 50, 90]).round(1)}; hits with a stroke within 12 dB: {int((hat_on > -12).sum())} of {n}')
     AO = AD.copy(); AO -= kept; AO -= A['Kick']   # 4.3.0: everything the drum stem carries at this hit that is neither the snare stem nor the kick stem (hat/ride/crash/tom stems + unassigned residual) - where a thin snare stem's tail ends up
     del A
     print('  snare lost to unassigned residual per band (dB; this is the real separation loss):', dropped)
@@ -178,7 +183,7 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
     print(f'  sub-band (40-120 Hz) excess over median, pct 50/90/max: {np.percentile(subx, [50, 90, 100]).round(1)}; hits > +6 dB (kick-coincident leak): {(subx > 6).sum()}')
     gref = 1.0 if realvel else float(np.median(gains)); rel = 20 * np.log10(gains / gref)
     if realvel: print('  level re loud cluster (dB) histogram:', {f'{a}..{a+3}': int(((rel >= a) & (rel < a + 3)).sum()) for a in range(-27, 6, 3)})
-    bgrel = PL - pkj; score = np.where(subx > 6, 50, 0) + dev + 10 * (1 - corr) + np.where(gap < tail_need, (tail_need - gap) * 40, 0) + np.where(kgap < 0.03, 5, 0) + np.maximum(bgrel + 40, 0) * 0.6 + np.maximum(6 - tsnr, 0) * 0.4   # 4.3.0: exposure weighs more (bg under the hit, and how much non-snare rides under its tail)
+    bgrel = PL - pkj; score = np.where(subx > 6, 50, 0) + dev + 10 * (1 - corr) + np.where(gap < tail_need, (tail_need - gap) * 40, 0) + np.where(kgap < 0.03, 5, 0) + np.maximum(bgrel + 40, 0) * 0.6 + np.maximum(6 - tsnr, 0) * 0.4 + np.maximum(hat_on + 15, 0) * 0.8   # 4.3.0: exposure weighs more (bg under the hit, and how much non-snare rides under its tail)
     EXT = [float(v) for v in os.environ.get('ZC_EXCLUDE', '').split(',') if v.strip()]   # per-file QC re-pick: hit times (s) the orchestrator rejected on a previous build
     ex = np.array([any(abs(meta['times'][j] - t) < 0.01 for t in EXT) for j in range(n)]); print(f'  excluded by QC: {int(ex.sum())}')
     order = [int(j) for j in np.argsort(score) if not ex[j]]
@@ -202,10 +207,10 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
                     if lo <= rel[j] < hi and j not in used and not any(abs(T_[j] - T_[u]) < 0.05 for u in c) and not near(j): c.append(int(j))
                     if len(c) == 4: break
             else:   # quiet layers: shape conformity to the LOUD median envelope does not apply; need the hit >= 8 dB over its own background, no coincident kick, >= 120 ms to the next snare
-                qs = 10 * (1 - corr) + np.maximum(bgrel + 20, 0) + np.maximum(0 - tsnr, 0) * 0.3 + np.where(cent > 1500, 50, 0) + np.where(brise < 10, 30, 0) + np.where(subx > 6, 50, 0) + np.where(gap < 0.12, 40, 0) + np.where(kgap < 0.03, 5, 0) + np.where(bgrel > -8, 50, 0)
+                qs = 10 * (1 - corr) + np.maximum(bgrel + 20, 0) + np.maximum(0 - tsnr, 0) * 0.3 + np.maximum(hat_on + 15, 0) * 0.8 + np.where(cent > 1500, 50, 0) + np.where(brise < 10, 30, 0) + np.where(subx > 6, 50, 0) + np.where(gap < 0.12, 40, 0) + np.where(kgap < 0.03, 5, 0) + np.where(bgrel > -8, 50, 0)
                 c = []
                 for j in np.argsort(qs):
-                    if lo <= rel[j] < hi and j not in used and qs[j] < 30 and not ex[j] and not near(j) and not any(abs(T_[j] - T_[u]) < 0.05 for u in c): c.append(int(j))
+                    if lo <= rel[j] < hi and j not in used and qs[j] < 30 and not ex[j] and not near(j) and corr[j] >= 0.75 * float(np.median(corr[hm])) and hat_on[j] < -9 and not any(abs(T_[j] - T_[u]) < 0.05 for u in c): c.append(int(j))
                     if len(c) == 4: break
             lay_sel[lname] = c; used |= set(c); print(f'  {lname}: {len(c)} real hits in [{lo},{hi}) dB, levels {[round(float(rel[j]),1) for j in c]}, times {[round(meta["times"][j],1) for j in c]}, gaps ms {[int(gap[j]*1000) for j in c]}')
         extra = []   # estimate donors: loud hits not used as real slots, each a distinct stroke
@@ -215,6 +220,27 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
     else: sel = [int(j) for j in order[:16]]
     print(f'  selected 16 hits: gap to next snare (ms) {[int(gap[j]*1000) for j in sel]}, background rel peak {[int(bgrel[j]) for j in sel]}, score {score[sel[0]]:.2f}..{score[sel[-1]]:.2f}, times {[round(meta["times"][j],1) for j in sel]}')
     if analyse_only: return
+    # ---- 5.0 ensemble priors: per layer, the aligned hits of that level band (>= 8) with 60 ms extra pre-roll; the hard prior is the fallback ----
+    def ref_set(js, nmax=60):   # the best-exposed hits of the band (selection order = exposure score), with the drum stem's non-snare material for per-frame validity
+        js = np.asarray(list(js)[:nmax], int); R = align_series(X, starts[js] - EXTRA, lags[js], gains[js], LEN + EXTRA)
+        O = align_series(D, starts[js] - EXTRA, lags[js], gains[js], LEN + EXTRA) - R
+        return R, gap[js], O
+    priors = {}; layer_of = {}
+    hard_js = [j for j in order if rel[j] >= -3] if realvel else list(order)
+    if len(hard_js) < 4: hard_js = list(order)
+    R_, G_, O_ = ref_set(hard_js); priors['hard'] = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_
+    print(f"  prior[hard]: {len(hard_js[:60])} hits, frames valid {priors['hard'].valid_frac:.2f}, ensemble median real to {priors['hard'].prior_real_to_ms:.0f} ms (median over bins), sigma pct 10/50/90 {np.percentile(priors['hard'].sig, [10, 50, 90]).round(1)} dB, continuation slope pct 10/50/90 {np.percentile(priors['hard'].slope_bin, [10, 50, 90]).round(0)} dB/s, band late slopes {getattr(priors['hard'], 'slope_band', np.zeros(1)).mean(0).round(0)}")
+    if os.environ.get('ZC_PRIOR_DUMP'): _p = priors['hard']; np.savez(os.environ['ZC_PRIOR_DUMP'], M=_p.M, Ms=_p.Ms, sig=_p.sig, real_to=_p.real_to, cnt=_p.cnt, tc=_p.tc, f=_p.f, Bmed=_p.Bmed, slope_bin=_p.slope_bin)
+    if realvel:
+        q_ = 10 * (1 - corr) + np.maximum(bgrel + 20, 0)
+        for lname in ['medium', 'soft', 'ghost']:
+            for j in lay_sel[lname]: layer_of[int(j)] = lname
+            lo_, hi_ = VEL_BANDS[lname]; js = [int(j) for j in np.argsort(q_) if lo_ <= rel[j] < hi_ and not ex[j]]
+            if len(js) >= 30: R_, G_, O_ = ref_set(js); priors[lname] = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_; print(f"  prior[{lname}]: {len(js[:60])} hits, frames valid {priors[lname].valid_frac:.2f}, ensemble median real to {priors[lname].prior_real_to_ms:.0f} ms")
+            elif len(js) >= 6:   # too few hits for a tail ensemble of their own: the hard ensemble's tail with this layer's measured spectral offset over the first 80 ms (velocity law)
+                R_, G_, O_ = ref_set(js); sh_ = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_
+                priors[lname] = layer_prior(priors['hard'], sh_); print(f"  prior[{lname}]: {len(js)} hits -> hard ensemble + this layer's spectral offset (median {np.median(priors[lname].offset_db):+.1f} dB, 10/90 pct {np.percentile(priors[lname].offset_db, [10, 90]).round(1)})")
+            else: print(f"  prior[{lname}]: only {len(js)} hits in band -> hard prior used as mask reference")
     # ---- 6. assemble: real hit untouched; only (a) a measured-floor fade so the file ends in silence instead of stem noise, (b) a fade at the next snare if one arrives before that ----
     def grains(src, length, b, j, seed=0):   # granular late texture from real material (40 ms Hann grains, random offset/sign), unit level
         grain = min(int(0.04 * SR), max(16, len(src) // 2)); hop = grain // 2; win = np.hanning(grain); rs = np.random.RandomState(1000 * b + j + 77 * seed); ext = np.zeros((length + 2 * grain, 2))   # clamp: a hit cut <100 ms in used to wrap to a negative slice ('high <= 0')
@@ -223,54 +249,20 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
             off = rs.randint(0, len(src) - grain); ext[k:k + grain] += win[:, None] * src[off:off + grain] * rs.choice([-1, 1])
         return ext[:length]
     def finish_hit(j, real_level=False):
-        y = kept[j].copy(); Hb = HB[j]
-        # (a) real part ends where the next snare arrives (15 ms before its onset) or where this hit's own envelope reaches the stem floor
+        y = kept[j].copy()
+        # 5.0 ensemble-constrained reconstruction (recon.py): this hit's own bytes wherever they sit inside the ensemble's per-bin tolerance; bleed /
+        # separator holes / the next snare's attack rebuilt at the ensemble-measured magnitude; beyond the ensemble's own floor the prior decays at the band slope (ESTIMATE)
+        hitR = align_series(X, [starts[j] - EXTRA], [lags[j]], [gains[j]], LEN + EXTRA)[0]
+        pr = priors.get(layer_of.get(j, 'hard'), priors['hard'])
+        yR, rinfo = reconstruct(hitR, pr, float(gap[j]), seed=int(j))
+        y = yR[EXTRA:LEN + EXTRA]
+        # where this hit's own content stops carrying the file: first 20 ms (4 frames) window after 60 ms in which >50 % of the energy-weighted bins were replaced
+        ext_ms = None; rec_ms = dict(prior_real_to_ms=int(pr.prior_real_to_ms), replaced_frac=rinfo['replaced_frac'], bleed_frac=rinfo['bleed_frac'], hole_frac=rinfo['hole_frac'])
         n_cut = LEN
-        for i in range(f0 + 30, len(E[j]) - 6):   # real tail ends where it is no longer >= 6 dB above this hit's own background (never before 150 ms)
-            if (E[j, i:i + 6] < PL[j] + 6).all(): n_cut = i * FR; break
-        gcut = max(PRE + int((gap[j] - 0.015) * SR), PRE + int(0.05 * SR)) if gap[j] < 9 else LEN   # never cut inside the first 50 ms (a flam/double right behind the hit used to drive the slice negative)
-        n_cut = int(min(n_cut, gcut, LEN)); ext_ms = None; rec_ms = {}
-        Ob = bandsplit(AO[j]) if reclaim.any() else None
-        if n_cut < LEN or reclaim.any():   # (b) below that point: continue each band with its own late texture at the decay rate measured for this song (late diffuse reverb = decaying noise of the same colour)
-            ext_ms = int((n_cut - PRE) / SR * 1000); out = np.zeros((LEN, 2)); xf = int(0.02 * SR); wx = 0.5 * (1 - np.cos(np.pi * np.arange(xf) / xf))
-            for b in range(NB):
-                yb = Hb[b].copy(); nc = n_cut; sl = slope[b]
-                if reclaim[b]:   # 4.3.0 thin-stem reclaim: this band's real stem tail ends where it falls under its own background (+6 dB, 30 ms; never before 100 ms); from there the hit's OWN tail is taken back from the other stems with a Wiener gain against their pre-hit background
-                    ncb = LEN
-                    for i in range(f0 + 20, len(E[j]) - 6):
-                        if (EB[j, b, i:i + 6] < PLB[j, b] + 6).all(): ncb = i * FR; break
-                    ncb = int(min(ncb, gcut, LEN)); eo = env_db(Ob[b].mean(1)); bgo = float(np.median(eo[f0 - 4:f0 - 1])); Pbg = 10 ** (bgo / 10)
-                    k0 = ncb // FR; k1 = k0
-                    while k1 < min(len(eo), gcut // FR) and not (eo[k1:k1 + 4] < bgo + 3).all(): k1 += 1
-                    k1 = min(k1, gcut // FR, len(eo))
-                    ok = np.ones(len(eo), bool)   # mask other-drum strokes (-10..+60 ms) landing inside the reclaim window: those frames get texture at the interpolated level instead
-                    pos = starts[j] + np.arange(len(eo)) * FR + FR // 2
-                    bo = band_on[b]
-                    for o_ in bo[(bo > starts[j] + PRE + int(0.05 * SR)) & (bo < starts[j] + LEN)]: ok[(pos >= o_ - int(0.01 * SR)) & (pos <= o_ + int(0.06 * SR))] = False
-                    tk = np.arange(k0, k1) * FR / SR; vk = eo[k0:k1]; fit = np.polyfit(tk[ok[k0:k1]], vk[ok[k0:k1]], 1) if ok[k0:k1].sum() >= 8 else None
-                    if os.environ.get('ZC_DEBUG'): print(f'    reclaim dbg hit t{meta["times"][j]:.1f} band{b}: ncb {int((ncb-PRE)/SR*1000)} ms, window {int((k0*FR-PRE)/SR*1000)}..{int((k1*FR-PRE)/SR*1000)} ms, ok {int(ok[k0:k1].sum())}/{k1-k0}, bgo {bgo:.1f}, eo@k0 {eo[k0] if k0 < len(eo) else 0:.1f}, slope {fit[0] if fit is not None else None}')
-                    if k1 - k0 >= 4 and (fit is None or fit[0] < -60):   # 4.3.1: at least 20 ms of hit-locked material; when long enough to fit it must decay at a snare rate (<= -60 dB/s, T60 <= 1 s). Fuel: the >6 kHz material locked to the hits decayed at -21..-34 dB/s = ride/crash wash riding the backbeat, not the snare -> rejected
-                        if ok[k0:k1].sum() >= 20: sl = float(np.clip(fit[0], -300, -60))
-                        g = np.zeros(len(eo)); P = 10 ** (eo / 10); g[k0:k1] = np.sqrt(np.maximum(P[k0:k1] - Pbg, 0) / P[k0:k1]); g[k0:k1][~ok[k0:k1]] = 0
-                        gi = np.interp(np.arange(LEN), np.arange(len(eo)) * FR + FR // 2, g); rec = Ob[b] * gi[:, None]
-                        lvl = np.interp(np.arange(len(eo)), np.arange(k0, k1)[ok[k0:k1]], vk[ok[k0:k1]]) if ok[k0:k1].sum() >= 2 else eo   # level (dB) across masked frames = interpolation from the unmasked neighbours
-                        if (~ok[k0:k1]).any():
-                            srcm = rec[k0 * FR:k1 * FR][np.repeat(ok[k0:k1], FR)[:k1 * FR - k0 * FR]]
-                            fill = grains(srcm, LEN, b, j, seed=1); ef = env_db(fill.mean(1)); kk = np.arange(len(eo)); hole = (~ok) & (kk >= k0) & (kk < k1)
-                            amp = np.interp(np.arange(LEN), kk * FR + FR // 2, np.where(hole, 10 ** ((lvl - np.maximum(ef[:len(lvl)], -120)) / 20), 0))
-                            rec += fill * amp[:, None]
-                        # 4.3.1 ceiling: a decaying hit never gets louder. The reclaimed band may not exceed the lowest level this band's real stem already reached (30 ms after the onset .. junction), decaying from there at the band's rate
-                        er = env_db(rec.mean(1)); kk2 = np.arange(len(eo)); ceil_ = float(np.min(sg.medfilt(EB[j, b], 5)[f0 + 6:k0 + 1])) + sl * np.maximum(kk2 - k0, 0) * FR / SR
-                        gc = np.minimum(1.0, 10 ** ((ceil_ - er[:len(eo)]) / 20)); gc[:k0] = 1.0; rec *= np.interp(np.arange(LEN), kk2 * FR + FR // 2, gc)[:, None]
-                        yb[ncb - xf:ncb] = yb[ncb - xf:ncb] * (1 - wx)[:, None] + rec[ncb - xf:ncb] * wx[:, None]; yb[ncb:k1 * FR] = rec[ncb:k1 * FR]; nc = k1 * FR
-                        rec_ms[f'band{b}'] = [int((ncb - PRE) / SR * 1000), int((k1 * FR - PRE) / SR * 1000)]
-                    else: nc = ncb
-                if nc >= LEN: out += yb; continue
-                src = yb[max(nc - int(0.1 * SR), 0):nc]; ext = grains(src, LEN - nc + xf, b, j)
-                ref = (src[-int(0.02 * SR):] ** 2).mean(); ext *= np.sqrt(ref / ((ext[:int(0.02 * SR)] ** 2).mean() + 1e-20))
-                te = np.arange(len(ext)) / SR; ext *= (10 ** (sl * te / 20))[:, None]
-                yb[nc - xf:nc] = yb[nc - xf:nc] * (1 - wx)[:, None] + ext[:xf] * wx[:, None]; yb[nc:] = ext[xf:xf + LEN - nc]; out += yb
-            y = out
+        ePre = env_db(kept[j].mean(1)); ePost = env_db(y.mean(1))
+        for i in range(f0 + 12, min(len(ePre), len(ePost)) - 4):   # the file leaves this hit's own tail where the reconstruction differs from the raw stem by > 3 dB for 20 ms
+            if (np.abs(ePre[i:i + 4] - ePost[i:i + 4]) > 3).all(): n_cut = i * FR; break
+        ext_ms = int((n_cut - PRE) / SR * 1000) if n_cut < LEN else None
         # 4.3.1 decay guard (every song, every hit): one snare hit decays. From 60 ms on, no band above 150 Hz may rise more than 3 dB over the lowest
         # level it has already reached in this file; whatever does is another event (next hit's pre-ring, a hat/ride stroke the masks missed, cymbal
         # wash in a continuation) and is held down to that level. It only ever attenuates, never shapes a real decay (ring-mode beating stays within 3 dB).
@@ -308,7 +300,7 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
         fi = np.ones(LEN); fi[:st] = 0; fi[st:st + k] = 0.5 * (1 - np.cos(np.pi * np.arange(k) / k)); pre_echo_ms = round((pkx - st) / SR * 1000, 2)
         y = (y * fi[:, None])[st:end]
         lv = float(np.clip(rel[j], -30, 1.5)) if real_level else float(np.clip(rel[j], -1.5, 1.5))   # real layers keep the record's actual level re the loud cluster; hard = natural spread, capped
-        return y * 10 ** (lv / 20), dict(t=round(meta['times'][j], 2), gap_ms=int(gap[j] * 1000), bg_rel_peak_db=round(float(bgrel[j]), 1), sub_excess_db=round(float(subx[j]), 1), guard_db=round(guard_db, 1), real_to_ms=ext_ms, reclaimed_ms=rec_ms, attack_to_peak_ms=pre_echo_ms, len_ms=int(len(y) / SR * 1000), dbg=dict(st=round((st - PRE) / SR * 1000, 2), n0d=round((n0 - PRE) / SR * 1000, 2), n0s=round((n0s - PRE) / SR * 1000, 2), n10=round((n10 - PRE) / SR * 1000, 2), pkx=round((pkx - PRE) / SR * 1000, 2), pks=round((pks - PRE) / SR * 1000, 2), end_ms=int(end / SR * 1000)), lvl_db=round(float(lv), 2), corr=round(float(corr[j]), 3))
+        return y * 10 ** (lv / 20), dict(t=round(meta['times'][j], 2), gap_ms=int(gap[j] * 1000), bg_rel_peak_db=round(float(bgrel[j]), 1), sub_excess_db=round(float(subx[j]), 1), cymbal_coincident_db=round(float(hat_on[j]), 1), guard_db=round(guard_db, 1), real_to_ms=ext_ms, reclaimed_ms=rec_ms, attack_to_peak_ms=pre_echo_ms, len_ms=int(len(y) / SR * 1000), dbg=dict(st=round((st - PRE) / SR * 1000, 2), n0d=round((n0 - PRE) / SR * 1000, 2), n0s=round((n0s - PRE) / SR * 1000, 2), n10=round((n10 - PRE) / SR * 1000, 2), pkx=round((pkx - PRE) / SR * 1000, 2), pks=round((pks - PRE) / SR * 1000, 2), end_ms=int(end / SR * 1000)), lvl_db=round(float(lv), 2), corr=round(float(corr[j]), 3))
     layers = {'hard': [], 'medium': [], 'soft': [], 'ghost': []}; hinfo = []; layers_real = {}
     spec_v = {'medium': dict(tilt=[(3000, -2.5)], w=0.9, g=0.8, a=0.95, lv=-6), 'soft': dict(tilt=[(2000, -5)], w=0.75, g=0.5, a=0.85, lv=-12), 'ghost': dict(tilt=[(1500, -8), (5000, -4)], w=0.6, g=0.3, a=0.7, lv=-20)}
     def est(j, lname):

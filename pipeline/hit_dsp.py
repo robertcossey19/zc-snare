@@ -17,9 +17,9 @@ def band_weights(n):
         lp = lowpass(fc); W[b] = lp - prev; prev = lp
     W[NB - 1] = 1 - prev; return W
 
-def bandsplit(x):  # x (n,2) -> (NB,n,2)
-    n = len(x); W = band_weights(n); X = np.fft.rfft(x, axis=0); out = np.empty((NB, n, 2))
-    for b in range(NB): out[b] = np.fft.irfft(X * W[b][:, None], n, axis=0)
+def bandsplit(x):  # x (n,2) -> (NB,n,2); zero padded so the split is not circular
+    n0 = len(x); x = np.vstack([x, np.zeros((4096, x.shape[1]))]); n = len(x); W = band_weights(n); X = np.fft.rfft(x, axis=0); out = np.empty((NB, n0, 2))
+    for b in range(NB): out[b] = np.fft.irfft(X * W[b][:, None], n, axis=0)[:n0]
     return out
 
 def env_db(y):  # y mono -> dB per FR frame (3-frame smoothed)
@@ -42,19 +42,21 @@ def shelf(x, f0, gdb):  # RBJ high shelf, applied zero-phase (filtfilt) with gai
     a0 = (A + 1) - (A - 1) * c + 2 * np.sqrt(A) * al; a1 = 2 * ((A - 1) - (A + 1) * c); a2 = (A + 1) - (A - 1) * c - 2 * np.sqrt(A) * al
     return sg.lfilter([b0 / a0, b1 / a0, b2 / a0], [1, a1 / a0, a2 / a0], x, axis=0)
 
+PAD = 8192   # FFT filtering is circular: without zero padding the attack wraps round into the last samples of the file (an audible click at the end of every estimate layer up to 4.3.1)
+
 def wires(x, factor, t_ref=0.08):  # shorten the 1.5-10 kHz (snare-wire) decay after 12 ms
-    n = len(x); f = np.fft.rfftfreq(n, 1 / SR); W = np.zeros_like(f); m = (f > 1500) & (f < 10000); W[m] = 1
+    n0 = len(x); x = np.vstack([x, np.zeros((PAD, x.shape[1]))]); n = len(x); f = np.fft.rfftfreq(n, 1 / SR); W = np.zeros_like(f); m = (f > 1500) & (f < 10000); W[m] = 1
     e = (f > 1000) & (f <= 1500); W[e] = 0.5 * (1 - np.cos(np.pi * (f[e] - 1000) / 500)); e = (f >= 10000) & (f < 14000); W[e] = 0.5 * (1 + np.cos(np.pi * (f[e] - 10000) / 4000))
     hf = np.fft.irfft(np.fft.rfft(x, axis=0) * W[:, None], n, axis=0); t = np.arange(n) / SR - 0.012
-    g = np.where(t > 0, np.exp(-np.maximum(t, 0) * (1 / factor - 1) / t_ref), 1.0); return x - hf + hf * g[:, None]
+    g = np.where(t > 0, np.exp(-np.maximum(t, 0) * (1 / factor - 1) / t_ref), 1.0); return (x - hf + hf * g[:, None])[:n0]
 
 def glide(x, s, a=0.20, tau=0.012):  # reduce the early pitch glide of the <600 Hz band (lighter hit = less membrane tension modulation)
-    n = len(x); f = np.fft.rfftfreq(n, 1 / SR); W = np.ones_like(f); e = (f > 450) & (f < 800); W[e] = 0.5 * (1 + np.cos(np.pi * (f[e] - 450) / 350)); W[f >= 800] = 0
+    n0 = len(x); x = np.vstack([x, np.zeros((PAD, x.shape[1]))]); n = len(x); f = np.fft.rfftfreq(n, 1 / SR); W = np.ones_like(f); e = (f > 450) & (f < 800); W[e] = 0.5 * (1 + np.cos(np.pi * (f[e] - 450) / 350)); W[f >= 800] = 0
     lo = np.fft.irfft(np.fft.rfft(x, axis=0) * W[:, None], n, axis=0); t = np.arange(n) / SR
     r = (1 + a * s * np.exp(-t / tau)) / (1 + a * np.exp(-t / tau)); pos = np.cumsum(r) - r[0]
     out = np.empty_like(lo); idx = np.arange(n)
     for ch in range(2): out[:, ch] = np.interp(pos, idx, lo[:, ch])
-    return x - lo + out
+    return (x - lo + out)[:n0]
 
 def attack(x, fct):
     t = np.arange(len(x)) / SR; w = np.where(t < 0.0025, 1.0, np.where(t < 0.005, 0.5 * (1 + np.cos(np.pi * (t - 0.0025) / 0.0025)), 0.0)); return x * (1 - (1 - fct) * w)[:, None]

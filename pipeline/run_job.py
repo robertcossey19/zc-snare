@@ -20,7 +20,7 @@ WORK = os.environ.get('ZC_WORK', os.path.join(ROOT, 'work'))
 CKPT_SHA = 'd2a4aa53eb584d21eead358a4e66d1882ad182911be018f052b5da73be9096d0'
 CKPT_URL = 'https://huggingface.co/noblebarkrr/mvsepless_resources/resolve/main/mdx23c/mdx23c_drumsep_6stem_aufr33_jarredou.ckpt'
 MSST_COMMIT = 'f0b527736e7da24eae5b561a2bb1efd0569ec757'
-PIPELINE_VERSION = '4.3.1'
+PIPELINE_VERSION = '5.0.0'
 SR = 44100
 STEMS = ['Kick', 'Snare', 'Toms', 'Hh', 'Ride', 'Crash']
 
@@ -158,6 +158,14 @@ def main(job):
                     if lay in ('hard', 'medium') and row['peak_dbfs'] < -40: row.update(ok=False, why='peak under -40 dBFS')
                     lim = -13 if h.get('real') else -6   # real hits: stick attack must build from >= 13 dB down; transformed estimates have their peak in the body, so only a true abrupt start (> -6 dB) fails
                     if row['first_half_ms_re_peak_db'] > lim: row.update(ok=False, why=f'attack clipped (first 0.5 ms within {-lim} dB of peak)')
+                    # 5.0: the file must end in silence, not in a burst (every estimate layer of packs <= 4.3.1 ended in a circular-FFT click 30..50 dB
+                    # above the tail it followed) and no band may step: after 30 ms the 5 ms broadband envelope may not rise by > 6 dB frame to frame
+                    e10 = int(0.01 * sr_); nfr = len(m) // e10; env = 20 * np.log10(np.sqrt((m[:nfr * e10].reshape(nfr, e10) ** 2).mean(1)) + 1e-9)
+                    last = float(20 * np.log10(np.abs(m[-int(0.02 * sr_):]).max() + 1e-9)); prev = float(20 * np.log10(np.abs(m[-int(0.1 * sr_):-int(0.02 * sr_)]).max() + 1e-9))
+                    d_ = np.diff(env[3:]); okf = env[4:] > env.max() - 50   # ring-mode beating gives <= 8 dB rises between 10 ms frames; the old end click measured 12..32 dB
+                    row['end_last20ms_dbfs'] = round(last, 1); row['max_env_rise_db'] = round(float(d_[okf].max()) if okf.any() else 0.0, 1)
+                    if last > -60 or last > prev + 3: row.update(ok=False, why=f'file ends in a burst ({last:.0f} dBFS in the last 20 ms, {prev:.0f} before)')
+                    if row['max_env_rise_db'] > 10: row.update(ok=False, why=f"envelope rises {row['max_env_rise_db']} dB between 10 ms frames after 30 ms (a second event or a click in the file)")
                     qc_rows.append(row)
                 # hat-bleed limit is relative to THIS snare: a bled hit is an outlier against the record's own loud strokes (reference snares 700..1400 Hz,
                 # Deftones 'Change' 1080..1500 Hz legitimately); fixed 1500 Hz failed a clean bright hit at 1501 Hz
