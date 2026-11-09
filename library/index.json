@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "architects-blackhole-22anq",
+   "artist": "Architects",
+   "title": "Blackhole",
+   "zip": "ZC_Snare_architects-blackhole-22anq_RoundRobins.zip",
+   "oneshot": "ZC_architects-blackhole-22anq_oneshot.wav",
+   "pipeline": "5.0.4",
+   "finished": "2026-11-09T13:39:23Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 1,
+    "ghost": 0
+   },
+   "strategy": "D_sparse",
+   "hits_aligned": 155,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "nickelback-san-quentin-offic-39akj",
    "artist": "Nickelback",
    "title": "San Quentin",
@@ -107,24 +125,6 @@
    "strategy": "B_dark",
    "hits_aligned": 133,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "architects-blackhole-22anq",
-   "artist": "Architects",
-   "title": "Blackhole",
-   "zip": "ZC_Snare_architects-blackhole-22anq_RoundRobins.zip",
-   "oneshot": "ZC_architects-blackhole-22anq_oneshot.wav",
-   "pipeline": "5.0.2",
-   "finished": "2026-11-09T12:40:55Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 3,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 150,
-   "realn": "real hits in this pack: hard 4/4, medium 3/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   },
   {
    "id": "underoath-it-s-dangerous-bus-d4e00",
