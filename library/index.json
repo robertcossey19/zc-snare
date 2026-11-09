@@ -55,24 +55,6 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 1/4; the rest are flagged estimates"
   },
   {
-   "id": "asking-alexandria-breathless-d53a2",
-   "artist": "Asking Alexandria",
-   "title": "Breathless",
-   "zip": "ZC_Snare_asking-alexandria-breathless-d53a2_RoundRobins.zip",
-   "oneshot": "ZC_asking-alexandria-breathless-d53a2_oneshot.wav",
-   "pipeline": "4.3.1",
-   "finished": "2026-11-07T02:01:56Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 2,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 298,
-   "realn": "real hits in this pack: hard 4/4, medium 2/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
    "id": "linkin-park-figure-09-d3b1a",
    "artist": "Linkin Park",
    "title": "Figure.09",
@@ -199,5 +181,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 11
+ "count": 10
 }
