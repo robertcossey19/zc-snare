@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "limp-bizkit-making-love-to-m-xaom8",
+   "artist": "Limp Bizkit",
+   "title": "Making Love To Morgan Wallen",
+   "zip": "ZC_Snare_limp-bizkit-making-love-to-m-xaom8_RoundRobins.zip",
+   "oneshot": "ZC_limp-bizkit-making-love-to-m-xaom8_oneshot.wav",
+   "pipeline": "5.0.4",
+   "finished": "2026-11-09T13:42:26Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 3,
+    "soft": 1,
+    "ghost": 0
+   },
+   "strategy": "B_dark",
+   "hits_aligned": 158,
+   "realn": "real hits in this pack: hard 4/4, medium 3/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "asking-alexandria-breathless-d53a2",
    "artist": "Asking Alexandria",
    "title": "Breathless",
@@ -181,5 +199,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 1/4; the rest are flagged estimates"
   }
  ],
- "count": 10
+ "count": 11
 }
