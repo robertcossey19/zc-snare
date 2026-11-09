@@ -73,24 +73,6 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 3/4; the rest are flagged estimates"
   },
   {
-   "id": "asking-alexandria-the-final--d3f79",
-   "artist": "Asking Alexandria",
-   "title": "The Final Episode",
-   "zip": "ZC_Snare_asking-alexandria-the-final--d3f79_RoundRobins.zip",
-   "oneshot": "ZC_asking-alexandria-the-final--d3f79_oneshot.wav",
-   "pipeline": "4.3.1",
-   "finished": "2026-11-07T01:58:56Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 2,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 166,
-   "realn": "real hits in this pack: hard 4/4, medium 2/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
    "id": "underoath-it-s-dangerous-bus-d4e00",
    "artist": "Underoath",
    "title": "It's Dangerous Business Walking Out Your Front Door",
@@ -163,5 +145,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 9
+ "count": 8
 }
