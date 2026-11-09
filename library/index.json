@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "asking-alexandria-breathless-d53a2",
+   "artist": "Asking Alexandria",
+   "title": "Breathless",
+   "zip": "ZC_Snare_asking-alexandria-breathless-d53a2_RoundRobins.zip",
+   "oneshot": "ZC_asking-alexandria-breathless-d53a2_oneshot.wav",
+   "pipeline": "5.0.1",
+   "finished": "2026-11-09T09:06:49Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 1,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 293,
+   "realn": "real hits in this pack: hard 4/4, medium 1/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "post-malone-dead-at-the-honk-d591c",
    "artist": "Post Malone",
    "title": "Dead at the Honky Tonk",
@@ -73,5 +91,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 4
+ "count": 5
 }
