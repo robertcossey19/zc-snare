@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "post-malone-dead-at-the-honk-d591c",
+   "artist": "Post Malone",
+   "title": "Dead at the Honky Tonk",
+   "zip": "ZC_Snare_post-malone-dead-at-the-honk-d591c_RoundRobins.zip",
+   "oneshot": "ZC_post-malone-dead-at-the-honk-d591c_oneshot.wav",
+   "pipeline": "5.0.2",
+   "finished": "2026-11-09T12:29:02Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 1,
+    "ghost": 1
+   },
+   "strategy": "D_sparse",
+   "hits_aligned": 115,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 1/4; the rest are flagged estimates"
+  },
+  {
    "id": "metallica-fuel-d55fc",
    "artist": "Metallica",
    "title": "Fuel",
@@ -125,24 +143,6 @@
    "strategy": "A_bright",
    "hits_aligned": 293,
    "realn": "real hits in this pack: hard 4/4, medium 1/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "post-malone-dead-at-the-honk-d591c",
-   "artist": "Post Malone",
-   "title": "Dead at the Honky Tonk",
-   "zip": "ZC_Snare_post-malone-dead-at-the-honk-d591c_RoundRobins.zip",
-   "oneshot": "ZC_post-malone-dead-at-the-honk-d591c_oneshot.wav",
-   "pipeline": "5.0.1",
-   "finished": "2026-11-09T09:04:52Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "B_dark",
-   "hits_aligned": 133,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   },
   {
    "id": "linkin-park-figure-09-d3b1a",
