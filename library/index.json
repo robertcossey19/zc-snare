@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "deftones-change-in-the-house-d4460",
+   "artist": "Deftones",
+   "title": "Change (In the House of Flies)",
+   "zip": "ZC_Snare_deftones-change-in-the-house-d4460_RoundRobins.zip",
+   "oneshot": "ZC_deftones-change-in-the-house-d4460_oneshot.wav",
+   "pipeline": "5.0.2",
+   "finished": "2026-11-09T13:01:28Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "D_sparse",
+   "hits_aligned": 145,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "metallica-fuel-d55fc",
    "artist": "Metallica",
    "title": "Fuel",
@@ -179,24 +197,6 @@
    "strategy": "D_sparse",
    "hits_aligned": 115,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 1/4; the rest are flagged estimates"
-  },
-  {
-   "id": "deftones-change-in-the-house-d4460",
-   "artist": "Deftones",
-   "title": "Change (In the House of Flies)",
-   "zip": "ZC_Snare_deftones-change-in-the-house-d4460_RoundRobins.zip",
-   "oneshot": "ZC_deftones-change-in-the-house-d4460_oneshot.wav",
-   "pipeline": "5.0.1",
-   "finished": "2026-11-09T09:10:25Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 1,
-    "ghost": 0
-   },
-   "strategy": "D_sparse",
-   "hits_aligned": 148,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 1/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
  "count": 11
