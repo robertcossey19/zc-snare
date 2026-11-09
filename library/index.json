@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "linkin-park-figure-09-d3b1a",
+   "artist": "Linkin Park",
+   "title": "Figure.09",
+   "zip": "ZC_Snare_linkin-park-figure-09-d3b1a_RoundRobins.zip",
+   "oneshot": "ZC_linkin-park-figure-09-d3b1a_oneshot.wav",
+   "pipeline": "5.0.1",
+   "finished": "2026-11-09T09:01:18Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 2,
+    "ghost": 0
+   },
+   "strategy": "D_sparse",
+   "hits_aligned": 132,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "underoath-it-s-dangerous-bus-d4e00",
    "artist": "Underoath",
    "title": "It's Dangerous Business Walking Out Your Front Door",
@@ -37,5 +55,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 2
+ "count": 3
 }
