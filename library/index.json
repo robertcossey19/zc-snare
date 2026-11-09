@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "nickelback-san-quentin-offic-39akj",
+   "artist": "Nickelback",
+   "title": "San Quentin",
+   "zip": "ZC_Snare_nickelback-san-quentin-offic-39akj_RoundRobins.zip",
+   "oneshot": "ZC_nickelback-san-quentin-offic-39akj_oneshot.wav",
+   "pipeline": "5.0.4",
+   "finished": "2026-11-09T13:36:42Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 204,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "asking-alexandria-the-final--d3f79",
    "artist": "Asking Alexandria",
    "title": "The Final Episode",
@@ -89,24 +107,6 @@
    "strategy": "B_dark",
    "hits_aligned": 133,
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 2/4, ghost 0/4; the rest are flagged estimates"
-  },
-  {
-   "id": "nickelback-san-quentin-offic-39akj",
-   "artist": "Nickelback",
-   "title": "San Quentin",
-   "zip": "ZC_Snare_nickelback-san-quentin-offic-39akj_RoundRobins.zip",
-   "oneshot": "ZC_nickelback-san-quentin-offic-39akj_oneshot.wav",
-   "pipeline": "5.0.2",
-   "finished": "2026-11-09T12:42:24Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "C_dense",
-   "hits_aligned": 232,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   },
   {
    "id": "architects-blackhole-22anq",
