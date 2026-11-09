@@ -1,0 +1,57 @@
+{
+ "job": "nickelback-san-quentin-offic-39akj",
+ "artist": "Nickelback",
+ "title": "San Quentin",
+ "status": "OK",
+ "pipeline": "5.0.1",
+ "strategy": "A_bright",
+ "input_sha256": "a43e04de9e057b21368d26d5ff3b288c8bfdf3ee1a61502642e6f31e6d4ead5a",
+ "hits_aligned": 213,
+ "hits_per_min": 54.8,
+ "corr_median": 0.952,
+ "level_sd_db": 2.34,
+ "coherent_resid_below_snare_db": 20.9,
+ "separation_residual_below_drums_db": 24.6,
+ "hat_vs_snare_5_8k_db": 5.6,
+ "hat_vs_snare_2_5_5k_db": -1.9,
+ "tilt_5_8k_db": -8.9,
+ "lost_to_resid_db": {
+  "60-150": -0.59,
+  "150-300": -0.0,
+  "300-600": -0.01,
+  "600-1200": -0.01,
+  "1200-2500": -0.02,
+  "2500-5000": -0.06,
+  "5000-8000": -0.29,
+  "8000-12000": -0.31,
+  "12000-16000": -0.63
+ },
+ "t60_band": {
+  "band0": 0.64,
+  "band1": 0.45,
+  "band2": 0.61,
+  "band3": 0.76,
+  "band4": 0.68
+ },
+ "t60_mid_s": 0.61,
+ "noise_floor_dbfs": -86.1,
+ "layers_real": {
+  "hard": 4,
+  "medium": 4,
+  "soft": 0,
+  "ghost": 0
+ },
+ "input_kbps": 192,
+ "input_codec": "mp3",
+ "duration_s": 233.3,
+ "stem_rms_dbfs": {
+  "Kick": -19.5,
+  "Snare": -26.8,
+  "Toms": -32.4,
+  "Hh": -34.8,
+  "Ride": -50.4,
+  "Crash": -39.2
+ },
+ "hat_minus_snare_stem_db": -8.0,
+ "warnings": 6
+}

@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "nickelback-san-quentin-offic-39akj",
+   "artist": "Nickelback",
+   "title": "San Quentin",
+   "zip": "ZC_Snare_nickelback-san-quentin-offic-39akj_RoundRobins.zip",
+   "oneshot": "ZC_nickelback-san-quentin-offic-39akj_oneshot.wav",
+   "pipeline": "5.0.1",
+   "finished": "2026-11-09T09:10:28Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "A_bright",
+   "hits_aligned": 213,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "deftones-change-in-the-house-d4460",
    "artist": "Deftones",
    "title": "Change (In the House of Flies)",
@@ -127,5 +145,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 7
+ "count": 8
 }
