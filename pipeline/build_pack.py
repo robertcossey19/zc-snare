@@ -225,7 +225,7 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
         js = np.asarray(list(js)[:nmax], int); R = align_series(X, starts[js] - EXTRA, lags[js], gains[js], LEN + EXTRA)
         O = align_series(D, starts[js] - EXTRA, lags[js], gains[js], LEN + EXTRA) - R
         return R, gap[js], O
-    priors = {}; layer_of = {}
+    priors = {}; layer_of = {}; vel_law = {}
     hard_js = [j for j in order if rel[j] >= -3] if realvel else list(order)
     if len(hard_js) < 4: hard_js = list(order)
     R_, G_, O_ = ref_set(hard_js); priors['hard'] = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_
@@ -233,13 +233,16 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
     if os.environ.get('ZC_PRIOR_DUMP'): _p = priors['hard']; np.savez(os.environ['ZC_PRIOR_DUMP'], M=_p.M, Ms=_p.Ms, sig=_p.sig, real_to=_p.real_to, cnt=_p.cnt, tc=_p.tc, f=_p.f, Bmed=_p.Bmed, slope_bin=_p.slope_bin)
     if realvel:
         q_ = 10 * (1 - corr) + np.maximum(bgrel + 20, 0)
-        short = {}
+        short = {}   # per quiet layer with >= 6 hits: the record's own velocity law = per-bin spectral offset of its (gain-normalised) hits vs the hard ensemble over the first 80 ms, and its median level re the loud cluster
         for lname in ['medium', 'soft', 'ghost']:
             for j in lay_sel[lname]: layer_of[int(j)] = lname
             lo_, hi_ = VEL_BANDS[lname]; js = [int(j) for j in np.argsort(q_) if lo_ <= rel[j] < hi_ and not ex[j]]
             if len(js) >= 30: R_, G_, O_ = ref_set(js); priors[lname] = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_; print(f"  prior[{lname}]: {len(js[:100])} hits, frames valid {priors[lname].valid_frac:.2f}, ensemble median real to {priors[lname].prior_real_to_ms:.0f} ms")
             elif len(js) >= 6:   # too few hits for a tail ensemble of their own: the hard ensemble's tail with this layer's measured spectral offset over the first 80 ms (velocity law)
                 R_, G_, O_ = ref_set(js); short[lname] = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_
+            if len(js) >= 6:
+                src_ = priors[lname] if lname in priors else short[lname]
+                vel_law[lname] = dict(off=layer_prior(priors['hard'], src_).offset_db.mean(0), lvl=float(np.median(rel[js])), n=len(js))
             else: print(f"  prior[{lname}]: only {len(js)} hits in band -> hard prior used as mask reference")
         # cross-layer extension: the same drum's decay measured on another layer's hits where this layer's own hits are all covered by events
         own = [l for l in ['hard', 'medium', 'soft', 'ghost'] if l in priors]
@@ -313,10 +316,26 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
         return y * 10 ** (lv / 20), dict(t=round(meta['times'][j], 2), gap_ms=int(gap[j] * 1000), bg_rel_peak_db=round(float(bgrel[j]), 1), sub_excess_db=round(float(subx[j]), 1), cymbal_coincident_db=round(float(hat_on[j]), 1), guard_db=round(guard_db, 1), real_to_ms=ext_ms, reclaimed_ms=rec_ms, attack_to_peak_ms=pre_echo_ms, len_ms=int(len(y) / SR * 1000), dbg=dict(st=round((st - PRE) / SR * 1000, 2), n0d=round((n0 - PRE) / SR * 1000, 2), n0s=round((n0s - PRE) / SR * 1000, 2), n10=round((n10 - PRE) / SR * 1000, 2), pkx=round((pkx - PRE) / SR * 1000, 2), pks=round((pks - PRE) / SR * 1000, 2), end_ms=int(end / SR * 1000)), lvl_db=round(float(lv), 2), corr=round(float(corr[j]), 3))
     layers = {'hard': [], 'medium': [], 'soft': [], 'ghost': []}; hinfo = []; layers_real = {}
     spec_v = {'medium': dict(tilt=[(3000, -2.5)], w=0.9, g=0.8, a=0.95, lv=-6), 'soft': dict(tilt=[(2000, -5)], w=0.75, g=0.5, a=0.85, lv=-12), 'ghost': dict(tilt=[(1500, -8), (5000, -4)], w=0.6, g=0.3, a=0.7, lv=-20)}
+    def law_for(lname):   # the record's own velocity law for this layer: measured on its hits if it has >= 6, else scaled from the nearest layer that does (same drum: the spectral change per dB of stroke level is a property of the drum/sample, not of the layer)
+        if lname in vel_law: return vel_law[lname]['off'], vel_law[lname]['lvl'], f"measured on {vel_law[lname]['n']} {lname} hits"
+        tgt = {'medium': -6.0, 'soft': -14.0, 'ghost': -24.0}[lname]
+        for src in ['medium', 'soft', 'ghost']:
+            if src in vel_law and vel_law[src]['lvl'] < -1.0:
+                fac = float(np.clip(tgt / vel_law[src]['lvl'], 0.3, 2.5)); o = vel_law[src]['off'] * fac; m = float(np.median(o))
+                if m < -12.0: fac *= -12.0 / m; o *= -12.0 / m   # a source law steeper than a stroke-velocity law can be (BMTH: -11 dB median for a 4 dB quieter layer = a different sample/section, not velocity) is not amplified past -12 dB median
+                return np.clip(o, -24.0, 6.0), tgt, f"scaled x{fac:.2f} from the record's {src} hits ({vel_law[src]['n']})"
+        return None, None, 'generic'
+    def apply_law(y, off):   # per-bin gain curve (1024-pt bins, 5-bin smoothed) as a minimum-phase FIR: no pre-ring ahead of the attack
+        fk = np.fft.rfftfreq(1024, 1 / SR); g = 10 ** (off / 20)
+        h = sg.minimum_phase(sg.firwin2(513, fk / (SR / 2), g ** 2), method='homomorphic')   # homomorphic min-phase of a linear-phase FIR carries the square root of its magnitude -> design on g^2
+        return np.stack([sg.lfilter(h, [1.0], y[:, c]) for c in range(y.shape[1])], axis=1)
     def est(j, lname):
-        p = spec_v[lname]; y, inf = finish_hit(j)
+        p = spec_v[lname]; y, inf = finish_hit(j); off, lvl, law = law_for(lname)
+        if off is not None:   # the record's velocity law: spectral offset of the quieter stroke + its level, applied to a real full hit. The tail decay is left alone (a drum's ring/room decay does not depend on stroke level)
+            y = apply_law(y / 10 ** (float(np.clip(rel[j], -1.5, 1.5)) / 20), off) * 10 ** ((lvl + rng.uniform(-0.7, 0.7)) / 20)
+            inf.update(layer=lname, real=False, rel_db=round(lvl, 1), law=law); return y, inf
         for f0s, gdb in p['tilt']: y = shelf(y, f0s, gdb)
-        y = wires(y, p['w']); y = glide(y, p['g']); y = attack(y, p['a']); y = y * 10 ** ((p['lv'] + rng.uniform(-0.7, 0.7)) / 20); inf.update(layer=lname, real=False, rel_db=p['lv']); return y, inf
+        y = wires(y, p['w']); y = glide(y, p['g']); y = attack(y, p['a']); y = y * 10 ** ((p['lv'] + rng.uniform(-0.7, 0.7)) / 20); inf.update(layer=lname, real=False, rel_db=p['lv'], law='generic (no quieter hits on this record)'); return y, inf
     if realvel:
         hits = []
         for j in lay_sel['hard']: y, inf = finish_hit(j); inf.update(layer='hard', real=True, rel_db=round(float(rel[j]), 1)); hits.append(y); hinfo.append(inf)

@@ -20,7 +20,7 @@ WORK = os.environ.get('ZC_WORK', os.path.join(ROOT, 'work'))
 CKPT_SHA = 'd2a4aa53eb584d21eead358a4e66d1882ad182911be018f052b5da73be9096d0'
 CKPT_URL = 'https://huggingface.co/noblebarkrr/mvsepless_resources/resolve/main/mdx23c/mdx23c_drumsep_6stem_aufr33_jarredou.ckpt'
 MSST_COMMIT = 'f0b527736e7da24eae5b561a2bb1efd0569ec757'
-PIPELINE_VERSION = '5.0.1'
+PIPELINE_VERSION = '5.0.2'
 SR = 44100
 STEMS = ['Kick', 'Snare', 'Toms', 'Hh', 'Ride', 'Crash']
 
@@ -240,7 +240,7 @@ def main(job):
             report['nearest'] = library.nearest(prof, LIB); report['library_notes'] = library.place(prof, LIB)
             log('nearest library songs after build:', [(n['job'], n['distance']) for n in report['nearest']]); [log('library note:', w) for w in report['library_notes']]
         for lname in ['medium', 'soft', 'ghost']:
-            if lr.get(lname, 0) < 4: report['warnings'].append(f"{lname}: {lr.get(lname,0)}/4 real hits found in that velocity band on this record; the other {4 - lr.get(lname,0)} are flagged estimates (hard hit with the lighter-stroke transform)")
+            if lr.get(lname, 0) < 4: report['warnings'].append(f"{lname}: {lr.get(lname,0)}/4 real hits found in that velocity band on this record; the other {4 - lr.get(lname,0)} are flagged estimates (a real full hit carried to that layer with this record's measured velocity law where it has one)")
         # ---------- 6. golden master (known inputs only) ----------
         gpath = os.path.join(ROOT, 'golden', report['input_sha256'] + '.json')
         if os.path.exists(gpath):
