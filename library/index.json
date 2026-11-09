@@ -1,6 +1,24 @@
 {
  "packs": [
   {
+   "id": "starset-manifest-snare-f2bvs",
+   "artist": "STARSET",
+   "title": "MANIFEST snare",
+   "zip": "ZC_Snare_starset-manifest-snare-f2bvs_RoundRobins.zip",
+   "oneshot": "ZC_starset-manifest-snare-f2bvs_oneshot.wav",
+   "pipeline": "5.0.4",
+   "finished": "2026-11-09T16:00:55Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "C_dense",
+   "hits_aligned": 165,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  },
+  {
    "id": "nothing-more-if-it-doesn-t-h-ztf6s",
    "artist": "Nothing More",
    "title": "If It Doesn't Hurt",
@@ -217,5 +235,5 @@
    "realn": "real hits in this pack: hard 4/4, medium 3/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
   }
  ],
- "count": 12
+ "count": 13
 }
