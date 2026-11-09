@@ -1,23 +1,4 @@
 {
- "packs": [
-  {
-   "id": "underoath-it-s-dangerous-bus-d4e00",
-   "artist": "Underoath",
-   "title": "It's Dangerous Business Walking Out Your Front Door",
-   "zip": "ZC_Snare_underoath-it-s-dangerous-bus-d4e00_RoundRobins.zip",
-   "oneshot": "ZC_underoath-it-s-dangerous-bus-d4e00_oneshot.wav",
-   "pipeline": "4.3.1",
-   "finished": "2026-11-07T01:51:01Z",
-   "layers_real": {
-    "hard": 4,
-    "medium": 4,
-    "soft": 0,
-    "ghost": 0
-   },
-   "strategy": "A_bright",
-   "hits_aligned": 131,
-   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
-  }
- ],
- "count": 1
+ "packs": [],
+ "count": 0
 }
