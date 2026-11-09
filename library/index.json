@@ -1,4 +1,23 @@
 {
- "packs": [],
- "count": 0
+ "packs": [
+  {
+   "id": "architects-blackhole-22anq",
+   "artist": "Architects",
+   "title": "Blackhole",
+   "zip": "ZC_Snare_architects-blackhole-22anq_RoundRobins.zip",
+   "oneshot": "ZC_architects-blackhole-22anq_oneshot.wav",
+   "pipeline": "5.0.1",
+   "finished": "2026-11-09T08:54:20Z",
+   "layers_real": {
+    "hard": 4,
+    "medium": 4,
+    "soft": 0,
+    "ghost": 0
+   },
+   "strategy": "B_dark",
+   "hits_aligned": 154,
+   "realn": "real hits in this pack: hard 4/4, medium 4/4, soft 0/4, ghost 0/4; the rest are flagged estimates"
+  }
+ ],
+ "count": 1
 }
