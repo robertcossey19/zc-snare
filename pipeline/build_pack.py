@@ -9,7 +9,7 @@ import numpy as np, soundfile as sf, scipy.signal as sg, json, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from extract import extract, frac_shift, candidates, envdb, SR, PRE
 from hit_dsp import shelf, wires, glide, attack, bandsplit, NB, XO
-from recon import Prior, reconstruct, layer_prior
+from recon import Prior, reconstruct, layer_prior, extend_prior
 EXTRA = int(0.06 * SR)   # 5.0: extra pre-roll handed to the reconstruction (per-hit background frames 55..25 ms before the onset)
 FR = int(0.005 * SR)
 LEN = int(1.3 * SR)            # analysis window per hit (s)
@@ -221,7 +221,7 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
     print(f'  selected 16 hits: gap to next snare (ms) {[int(gap[j]*1000) for j in sel]}, background rel peak {[int(bgrel[j]) for j in sel]}, score {score[sel[0]]:.2f}..{score[sel[-1]]:.2f}, times {[round(meta["times"][j],1) for j in sel]}')
     if analyse_only: return
     # ---- 5.0 ensemble priors: per layer, the aligned hits of that level band (>= 8) with 60 ms extra pre-roll; the hard prior is the fallback ----
-    def ref_set(js, nmax=60):   # the best-exposed hits of the band (selection order = exposure score), with the drum stem's non-snare material for per-frame validity
+    def ref_set(js, nmax=100):   # the best-exposed hits of the band (selection order = exposure score), with the drum stem's non-snare material for per-frame validity
         js = np.asarray(list(js)[:nmax], int); R = align_series(X, starts[js] - EXTRA, lags[js], gains[js], LEN + EXTRA)
         O = align_series(D, starts[js] - EXTRA, lags[js], gains[js], LEN + EXTRA) - R
         return R, gap[js], O
@@ -229,18 +229,28 @@ def build(name, analyse_only=False, realvel=None, strategy=None):
     hard_js = [j for j in order if rel[j] >= -3] if realvel else list(order)
     if len(hard_js) < 4: hard_js = list(order)
     R_, G_, O_ = ref_set(hard_js); priors['hard'] = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_
-    print(f"  prior[hard]: {len(hard_js[:60])} hits, frames valid {priors['hard'].valid_frac:.2f}, ensemble median real to {priors['hard'].prior_real_to_ms:.0f} ms (median over bins), sigma pct 10/50/90 {np.percentile(priors['hard'].sig, [10, 50, 90]).round(1)} dB, continuation slope pct 10/50/90 {np.percentile(priors['hard'].slope_bin, [10, 50, 90]).round(0)} dB/s, band late slopes {getattr(priors['hard'], 'slope_band', np.zeros(1)).mean(0).round(0)}")
+    print(f"  prior[hard]: {len(hard_js[:100])} hits, frames valid {priors['hard'].valid_frac:.2f}, ensemble median real to {priors['hard'].prior_real_to_ms:.0f} ms (median over bins), sigma pct 10/50/90 {np.percentile(priors['hard'].sig, [10, 50, 90]).round(1)} dB, continuation slope pct 10/50/90 {np.percentile(priors['hard'].slope_bin, [10, 50, 90]).round(0)} dB/s, band late slopes {getattr(priors['hard'], 'slope_band', np.zeros(1)).mean(0).round(0)}")
     if os.environ.get('ZC_PRIOR_DUMP'): _p = priors['hard']; np.savez(os.environ['ZC_PRIOR_DUMP'], M=_p.M, Ms=_p.Ms, sig=_p.sig, real_to=_p.real_to, cnt=_p.cnt, tc=_p.tc, f=_p.f, Bmed=_p.Bmed, slope_bin=_p.slope_bin)
     if realvel:
         q_ = 10 * (1 - corr) + np.maximum(bgrel + 20, 0)
+        short = {}
         for lname in ['medium', 'soft', 'ghost']:
             for j in lay_sel[lname]: layer_of[int(j)] = lname
             lo_, hi_ = VEL_BANDS[lname]; js = [int(j) for j in np.argsort(q_) if lo_ <= rel[j] < hi_ and not ex[j]]
-            if len(js) >= 30: R_, G_, O_ = ref_set(js); priors[lname] = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_; print(f"  prior[{lname}]: {len(js[:60])} hits, frames valid {priors[lname].valid_frac:.2f}, ensemble median real to {priors[lname].prior_real_to_ms:.0f} ms")
+            if len(js) >= 30: R_, G_, O_ = ref_set(js); priors[lname] = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_; print(f"  prior[{lname}]: {len(js[:100])} hits, frames valid {priors[lname].valid_frac:.2f}, ensemble median real to {priors[lname].prior_real_to_ms:.0f} ms")
             elif len(js) >= 6:   # too few hits for a tail ensemble of their own: the hard ensemble's tail with this layer's measured spectral offset over the first 80 ms (velocity law)
-                R_, G_, O_ = ref_set(js); sh_ = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_
-                priors[lname] = layer_prior(priors['hard'], sh_); print(f"  prior[{lname}]: {len(js)} hits -> hard ensemble + this layer's spectral offset (median {np.median(priors[lname].offset_db):+.1f} dB, 10/90 pct {np.percentile(priors[lname].offset_db, [10, 90]).round(1)})")
+                R_, G_, O_ = ref_set(js); short[lname] = Prior(R_, G_, PRE + EXTRA, slope, XO, other=O_); del R_, O_
             else: print(f"  prior[{lname}]: only {len(js)} hits in band -> hard prior used as mask reference")
+        # cross-layer extension: the same drum's decay measured on another layer's hits where this layer's own hits are all covered by events
+        own = [l for l in ['hard', 'medium', 'soft', 'ghost'] if l in priors]
+        for l1 in own:
+            for l2 in own:
+                if l1 == l2: continue
+                ne = extend_prior(priors[l1], priors[l2])
+                if ne: print(f"  prior[{l1}]: {ne} bins continued with the {l2} layer's measured decay -> ensemble median real to {priors[l1].prior_real_to_ms:.0f} ms")
+        for lname, sh_ in short.items():
+            priors[lname] = layer_prior(priors['hard'], sh_); print(f"  prior[{lname}]: hard ensemble + this layer's spectral offset (median {np.median(priors[lname].offset_db):+.1f} dB, 10/90 pct {np.percentile(priors[lname].offset_db, [10, 90]).round(1)})")
+        if os.environ.get('ZC_PRIOR_DUMP'): _p = priors['hard']; np.savez(os.environ['ZC_PRIOR_DUMP'].replace('.npz', '_ext.npz'), M=_p.M, Ms=_p.Ms, sig=_p.sig, real_to=_p.real_to, cnt=_p.cnt, tc=_p.tc, f=_p.f, Bmed=_p.Bmed, slope_bin=_p.slope_bin)
     # ---- 6. assemble: real hit untouched; only (a) a measured-floor fade so the file ends in silence instead of stem noise, (b) a fade at the next snare if one arrives before that ----
     def grains(src, length, b, j, seed=0):   # granular late texture from real material (40 ms Hann grains, random offset/sign), unit level
         grain = min(int(0.04 * SR), max(16, len(src) // 2)); hop = grain // 2; win = np.hanning(grain); rs = np.random.RandomState(1000 * b + j + 77 * seed); ext = np.zeros((length + 2 * grain, 2))   # clamp: a hit cut <100 ms in used to wrap to a negative slice ('high <= 0')

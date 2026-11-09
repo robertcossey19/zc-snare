@@ -160,7 +160,8 @@ class Prior:
                     else: s_end = sl[k]
                     sb_ = self.slope_band[c, band_of[k]] if hasattr(self, 'slope_band') else np.nan
                     if np.isfinite(sb_): s_end = sb_          # the band's measured late rate beats a line through this bin's early region
-                    s_use = float(np.clip(s_end, -300.0, -60.0)) if np.isfinite(s_end) else sl[k]; self.slope_bin[c, k] = s_use
+                    hi_clip = -60.0 if tc[te - 1] >= 0.08 else -90.0   # a bin whose evidence ends before 80 ms has no measured late rate: keep it inside a snare's range (t60 <= 0.67 s)
+                    s_use = float(np.clip(s_end, -300.0, hi_clip)) if np.isfinite(s_end) else min(sl[k], hi_clip); self.slope_bin[c, k] = s_use
                     Mx[c, k, te:] = min(Mx[c, k, te - 1], fit[-1] + 4.0) + s_use * (tc[te:] - tc[te - 1])
         # and never louder later: cap at running-min + 3 dB
         rm = np.minimum.accumulate(np.nan_to_num(Mx[:, :, k40:], nan=-120.0), axis=2)
@@ -169,6 +170,29 @@ class Prior:
         self.Ms = self.Ms + (Mxn - Mn)   # the smoothed decision reference follows the same continuation/cap as the fill level
         self.M = Mxn; self.real_to = real_to; self.cnt = cnt; self.n = n
         self.prior_real_to_ms = float(np.median(tc[np.clip(real_to, 0, T - 1)]) * 1000)
+
+def extend_prior(P, Q, min_frames=4):
+    """Where P's ensemble stops being real early in a bin (busy record: every hard hit has a hat/ride landing in its tail) and another layer Q of
+    the same drum is still measured there, continue P's bin with Q's measured decay SHAPE (level matched over the last 3 real frames of P), then
+    Q's continuation. The drum's ring/room decay is a property of the drum and the room, not of the stroke level, so the quieter layer's tail is
+    a real measurement of the same decay. Returns the number of bins extended; P.real_to is advanced to Q's (still reported as the estimate boundary
+    for the frames P itself could not measure: P.ext_from keeps P's own boundary)."""
+    T = P.M.shape[2]; n_ext = 0
+    if not hasattr(P, 'ext_from'): P.ext_from = P.real_to.copy()
+    for c in range(2):
+        for k in range(P.M.shape[1]):
+            te = int(P.real_to[c, k]); tq = int(Q.real_to[c, k])
+            if te >= T or tq - te < min_frames: continue
+            a = slice(max(te - 3, 0), te)
+            if not (np.all(np.isfinite(P.M[c, k, a])) and np.all(np.isfinite(Q.M[c, k, a]))): continue
+            off = float(np.median(P.M[c, k, a] - Q.M[c, k, a]))
+            new = Q.M[c, k, te:] + off
+            new = np.minimum(new, P.M[c, k, te - 1] + 3.0)            # never louder than where P's own measurement ended
+            d = new - P.M[c, k, te:]
+            P.M[c, k, te:] = new; P.Ms[c, k, te:] += d
+            P.real_to[c, k] = tq; P.slope_bin[c, k] = Q.slope_bin[c, k]; n_ext += 1
+    P.prior_real_to_ms = float(np.median(P.tc[np.clip(P.real_to, 0, T - 1)]) * 1000)
+    return n_ext
 
 def layer_prior(hard, short, upto_s=0.08, lim=(-24.0, 6.0)):
     """Prior for a quieter layer from few hits: the hard layer's full ensemble (its tail is measured on 60 hits) with the per-bin level offset this
